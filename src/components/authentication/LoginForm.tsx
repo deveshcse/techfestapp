@@ -1,11 +1,15 @@
+"use client";
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 const LoginForm = ({ className, ...props }: React.ComponentProps<"div">) => {
+  const router = useRouter();
+
   return (
 
       <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -79,9 +83,9 @@ const LoginForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                 </div>
                 <div className="text-center text-sm">
                   Don&apos;t have an account?{" "}
-                  <a href="#" className="underline underline-offset-4">
+                  <Link  href="/auth/signup" className="underline underline-offset-4">
                     Sign up
-                  </a>
+                  </Link>
                 </div>
               </div>
             </form>
