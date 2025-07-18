@@ -5,10 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 const SignUpForm = ({ className, ...props }: React.ComponentProps<"div">) => {
-  const router = useRouter();
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -52,11 +50,17 @@ const SignUpForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                 <Button variant="outline" type="button" className="w-full">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <path
-                      d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"
                       fill="currentColor"
+                      d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.387.6.113.82-.263.82-.583 
+        0-.288-.012-1.243-.018-2.252-3.338.725-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.083-.73.083-.73 
+        1.205.085 1.84 1.238 1.84 1.238 1.07 1.832 2.807 1.303 3.492.997.108-.775.42-1.303.762-1.603-2.665-.303-5.466-1.334-5.466-5.933 
+        0-1.31.468-2.382 1.236-3.222-.124-.303-.536-1.523.118-3.176 0 0 1.008-.322 3.3 1.23.96-.267 1.98-.4 3-.405 
+        1.02.005 2.04.138 3 .405 2.29-1.552 3.297-1.23 3.297-1.23.656 1.653.244 2.873.12 3.176.77.84 1.236 
+        1.912 1.236 3.222 0 4.61-2.804 5.625-5.475 5.922.432.372.816 1.102.816 2.222 0 1.604-.015 2.898-.015 
+        3.293 0 .322.216.7.825.58C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12z"
                     />
                   </svg>
-                  <span className="sr-only">Login with Apple</span>
+                  <span className="sr-only">Login with GitHub</span>
                 </Button>
                 <Button variant="outline" type="button" className="w-full">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -79,7 +83,10 @@ const SignUpForm = ({ className, ...props }: React.ComponentProps<"div">) => {
               </div>
               <div className="text-center text-sm">
                 Already have an account?{" "}
-                  <Link  href="/auth/login" className="underline underline-offset-4">
+                <Link
+                  href="/auth/login"
+                  className="underline underline-offset-4"
+                >
                   Sign in
                 </Link>
               </div>
