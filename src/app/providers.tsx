@@ -23,7 +23,7 @@ export function Providers({ children }: { children: ReactNode }) {
             Link={Link}
         >
             {children}
-             <Toaster />
+             <Toaster position="top-center" />
         </AuthUIProvider>
     )
 }
