@@ -1,5 +1,5 @@
 import ForgotPasswordForm from "@/features/auth/forgot-password-form";
-import { LoginForm } from "@/features/auth/login-form";
+import { LoginForm } from "@/features/auth/login/login-form";
 import { SignupForm } from "@/features/auth/signup-form";
 import { AuthView } from "@/lib/auth-views";
 
