@@ -25,11 +25,10 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { loginSchema, type LoginSchema } from "./login-schema"
-import { authClient } from "@/lib/auth-client"
 import { toast } from "sonner"
 import { useState } from "react"
 import { Spinner } from "@/components/ui/spinner"
-
+import {signIn} from "@/lib/auth-client"
 export function LoginForm({
   className,
   ...props
@@ -47,11 +46,11 @@ export function LoginForm({
     // TODO: Handle login submission
     console.log(values)
 
-    const { data, error } = await authClient.signIn.email({
+    const { data, error } = await signIn.email({
       email: values.email,
       password: values.password,
       rememberMe: true,
-      callbackURL: "http://localhost:3000/participants",
+      callbackURL: "http://localhost:3000/participant",
     },
 
       {
@@ -147,7 +146,7 @@ export function LoginForm({
                   </Button>
                   <p className="text-center text-sm text-muted-foreground">
                     Don&apos;t have an account?{" "}
-                    <a href="/signup" className="underline underline-offset-4 hover:text-primary">
+                    <a href="/auth/signup" className="underline underline-offset-4 hover:text-primary">
                       Sign up
                     </a>
                   </p>
