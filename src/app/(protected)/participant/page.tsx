@@ -1,12 +1,21 @@
-import Temp from "@/components/temp";
+import SignOutButton from "@/components/sign-out-button";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 
-export default function Page() {
-
+export default async function Page() {
+    const session = await auth.api.getSession({ headers: await headers() })
+    if (!session) {
+        redirect('/auth/login')
+    }
+    console.log(session)
     return (
-        <div>
+        <div className="mx-10 my-10">
             <h1>Participant Page</h1>
-            <Temp />
+             <SignOutButton />
+            <pre>{JSON.stringify(session, null, 2)}</pre>
+           
         </div>
     )
 }

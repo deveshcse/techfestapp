@@ -7,10 +7,9 @@ datasource db {
   provider = "postgresql"
 }
 
-enum Role {
+enum UserRole {
   ADMIN
-  ORGANIZER
-  PARTICIPANT
+  USER
 }
 
 model User {
@@ -19,16 +18,12 @@ model User {
   email         String
   emailVerified Boolean  @default(false)
   image         String?
-  role          Role     @default(PARTICIPANT)
+  role          UserRole     @default(USER)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   sessions   Session[]
   accounts   Account[]
-
-  events     Event[]
-  activity Activity[]
-  organizers ActivityOrganizer[]
 
   @@unique([email])
   @@map("user")
@@ -82,70 +77,8 @@ model Verification {
   @@map("verification")
 }
 
-model Event {
-  id           Int    @id @default(autoincrement())
-  title        String
-  descriptions String
-  location     String
-
-  // Schedule
-  startTime DateTime
-  endTime   DateTime
-
-  isPublished Boolean @default(false)
-
-  activity Activity[]
-
-  // Ownership
-  createdById String
-  createdBy   User   @relation(fields: [createdById], references: [id])
-
-  // Audit
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("event")
-}
-
-model Activity {
-  id       Int     @id @default(autoincrement())
-  title    String
-  venue    String
-  isOnline Boolean @default(false)
-  capacity Int @default(50)
-  // Schedule
-  startTime DateTime
-  endTime   DateTime
-  registration_deadline DateTime
 
 
-  createdById String
-  createdBy   User   @relation(fields: [createdById], references: [id])
 
-  event_id Int
-  event    Event @relation(fields: [event_id], references: [id])
 
-  organizers ActivityOrganizer[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("activity")
-}
-
-model ActivityOrganizer {
-  id Int @id @default(autoincrement())
-
-  activityId Int
-  activity   Activity @relation(fields: [activityId], references: [id])
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-
-  role Role @default(ORGANIZER)
-
-  assignedAt DateTime @default(now())
-
-  @@unique([activityId, userId])
-  @@map("activity_organizer")
-}

@@ -1,51 +1,36 @@
-
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
-import next from "next";
-
-
-const protectedRoutes = [
-    "/participant/:path*",
-    "/admin/:path*",
-    "/organizer/:path*",
-]
 
 export function proxy(request: NextRequest) {
-
     const sessionCookie = getSessionCookie(request);
-    if (!sessionCookie) {
-        return NextResponse.redirect(new URL("/auth/signup", request.url));
-    }
+    const { pathname } = request.nextUrl;
 
-    const { nextUrl } = request;
-    console.log("pathname", nextUrl.pathname);
-    const response = NextResponse.next();
     const isLoggedIn = !!sessionCookie;
-    const isOnProtectedRoute = protectedRoutes.includes(nextUrl.pathname);
 
-    const isOnAuthRoute = nextUrl.pathname.startsWith("/auth");
+    const isOnAuthRoute = pathname.startsWith("/auth");
+    const isOnProtectedRoute =
+        pathname.startsWith("/participant") ||
+        pathname.startsWith("/admin") ||
+        pathname.startsWith("/organizer");
 
-
-    //console log above variables
-    console.log("isLoggedIn", isLoggedIn);
-    console.log("isProtectedRoute", isOnProtectedRoute);
-    console.log("isOnAuthRoute", isOnAuthRoute);
-
-    if (isOnProtectedRoute && !isLoggedIn) {
+    // 1️⃣ NOT logged in → trying to access protected route
+    if (!isLoggedIn && isOnProtectedRoute) {
         return NextResponse.redirect(new URL("/auth/login", request.url));
     }
 
-    if (isOnAuthRoute && isLoggedIn) {
-        
+    // 2️⃣ Logged in → trying to access auth routes
+    if (isLoggedIn && isOnAuthRoute) {
         return NextResponse.redirect(new URL("/participant", request.url));
     }
 
-    return response;
+    // 3️⃣ Allow everything else
+    return NextResponse.next();
 }
 
+
 export const config = {
-  matcher: [
-    // Exclude API routes, static files, image optimizations, and .png files
-    '/((?!api|_next/static|_next/image|.*\\.png$).*)',
-  ],
+    matcher: [
+        // Exclude API routes, static files, image optimizations, and .png files
+        // '/((?!api|_next/static|_next/image|.*\\.png$).*)',
+    ],
 }
