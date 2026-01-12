@@ -20,7 +20,7 @@ export function proxy(request: NextRequest) {
 
     // 2️⃣ Logged in → trying to access auth routes
     if (isLoggedIn && isOnAuthRoute) {
-        return NextResponse.redirect(new URL("/participant", request.url));
+        return NextResponse.redirect(new URL("/user", request.url));
     }
 
     // 3️⃣ Allow everything else
@@ -31,6 +31,6 @@ export function proxy(request: NextRequest) {
 export const config = {
     matcher: [
         // Exclude API routes, static files, image optimizations, and .png files
-        // '/((?!api|_next/static|_next/image|.*\\.png$).*)',
+        '/((?!api|_next/static|_next/image|.*\\.png$).*)',
     ],
 }

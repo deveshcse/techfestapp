@@ -6,10 +6,7 @@ import { redirect } from "next/navigation";
 
 export default async function Page() {
     const session = await auth.api.getSession({ headers: await headers() })
-    if (!session) {
-        redirect('/auth/login')
-    }
-    console.log(session)
+    // console.log(session)
     return (
         <div className="mx-10 my-10">
             <h1>Participant Page</h1>

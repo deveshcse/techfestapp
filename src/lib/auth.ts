@@ -1,36 +1,62 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "./prisma";
-import { customSession } from "better-auth/plugins"
-// // If your Prisma file is located elsewhere, you can change the path
-// import { PrismaClient } from "@/generated/prisma/client";
+import { createAuthMiddleware } from "better-auth/api";
+import { getRedirectByRole, UserRole } from "./roleRedirect";
 
-async function findUserRoles(userId: string){
- const user = await prisma.user.findUnique({
-    where: {
-        id: userId
-    },
-    select:{role: true},
-
- });
- return user?.role;  
-}
+type SignInReturn = {
+  redirect?: boolean;
+  url?: string;
+  token?: string;
+  user?: {
+    id: string;
+    email: string;
+    emailVerified: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+    role: UserRole;
+  };
+};
 
 export const auth = betterAuth({
-    baseURL: "http://localhost:3000",
-    database: prismaAdapter(prisma, {
-        provider: "postgresql",
-    }),
-    emailAndPassword: {
-        enabled: true,
+  baseURL: "http://localhost:3000",
+  database: prismaAdapter(prisma, {
+    provider: "postgresql",
+  }),
+  emailAndPassword: {
+    enabled: true,
+  },
+
+  user: {
+    additionalFields: {
+      role: {
+        type: ["ADMIN", "USER"],
+      },
     },
-    user: {
-        additionalFields: {
-            role:{
-                type: ["ADMIN", "USER"]
-            },
-        }
-    }
+  },
+
+  hooks: {
+    after: createAuthMiddleware(async (ctx) => {
+      if (ctx.path.startsWith("/sign-in")) {
+        const returned = ctx.context.returned as SignInReturn | undefined;
+
+        if (!returned?.user) return;
+
+        const role = returned.user.role;
+        const roleBasedUrl = getRedirectByRole(role);
+
+        ctx.context.returned = {
+          ...returned,
+          redirect: true, // force redirect even if client didn't pass url
+          url: roleBasedUrl, // always override
+        };
+
+        console.log(returned)
+      }
+      
+    }),
+    
+  },
 });
 
-type Session = typeof auth.$Infer.Session
+type Session = typeof auth.$Infer.Session;
