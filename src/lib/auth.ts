@@ -45,13 +45,13 @@ export const auth = betterAuth({
         const role = returned.user.role;
         const roleBasedUrl = getRedirectByRole(role);
 
+        // redirecting based on user role
         ctx.context.returned = {
           ...returned,
-          redirect: true, // force redirect even if client didn't pass url
-          url: roleBasedUrl, // always override
+          redirect: true, 
+          url: roleBasedUrl,
         };
 
-        console.log(returned)
       }
       
     }),
