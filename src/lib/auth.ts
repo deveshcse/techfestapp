@@ -3,6 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "./prisma";
 import { createAuthMiddleware } from "better-auth/api";
 import { getRedirectByRole, UserRole } from "./roleRedirect";
+import { admin } from "better-auth/plugins";
 
 type SignInReturn = {
   redirect?: boolean;
@@ -27,6 +28,8 @@ export const auth = betterAuth({
     enabled: true,
   },
 
+  plugins: [admin()],
+
   user: {
     additionalFields: {
       role: {
@@ -48,14 +51,11 @@ export const auth = betterAuth({
         // redirecting based on user role
         ctx.context.returned = {
           ...returned,
-          redirect: true, 
+          redirect: true,
           url: roleBasedUrl,
         };
-
       }
-      
     }),
-    
   },
 });
 
