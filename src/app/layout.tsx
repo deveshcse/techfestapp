@@ -6,6 +6,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { ThemeProvider } from "@/components/theme-provider";
+import ModalProvider from "@/components/modal-provider";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -33,6 +34,7 @@ export default async function RootLayout({
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem enableColorScheme>
           {children}
+          <ModalProvider />
           <Toaster position="top-right" />
         </ThemeProvider>
       </body>

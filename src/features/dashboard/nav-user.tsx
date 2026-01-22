@@ -26,6 +26,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { ModeToggle } from "@/components/mode-toggle";
+import SignOutButton from "@/components/sign-out-button";
 
 export function NavUser({
   user,
@@ -105,7 +106,7 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <LogOut />
-              Log out
+             <SignOutButton />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

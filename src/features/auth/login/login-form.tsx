@@ -46,6 +46,7 @@ export function LoginForm({
         email: values.email,
         password: values.password,
         rememberMe: true,
+        callbackURL: "/dashboard/user",
       },
 
       {

@@ -33,7 +33,8 @@ interface EventFormProps {
 }
 
 async function onSubmit(data: EventFormValues) {
-    console.log(data);
+
+    console.log(eventSchema.parse(data));
 }
 
 export function EventForm({ initialData }: EventFormProps) {
