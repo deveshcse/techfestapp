@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { createEventSchema, eventQuerySchema } from "@/features/events/schemas";
+import { createEventSchema, eventQuerySchema } from "@/features/events/event.schema";
 import {
     getAuthenticatedUser,
     unauthorizedResponse,
     badRequestResponse,
     serverErrorResponse,
-} from "@/lib/api-utils";
+} from "@/app/api/_lib/utils";
 
 // GET /api/events - List all events
 export async function GET(request: NextRequest) {

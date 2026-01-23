@@ -26,7 +26,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 
-import { eventSchema, EventFormValues } from "../../features/events/schemas";
+import { eventFormSchema, EventFormValues } from "../event.schema";
 
 interface EventFormProps {
     initialData?: EventFormValues;
@@ -34,12 +34,12 @@ interface EventFormProps {
 
 async function onSubmit(data: EventFormValues) {
 
-    console.log(eventSchema.parse(data));
+    console.log(eventFormSchema.parse(data));
 }
 
-export function EventForm({ initialData }: EventFormProps) {
+export function EventCreateUpdateForm({ initialData }: EventFormProps) {
     const form = useForm<EventFormValues>({
-        resolver: zodResolver(eventSchema),
+        resolver: zodResolver(eventFormSchema),
         defaultValues: initialData || {
             title: "",
             description: "",

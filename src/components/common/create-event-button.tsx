@@ -1,14 +1,14 @@
 "use client";
 import { useModalStore } from "@/store/useModalStore";
 import { Button } from "@/components/ui/button";
-import { EventForm } from "@/components/common/event-form";
+import { EventCreateUpdateForm } from "@/features/events/components/event-create-update-form";
 
 export default function CreateEventButton() {
   const { open } = useModalStore();
 
   return (
     <>
-      <Button size="sm" onClick={() => open(<EventForm />)}>Create Event</Button>
+      <Button size="sm" onClick={() => open(<EventCreateUpdateForm />)}>Create Event</Button>
     </>
   );
 }

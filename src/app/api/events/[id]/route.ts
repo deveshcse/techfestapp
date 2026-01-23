@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { updateEventSchema } from "@/features/events/schemas";
+import { updateEventSchema } from "@/features/events/event.schema";
 import {
     getAuthenticatedUser,
     unauthorizedResponse,
     badRequestResponse,
     notFoundResponse,
     serverErrorResponse,
-} from "@/lib/api-utils";
+} from "@/app/api/_lib/utils";
 
 type RouteContext = {
     params: Promise<{ id: string }>;
