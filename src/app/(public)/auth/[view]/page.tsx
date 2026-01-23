@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 
 import { GalleryVerticalEnd } from "lucide-react";
 import { AUTH_VIEWS, type AuthView } from "@/lib/auth-views";
-import { AuthViewProvider } from "@/components/auth-view-provider";
+import { AuthViewProvider } from "@/components/providers/auth-view-provider";
 import Link from "next/link";
 
 export const dynamicParams = false

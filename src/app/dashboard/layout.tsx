@@ -1,6 +1,6 @@
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/features/dashboard/app-sidebar";
-import BreadcrumbComponent from "@/features/dashboard/breadcrumb-component";
+import { AppSidebar } from "@/components/common/app-sidebar";
+import BreadcrumbComponent from "@/components/common/breadcrumb-component";
 
 export default function DashboardLayout({
   children,

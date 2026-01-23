@@ -1,4 +1,4 @@
-import CreateEventButton from "@/components/create-event-button";
+import CreateEventButton from "@/components/common/create-event-button";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";

@@ -1,7 +1,7 @@
-import { Navbar } from "@/components/layout/Navbar";
-import { HeroSection } from "@/components/landing/HeroSection";
-import { EventShowcase } from "@/components/landing/EventShowcase";
-import { Footer } from "@/components/layout/Footer";
+import { Navbar } from "@/features/landing/components/navbar";
+import { HeroSection } from "@/features/landing/components/hero-section";
+import { EventShowcase } from "@/features/landing/components/event-showcase";
+import { Footer } from "@/features/landing/components/footer";
 
 
 // Data that could be fetched from a CMS or Database at build time

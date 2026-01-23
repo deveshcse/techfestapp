@@ -1,7 +1,7 @@
 "use client";
 import { useModalStore } from "@/store/useModalStore";
-import { Button } from "./ui/button";
-import { EventForm } from "@/features/events/components/event-form";
+import { Button } from "@/components/ui/button";
+import { EventForm } from "@/components/common/event-form";
 
 export default function CreateEventButton() {
   const { open } = useModalStore();

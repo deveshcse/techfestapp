@@ -26,7 +26,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 
-import { eventSchema, EventFormValues } from "../schemas";
+import { eventSchema, EventFormValues } from "../../features/events/schemas";
 
 interface EventFormProps {
     initialData?: EventFormValues;
