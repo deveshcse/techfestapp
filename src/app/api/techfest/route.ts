@@ -16,24 +16,46 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch techfests from database
-    const techfest = await prisma.techFest.findMany({
-      where: {
-        published: true,
-      },
-      select: {
-        id: true,
-        title: true,
-        description: true,
-        venue: true,
-        start_date: true,
-        end_date: true,
-      }
-    });
+    // const techfest = await prisma.techFest.findMany({
+    //   where: {
+    //     published: true,
+    //   },
+    //   select: {
+    //     id: true,
+    //     title: true,
+    //     description: true,
+    //     venue: true,
+    //     start_date: true,
+    //     end_date: true,
+    //   }
+    // });
+
+    const { searchParams } = new URL(request.url);
+
+    const page = Number(searchParams.get("page") ?? 1);
+    const limit = Number(searchParams.get("limit") ?? 10);
+    const sortBy = searchParams.get("sortBy") ?? "createdAt";
+    const order = searchParams.get("order") ?? "desc";
+    const search = searchParams.get("search") ?? "";
+
+    const skip = (page - 1) * limit;
+
+    const where = search ? { title: { contains: search } } : {};
+
+    const [data, total] = await Promise.all([
+      prisma.techFest.findMany({
+        skip,
+        take: limit,
+        where,
+        // orderBy: { [sortBy]: order },
+      }),
+      prisma.techFest.count({ where }),
+    ]);
 
     return NextResponse.json({
       success: true,
-      data: techfest,
-      count: techfest.length,
+      data,
+      total,
     });
   } catch (error) {
     console.error("API Error:", error);
