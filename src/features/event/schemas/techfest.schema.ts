@@ -23,7 +23,7 @@ export const baseTechFestSchema = z
   });
 
 export const TechFestFormSchema = baseTechFestSchema.safeExtend({
-  id: z.string().optional(),
+  id: z.number().optional(),
 });
 
 export const createTechFestSchema = baseTechFestSchema.safeExtend({
