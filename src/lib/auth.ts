@@ -1,8 +1,8 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "./prisma";
-import { admin } from "better-auth/plugins";
-
+import { admin as adminPlugin } from "better-auth/plugins";
+import { admin, organizer, user, ac } from "./permissions";
 
 export const auth = betterAuth({
   baseURL: "http://localhost:3000",
@@ -13,7 +13,12 @@ export const auth = betterAuth({
     enabled: true,
   },
 
-  plugins: [admin()],
+  plugins: [
+    adminPlugin({
+      ac,
+      roles: { admin, organizer, user },
+    }),
+  ],
 
   user: {
     additionalFields: {
@@ -22,8 +27,6 @@ export const auth = betterAuth({
       },
     },
   },
-
- 
 });
 
 type Session = typeof auth.$Infer.Session;
