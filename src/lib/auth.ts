@@ -1,4 +1,4 @@
-import { betterAuth } from "better-auth";
+import { betterAuth, string } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "./prisma";
 // import { createAuthMiddleware } from "better-auth/api";
@@ -33,7 +33,7 @@ export const auth = betterAuth({
   user: {
     additionalFields: {
       role: {
-        type: ["ADMIN", "USER", "ORGANIZER"],
+        type: ["user", "admin", "organizer"] as const,
       },
     },
   },
