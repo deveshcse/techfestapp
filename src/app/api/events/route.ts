@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { createEventSchema, eventQuerySchema } from "@/features/events/event.schema";
+import { createEventSchema, eventQuerySchema } from "@/features/archive-events/event.schema";
 import {
     getAuthenticatedUser,
     unauthorizedResponse,

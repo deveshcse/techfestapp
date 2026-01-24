@@ -1,4 +1,5 @@
 import CreateEventButton from "@/components/common/create-event-button";
+// import { EventsDataTableExample } from "@/features/event/components/events-data-table";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -10,5 +11,10 @@ export default async function Page() {
   if(session && session.user.role !== "ADMIN"){
     redirect("/dashboard/user")
   }
-  return <CreateEventButton />;
+  return(
+    <div className="flex">
+      {/* <EventsDataTableExample /> */}
+      <CreateEventButton />
+    </div>  
+  );
 }
