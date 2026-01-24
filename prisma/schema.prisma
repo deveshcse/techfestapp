@@ -7,11 +7,58 @@ datasource db {
   provider = "postgresql"
 }
 
-model account {
+enum UserRole {
+  ADMIN
+  USER
+  ORGANIZER
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  role          UserRole  @default(USER)
+  banned        Boolean?  @default(false)
+  banReason     String?
+  banExpires    DateTime?
+  sessions      Session[]
+  accounts      Account[]
+
+  createdTechFests TechFest[] @relation("TechFestCreatedBy")
+  updatedTechFests TechFest[] @relation("TechFestUpdatedBy")
+
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id             String   @id
+  expiresAt      DateTime
+  token          String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  ipAddress      String?
+  userAgent      String?
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  impersonatedBy String?
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
   id                    String    @id
   accountId             String
   providerId            String
   userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?
   refreshToken          String?
   idToken               String?
@@ -20,72 +67,41 @@ model account {
   scope                 String?
   password              String?
   createdAt             DateTime  @default(now())
-  updatedAt             DateTime
-  user                  user      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  updatedAt             DateTime  @updatedAt
 
   @@index([userId])
+  @@map("account")
 }
 
-model session {
-  id             String   @id
-  expiresAt      DateTime
-  token          String   @unique
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime
-  ipAddress      String?
-  userAgent      String?
-  userId         String
-  impersonatedBy String?
-  user           user     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-}
-
-model user {
-  id            String    @id
-  name          String
-  email         String    @unique
-  emailVerified Boolean   @default(false)
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime
-  role          UserRole  @default(USER)
-  banExpires    DateTime?
-  banReason     String?
-  banned        Boolean?  @default(false)
-  account       account[]
-  session       session[]
-}
-
-model verification {
+model Verification {
   id         String   @id
   identifier String
   value      String
   expiresAt  DateTime
   createdAt  DateTime @default(now())
-  updatedAt  DateTime
+  updatedAt  DateTime @updatedAt
 
   @@index([identifier])
+  @@map("verification")
 }
 
 model TechFest {
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-  title       String
-  description String?
-  start_date  DateTime
-  end_date    DateTime
-  venue       String?
-  published   Boolean  @default(false)
-  created_by  String
-  updated_by  String?
-  id          Int      @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-  @@index([title])
-  @@map("techfests")
-}
+  name        String
+  description String
+  startDate   DateTime
+  endDate     DateTime
+  venue       String
 
-enum UserRole {
-  ADMIN
-  USER
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  createdById String
+  updatedById String?
+
+  createdBy User @relation("TechFestCreatedBy", fields: [createdById], references: [id])
+  updatedBy User? @relation("TechFestUpdatedBy", fields: [updatedById], references: [id])
+
 }

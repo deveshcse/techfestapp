@@ -23,6 +23,8 @@ import { Calendar } from "@/components/ui/calendar";
 import { Textarea } from "@/components/ui/textarea";
 import { TechFestFormValues } from "../types/techfest.types";
 import { TechFestFormSchema } from "../schemas/techfest.schema";
+import { useQuery } from "@tanstack/react-query";
+import { listTechFest } from "../utils/apis";
 
 interface EventFormProps {
   initialData?: TechFestFormValues;
@@ -42,7 +44,12 @@ export function EventCreateUpdateForm({ initialData }: EventFormProps) {
     },
   });
 
-  
+  const { data } = useQuery({
+    queryKey: ["techfest"],
+    queryFn: listTechFest,
+  });
+
+  console.log("Fetched TechFests:", data);
 
   return (
     <form
@@ -204,7 +211,9 @@ export function EventCreateUpdateForm({ initialData }: EventFormProps) {
         </Field>
       </div>
 
-      <Button type="submit" className="mb-4">Submit</Button>
+      <Button type="submit" className="mb-4">
+        Submit
+      </Button>
     </form>
   );
 }

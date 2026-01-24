@@ -4,14 +4,16 @@ import prisma from "@/lib/prisma";
 
 export async function GET(request: NextRequest) {
   try {
-    // Verify authentication
-    // const session = await auth.api.getSession({
-    //   headers: request.headers,
-    // });
+    //Verify authentication
+    const session = await auth.api.getSession({
+      headers: request.headers,
+    });
 
-    // if (!session) {
-    //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    // }
+    console.log("Session Info:", session);
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     // Fetch techfests from database
     const techfest = await prisma.techFest.findMany({
