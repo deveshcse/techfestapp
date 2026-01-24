@@ -7,10 +7,10 @@ import { redirect } from "next/navigation";
 export default async function Page() {
   console.log("event page");
 
-  const session = await auth.api.getSession({ headers: await headers() });
-  if(session && session.user.role !== "ADMIN"){
-    redirect("/dashboard/user")
-  }
+  // const session = await auth.api.getSession({ headers: await headers() });
+  // if(session && session.user.role !== "ADMIN"){
+  //   redirect("/dashboard/user")
+ // }
   return(
     <div className="flex">
       {/* <EventsDataTableExample /> */}

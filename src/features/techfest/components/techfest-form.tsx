@@ -42,6 +42,8 @@ export function EventCreateUpdateForm({ initialData }: EventFormProps) {
     },
   });
 
+  
+
   return (
     <form
       onSubmit={form.handleSubmit(onSubmit)}

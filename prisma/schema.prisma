@@ -68,18 +68,9 @@ model verification {
   @@index([identifier])
 }
 
-enum UserRole {
-  ADMIN
-  USER
-}
-
-
-
 model TechFest {
-  id         Int   @id @default(autoincrement())
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
   title       String
   description String?
   start_date  DateTime
@@ -88,7 +79,13 @@ model TechFest {
   published   Boolean  @default(false)
   created_by  String
   updated_by  String?
+  id          Int      @id @default(autoincrement())
 
   @@index([title])
   @@map("techfests")
+}
+
+enum UserRole {
+  ADMIN
+  USER
 }
