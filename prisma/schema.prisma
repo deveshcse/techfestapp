@@ -102,4 +102,7 @@ model TechFest {
 
   createdBy User  @relation("TechFestCreatedBy", fields: [createdById], references: [id])
   updatedBy User? @relation("TechFestUpdatedBy", fields: [updatedById], references: [id])
+
+  @@map("tech_fest")
+  
 }
