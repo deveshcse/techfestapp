@@ -17,5 +17,5 @@ export const useModalStore = create<ModalState>((set) => ({
   title: "",
   description: "",
   open: (content, title, description) => set({ isOpen: true, content, title, description }),
-  close: () => set({ isOpen: false, content: null }),
+  close: () => set({ isOpen: false, content: null , title: "", description: "" }),
 }));
