@@ -31,7 +31,6 @@ model User {
   createdTechFests TechFest[] @relation("TechFestCreatedBy")
   updatedTechFests TechFest[] @relation("TechFestUpdatedBy")
 
-
   @@unique([email])
   @@map("user")
 }
@@ -90,11 +89,10 @@ model TechFest {
 
   title       String
   description String
-  startDate   DateTime
-  endDate     DateTime
+  start_date  DateTime
+  end_date    DateTime
   venue       String
-  published   Boolean @default(false)
-
+  published   Boolean  @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -102,7 +100,6 @@ model TechFest {
   createdById String
   updatedById String?
 
-  createdBy User @relation("TechFestCreatedBy", fields: [createdById], references: [id])
+  createdBy User  @relation("TechFestCreatedBy", fields: [createdById], references: [id])
   updatedBy User? @relation("TechFestUpdatedBy", fields: [updatedById], references: [id])
-
 }
