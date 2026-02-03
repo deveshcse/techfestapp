@@ -5,7 +5,7 @@ import { admin as adminPlugin } from "better-auth/plugins";
 import { admin, organizer, user, ac } from "./permissions";
 
 export const auth = betterAuth({
-  baseURL: "http://localhost:3000",
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),

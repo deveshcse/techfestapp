@@ -44,13 +44,7 @@ export function EventCreateUpdateForm({ initialData }: EventFormProps) {
     },
   });
 
-  const { data } = useQuery({
-    queryKey: ["techfest"],
-    queryFn: listTechFest,
-  });
-
-  console.log("Fetched TechFests:", data);
-
+ 
   return (
     <form
       onSubmit={form.handleSubmit(onSubmit)}

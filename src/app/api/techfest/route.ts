@@ -4,52 +4,54 @@ import prisma from "@/lib/prisma";
 
 export async function GET(request: NextRequest) {
   try {
-    //Verify authentication
     const session = await auth.api.getSession({
       headers: request.headers,
     });
-
-    console.log("Session Info:", session);
 
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Fetch techfests from database
-    // const techfest = await prisma.techFest.findMany({
-    //   where: {
-    //     published: true,
-    //   },
-    //   select: {
-    //     id: true,
-    //     title: true,
-    //     description: true,
-    //     venue: true,
-    //     start_date: true,
-    //     end_date: true,
-    //   }
-    // });
+    // 1️⃣ Must be allowed to read
+    const canRead = await auth.api.userHasPermission({
+      body: {
+        userId: session.user.id,
+        permissions: {
+          techfest: ["read"],
+        },
+      },
+    });
 
-    const { searchParams } = new URL(request.url);
+    if (!canRead.success) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
 
-    const page = Number(searchParams.get("page") ?? 1);
-    const limit = Number(searchParams.get("limit") ?? 10);
-    const sortBy = searchParams.get("sortBy") ?? "createdAt";
-    const order = searchParams.get("order") ?? "desc";
-    const search = searchParams.get("search") ?? "";
+    // 2️⃣ Visibility logic (NOT permission-based)
+    const elevatedRoles = ["admin", "organizer"];
+    const isElevatedUser = elevatedRoles.includes(session.user.role);
 
-    const skip = (page - 1) * limit;
+    // 3️⃣ Dynamic where
+    const whereClause = isElevatedUser
+      ? {}
+      : { published: true };
 
-    const where = search ? { title: { contains: search } } : {};
-
+    // 4️⃣ Query
     const [data, total] = await Promise.all([
       prisma.techFest.findMany({
-        skip,
-        take: limit,
-        where,
-        // orderBy: { [sortBy]: order },
+        where: whereClause,
+        select: {
+          id: true,
+          title: true,
+          venue: true,
+          start_date: true,
+          end_date: true,
+          published: true,
+        },
+        orderBy: { start_date: "asc" },
       }),
-      prisma.techFest.count({ where }),
+      prisma.techFest.count({
+        where: whereClause,
+      }),
     ]);
 
     return NextResponse.json({

@@ -23,7 +23,7 @@ interface Props {
   onPageSizeChange: (size: number) => void;
 }
 
-export function DataTablePagination({
+export function TechFestPagination({
   pageIndex,
   pageSize,
   totalCount,
@@ -33,7 +33,7 @@ export function DataTablePagination({
   const pageCount = Math.ceil(totalCount / pageSize);
 
   return (
-    <div className="flex items-center justify-between py-4 border rounded-lg px-2">
+    <div className="flex items-center justify-between py-4 border rounded-sm px-2">
       <span className="text-sm">
         Page {pageIndex + 1} of {pageCount}
       </span>
@@ -75,21 +75,7 @@ export function DataTablePagination({
           <ChevronsRight />
         </Button>
 
-        <Select
-          value={String(pageSize)}
-          onValueChange={(v) => onPageSizeChange(Number(v))}
-        >
-          <SelectTrigger className="w-[120px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {[10, 20, 50].map((s) => (
-              <SelectItem key={s} value={String(s)}>
-                {s} rows
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+       
       </div>
     </div>
   );

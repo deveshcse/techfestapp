@@ -5,8 +5,8 @@ import { redirect } from "next/navigation";
 
 
 export default async function Page() {
-    const session = await auth.api.getSession({ headers: await headers() })
-  if(session && session.user.role == "admin"){
+  const session = await auth.api.getSession({ headers: await headers() })
+  if(session && session.user.role !== "admin"){
     redirect("/dashboard/events")
   }
     return (
