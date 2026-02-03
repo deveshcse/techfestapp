@@ -14,7 +14,6 @@ import { useTechFest } from "../utils/useTechFest";
 export type TechFest = {
   id: number;
   title: string;
-  description: string;
   start_date: Date;
   end_date: Date;
   venue: string;
@@ -28,8 +27,12 @@ const statusStyles: Record<TechFestStatus, string> = {
 
 export function TechFestList() {
   const { data, isPending, isError } = useTechFest();
+  console.log(data);
 
-  const techfests: TechFest[] = data?.data || [];
+  const techfests: TechFest[] =
+    data?.data.map((fest) => ({
+      ...fest,
+    })) || [];
 
   if (isPending) {
     return <div className="p-4">Loading techfests...</div>;
@@ -43,10 +46,19 @@ export function TechFestList() {
     return <p className="text-sm text-muted-foreground">No techfests found.</p>;
   }
 
+  const options = {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+} as const;
+
   return (
     <div className="space-y-2">
       {techfests.map((fest) => {
-        const status = getTechFestStatus(fest.start_date, fest.end_date);
+        const status = getTechFestStatus(
+          new Date(fest.start_date),
+          new Date(fest.end_date),
+        );
 
         return (
           <Card key={fest.id} className="py-4 rounded-sm">
@@ -60,8 +72,8 @@ export function TechFestList() {
                 <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Calendar className="h-4 w-4" />
-                    {new Date(fest.start_date).toLocaleDateString()} -{" "}
-                    {new Date(fest.end_date).toLocaleDateString()}
+                    {new Date(fest.start_date).toLocaleDateString("en-US", options)} -{" "}
+                    {new Date(fest.end_date).toLocaleDateString("en-US", options)}
                   </span>
 
                   <span className="flex items-center gap-1">

@@ -1,13 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import {
   ChevronLeft,
   ChevronRight,
@@ -17,20 +11,16 @@ import {
 
 interface Props {
   pageIndex: number;
-  pageSize: number;
   totalCount: number;
   onPageChange: (page: number) => void;
-  onPageSizeChange: (size: number) => void;
 }
 
 export function TechFestPagination({
   pageIndex,
-  pageSize,
   totalCount,
   onPageChange,
-  onPageSizeChange,
 }: Props) {
-  const pageCount = Math.ceil(totalCount / pageSize);
+  const pageCount = Math.ceil(totalCount / 6); // Assuming 10 items per page
 
   return (
     <div className="flex items-center justify-between py-4 border rounded-sm px-2">

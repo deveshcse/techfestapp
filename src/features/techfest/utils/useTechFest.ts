@@ -1,13 +1,11 @@
-import api from "@/lib/axios";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { listTechFest } from "./apis";
+import { TechFestListResponse } from "../types/techfest.types";
 
 export function useTechFest() {
-  return useQuery({
+  return useQuery<TechFestListResponse>({
     queryKey: ["techfest"],
-    queryFn: async () => {
-      const res = await api.get(`/api/techfest`);
-      return res.data;
-    },
+    queryFn: listTechFest,
     placeholderData: keepPreviousData,
   });
 }

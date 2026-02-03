@@ -23,7 +23,7 @@ export default async function Page() {
 
       {/* Pagination (always visible) */}
       <div className="sticky bottom-0 bg-background ">
-        <TechFestPagination />
+        {/* <TechFestPagination /> */}
       </div>
     </div>
   );
