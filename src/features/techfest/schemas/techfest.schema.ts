@@ -26,9 +26,7 @@ export const TechFestFormSchema = baseTechFestSchema.safeExtend({
   id: z.number().optional(),
 });
 
-export const createTechFestSchema = baseTechFestSchema.safeExtend({
-  published: z.boolean().default(false),
-});
+export const createTechFestSchema = baseTechFestSchema.safeExtend({});
 
 export const updateTechFestSchema = createTechFestSchema.partial();
 

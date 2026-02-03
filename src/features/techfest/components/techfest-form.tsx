@@ -23,18 +23,22 @@ import { Calendar } from "@/components/ui/calendar";
 import { Textarea } from "@/components/ui/textarea";
 import { TechFestFormValues } from "../types/techfest.types";
 import { TechFestFormSchema } from "../schemas/techfest.schema";
-import { useQuery } from "@tanstack/react-query";
-import { listTechFest } from "../utils/apis";
+import { useCreateTechFest } from "../utils/useTechFest";
+
 
 interface EventFormProps {
   initialData?: TechFestFormValues;
 }
 
-async function onSubmit(data: TechFestFormValues) {
-  console.log(TechFestFormSchema.parse(data));
-}
+
 
 export function EventCreateUpdateForm({ initialData }: EventFormProps) {
+const { mutate: createTechFest, isPending } = useCreateTechFest();
+
+async function onSubmit(data: TechFestFormValues) {
+  createTechFest(data);
+}
+
   const form = useForm<TechFestFormValues>({
     resolver: zodResolver(TechFestFormSchema),
     defaultValues: initialData || {
