@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import ModalProvider from "@/components/providers/modal-provider";
 import ReactQueryClientProvider from "@/components/providers/react-query-client-provider";
+import { AuthProvider } from "@/features/auth/context/auth-context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,16 +33,18 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ReactQueryClientProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            enableColorScheme
-          >
-            {children}
-            <ModalProvider />
-            <Toaster position="top-right" />
-          </ThemeProvider>
+          <AuthProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              enableColorScheme
+            >
+              {children}
+              <ModalProvider />
+              <Toaster position="top-right" />
+            </ThemeProvider>
+          </AuthProvider>
         </ReactQueryClientProvider>
       </body>
     </html>

@@ -27,7 +27,6 @@ const statusStyles: Record<TechFestStatus, string> = {
 
 export function TechFestList() {
   const { data, isPending, isError } = useTechFest();
-  console.log(data);
 
   const techfests: TechFest[] =
     data?.data.map((fest) => ({
