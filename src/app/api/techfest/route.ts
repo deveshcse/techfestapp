@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { createTechFestSchema } from "@/features/techfest/schemas/techfest.schema";
 
 export async function GET(request: NextRequest) {
   try {
@@ -76,58 +77,86 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // 1️⃣ Must be allowed to create
     const canCreate = await auth.api.userHasPermission({
       body: {
         userId: session.user.id,
-        permissions: {
-          techfest: ["create"],
-        },
+        permissions: { techfest: ["create"] },
       },
     });
 
     if (!canCreate.success) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      return NextResponse.json(
+        {
+          error: "Forbidden: User does not have permission to create techfest",
+        },
+        { status: 403 },
+      );
     }
 
-    // 2️⃣ Parse and validate body
-    const body = await request.json();
-    const { title, description, venue, start_date, end_date } = body;
+    // Read body
+    const rawBody = await request.json();
 
-    // check existing techfest between the given dates
-    const existingTechFest = await prisma.techFest.findFirst({
-      where: {
-        start_date: start_date,
-        end_date: end_date,
-      },
-    });
+    // Convert dates (JSON → Date)
+    const parsedBody = {
+      ...rawBody,
+      start_date: new Date(rawBody.start_date),
+      end_date: new Date(rawBody.end_date),
+    };
 
-    if (existingTechFest) {
+    // Validate using Zod (THIS is the line you asked about)
+    const data = createTechFestSchema.parse(parsedBody);
+
+    const { start_date, end_date } = data;
+
+    // invalid range
+    if (start_date > end_date) {
       return NextResponse.json(
-        { error: "Techfest already exists for the given dates" },
+        { error: "Start date cannot be after end date" },
         { status: 400 },
       );
     }
 
+    // must be future-only (tomorrow or later)
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
 
+    if (start_date < tomorrow) {
+      return NextResponse.json(
+        { error: "Techfest must start from tomorrow or later" },
+        { status: 400 },
+      );
+    }
 
-    // 3️⃣ Create new techfest
-    const newTechFest = await prisma.techFest.create({
+    // Overlap check
+    const overlappingTechFest = await prisma.techFest.findFirst({
+      where: {
+        AND: [
+          { start_date: { lte: data.end_date } },
+          { end_date: { gte: data.start_date } },
+        ],
+      },
+    });
+
+    if (overlappingTechFest) {
+      return NextResponse.json(
+        { error: "Another techfest already exists during this date range" },
+        { status: 409 },
+      );
+    }
+
+    // Create
+    const techFest = await prisma.techFest.create({
       data: {
-        title,
-        description,
-        venue,
-        start_date,
-        end_date,
+        ...data,
         createdById: session.user.id,
       },
     });
 
-    return NextResponse.json({ success: true, data: newTechFest });
+    return NextResponse.json({ success: true, data: techFest });
   } catch (error) {
-    console.error("API Error:", error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: `Failed to create techfest: ${error}` },
       { status: 500 },
     );
   }

@@ -3,7 +3,7 @@
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
+import { addDays, endOfDay, format, startOfDay } from "date-fns";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -23,14 +23,16 @@ import { Calendar } from "@/components/ui/calendar";
 import { Textarea } from "@/components/ui/textarea";
 import { TechFestFormValues } from "../types/techfest.types";
 import { TechFestFormSchema } from "../schemas/techfest.schema";
-import { useCreateTechFest } from "../utils/useTechFest";
+import { useCreateTechFest, useTechFest } from "../utils/useTechFest";
 import { Spinner } from "@/components/ui/spinner";
 import { useAuth } from "@/features/auth/context/auth-context";
 import { authClient } from "@/lib/auth-client";
 
+
 interface EventFormProps {
   initialData?: TechFestFormValues;
 }
+
 
 export function EventCreateUpdateForm({ initialData }: EventFormProps) {
   const { user, isAuthenticated } = useAuth();
@@ -42,15 +44,21 @@ export function EventCreateUpdateForm({ initialData }: EventFormProps) {
       },
       role: user?.role,
     });
-      console.log("User can create techfest:", canCreateTechfest);
-
+    console.log("User can create techfest:", canCreateTechfest);
   }
-
 
   const { mutate: createTechFest, isPending } = useCreateTechFest();
 
   async function onSubmit(data: TechFestFormValues) {
-    createTechFest(data);
+    const { from, to } = data.dateRange!;
+
+    createTechFest({
+      title: data.title,
+      description: data.description,
+      venue: data.venue,
+      start_date: from,
+      end_date: to,
+    });
   }
 
   const form = useForm<TechFestFormValues>({
@@ -59,8 +67,31 @@ export function EventCreateUpdateForm({ initialData }: EventFormProps) {
       title: "",
       description: "",
       venue: "",
+      dateRange: undefined,
     },
   });
+
+  const tomorrow = startOfDay(addDays(new Date(), 1));
+
+  const { data } = useTechFest();
+
+  const techfestList = data?.data ?? [];
+
+  const blockedRanges = techfestList.map((tf) => ({
+    start: startOfDay(new Date(tf.start_date)),
+    end: endOfDay(new Date(tf.end_date)),
+  }));
+
+  const isDateBlocked = (date: Date): boolean => {
+    return blockedRanges.some(
+      (range) => date >= range.start && date <= range.end,
+    );
+  };
+
+  const isDisabled = (date: Date): boolean => {
+    if (date < tomorrow) return true;
+    return isDateBlocked(date);
+  };
 
   return (
     <form
@@ -103,7 +134,56 @@ export function EventCreateUpdateForm({ initialData }: EventFormProps) {
           </FieldContent>
         </Field>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* ✅ Date Range */}
+        <Field>
+          <FieldLabel>Event Duration</FieldLabel>
+          <FieldContent>
+            <Controller
+              control={form.control}
+              name="dateRange"
+              render={({ field }) => (
+                <>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !field.value && "text-muted-foreground",
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {field.value?.from && field.value?.to
+                          ? `${format(field.value.from, "PPP")} – ${format(field.value.to, "PPP")}`
+                          : "Pick a date range"}
+                      </Button>
+                    </PopoverTrigger>
+
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="range"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={isDisabled}
+                        numberOfMonths={2}
+                      />
+                    </PopoverContent>
+                  </Popover>
+
+                  <FieldError
+                    errors={
+                      form.formState.errors.dateRange
+                        ? [form.formState.errors.dateRange]
+                        : []
+                    }
+                  />
+                </>
+              )}
+            />
+          </FieldContent>
+        </Field>
+
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Field>
             <FieldLabel htmlFor="start_date">Start Date</FieldLabel>
             <FieldContent>
@@ -203,7 +283,7 @@ export function EventCreateUpdateForm({ initialData }: EventFormProps) {
               />
             </FieldContent>
           </Field>
-        </div>
+        </div> */}
 
         <Field>
           <FieldLabel htmlFor="venue">Venue</FieldLabel>
