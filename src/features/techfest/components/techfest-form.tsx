@@ -24,20 +24,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { TechFestFormValues } from "../types/techfest.types";
 import { TechFestFormSchema } from "../schemas/techfest.schema";
 import { useCreateTechFest } from "../utils/useTechFest";
-
+import { Spinner } from "@/components/ui/spinner";
 
 interface EventFormProps {
   initialData?: TechFestFormValues;
 }
 
-
-
 export function EventCreateUpdateForm({ initialData }: EventFormProps) {
-const { mutate: createTechFest, isPending } = useCreateTechFest();
+  const { mutate: createTechFest, isPending } = useCreateTechFest();
 
-async function onSubmit(data: TechFestFormValues) {
-  createTechFest(data);
-}
+  async function onSubmit(data: TechFestFormValues) {
+    createTechFest(data);
+  }
 
   const form = useForm<TechFestFormValues>({
     resolver: zodResolver(TechFestFormSchema),
@@ -48,7 +46,6 @@ async function onSubmit(data: TechFestFormValues) {
     },
   });
 
- 
   return (
     <form
       onSubmit={form.handleSubmit(onSubmit)}
@@ -209,7 +206,14 @@ async function onSubmit(data: TechFestFormValues) {
         </Field>
       </div>
 
-      <Button type="submit" className="mb-4">
+      <Button
+        type="submit"
+        className="mb-4 flex items-center disabled:opacity-80"
+        disabled={isPending}
+      >
+        <span className=" h-4 w-4">
+          {isPending && <Spinner className="h-4 w-4" />}
+        </span>
         Submit
       </Button>
     </form>
