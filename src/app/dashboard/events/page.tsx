@@ -1,6 +1,7 @@
 import CreateEventButton from "@/components/common/create-event-button";
 import { TechFestPagination } from "@/features/techfest/components/techfest-pagination";
 import { TechFestList } from "@/features/techfest/components/techfest-list";
+import { Access } from "@/features/auth/components/permission/access";
 
 export default async function Page() {
   return (
@@ -13,7 +14,9 @@ export default async function Page() {
             View and manage upcoming, ongoing, and past techfests.
           </p>
         </div>
-        <CreateEventButton />
+        <Access resource="techfest" action="create">
+          <CreateEventButton />
+        </Access>
       </header>
 
       {/* Scrollable list */}
