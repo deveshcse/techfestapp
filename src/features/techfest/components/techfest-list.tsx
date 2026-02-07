@@ -10,6 +10,7 @@ import {
 } from "@/features/techfest/utils/techfest-status";
 import { cn } from "@/lib/utils";
 import { useTechFest } from "../utils/useTechFest";
+import { useRouter } from "next/navigation";
 
 export type TechFest = {
   id: number;
@@ -26,6 +27,7 @@ const statusStyles: Record<TechFestStatus, string> = {
 };
 
 export function TechFestList() {
+  const router = useRouter(); 
   const { data, isPending, isError } = useTechFest();
 
   const techfests: TechFest[] =
@@ -93,7 +95,7 @@ export function TechFestList() {
 
                 <Button
                   size="sm"
-                  onClick={() => {}}
+                   onClick={() => router.push(`/dashboard/techfest/${fest.id}`)}
                   aria-label={`Open details for ${fest.title}`}
                 >
                   Open details
