@@ -180,8 +180,8 @@ const data = {
       icon: Command,
       items: [
         {
-          title: "Events",
-          url: "/dashboard/events",
+          title: "Techfests",
+          url: "/dashboard/techfest",
         },
         {
           title: "Activities",
