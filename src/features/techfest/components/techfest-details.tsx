@@ -95,7 +95,6 @@ export function TechFestDetail({
     >
       {/* ================= ACTION BAR ================= */}
       <div className="flex flex-col md:flex-row justify-end gap-2">
-
         <Button size="sm" type="button" onClick={onTogglePublish}>
           <Plus className="mr-2 h-4 w-4" />
           View Activities
@@ -119,30 +118,29 @@ export function TechFestDetail({
           </Button>
         </Access>
 
-       <Access resource="techfest" action="update">
-  <Button
-    size="sm"
-    type="button"
-    variant="outline"
-    onClick={isEditing ? cancelEdit : startEdit}
-    className="flex items-center justify-center gap-2 md:w-24" // fixed width
-  >
-    {/* Icon slot (same size always) */}
-    <span className="inline-flex w-4 h-4">
-      {isEditing ? (
-        <CircleX className="h-4 w-4" />
-      ) : (
-        <Pencil className="h-4 w-4" />
-      )}
-    </span>
+        <Access resource="techfest" action="update">
+          <Button
+            size="sm"
+            type="button"
+            variant="outline"
+            onClick={isEditing ? cancelEdit : startEdit}
+            className="flex items-center justify-center gap-2 md:w-24" // fixed width
+          >
+            {/* Icon slot (same size always) */}
+            <span className="inline-flex w-4 h-4">
+              {isEditing ? (
+                <CircleX className="h-4 w-4" />
+              ) : (
+                <Pencil className="h-4 w-4" />
+              )}
+            </span>
 
-    {/* Text slot (same font, no margin change) */}
-    <span className="leading-none">
-      {isEditing ? "Cancel" : "Edit"}
-    </span>
-  </Button>
-</Access>
-
+            {/* Text slot (same font, no margin change) */}
+            <span className="leading-none">
+              {isEditing ? "Cancel" : "Edit"}
+            </span>
+          </Button>
+        </Access>
       </div>
 
       {/* ================= HERO BANNER ================= */}
@@ -159,7 +157,7 @@ export function TechFestDetail({
               {...register("title", { required: "Title is required" })}
               readOnly={lock}
               aria-readonly={lock}
-              className="md:text-xl font-bold"
+              className="font-bold"
             />
             <FieldError errors={errors.title && [errors.title]} />
           </Field>
@@ -171,7 +169,10 @@ export function TechFestDetail({
         <div className="flex items-center justify-between">
           <FieldLegend>Event Details</FieldLegend>
 
-          <Badge variant={techFest.published ? "default" : "secondary"}>
+          <Badge
+            data-status={techFest.published ? "published" : "unpublished"}
+            className=" data-[status=published]:bg-green-500 data-[status=published]:text-white data-[status=unpublished]:bg-muted data-[status=unpublished]:text-muted-foreground"
+          >
             {techFest.published ? "Published" : "Unpublished"}
           </Badge>
         </div>
