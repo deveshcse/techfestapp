@@ -42,7 +42,7 @@ import { Access } from "@/features/auth/components/permission/access";
 
 type Props = {
   techFest: TechFestDetails;
-  onSave: (data: TechFestDetails) => Promise<void>;
+  onSave: (data: TechFestDetails) => void;
   onDelete: () => void;
   onTogglePublish: () => void;
 };

@@ -3,6 +3,7 @@ import {
   CreateTechFestInput,
   TechFestDetails,
   TechFestListResponse,
+  UpdateTechFestInput,
 } from "../types/techfest.types";
 
 export const listTechFest = async (): Promise<TechFestListResponse> => {
@@ -30,7 +31,7 @@ export const deleteTechFest = async (id: number) => {
 
 export const updateTechFest = async (
   id: number,
-  formData: CreateTechFestInput,
+  formData: UpdateTechFestInput,
 ) => {
   const response = await api.put(`/api/techfest/${id}`, formData);
   return response.data;
