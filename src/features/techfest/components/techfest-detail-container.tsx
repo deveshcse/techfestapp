@@ -1,29 +1,33 @@
 "use client";
 
 import { UpdateTechFestInput } from "../types/techfest.types";
-import { useDeleteTechFest, useTechFestDetails, useToggleTechFestStatus, useUpdateTechFest } from "../utils/useTechFest";
+import {
+  useDeleteTechFest,
+  useTechFestActions,
+  useTechFestDetails,
+  useToggleTechFestStatus,
+  useUpdateTechFest,
+} from "../utils/useTechFest";
 import { TechFestDetail } from "./techfest-details";
 
 type Props = {
   techFestId: number;
 };
 export function TechFestDetailContainer({ techFestId }: Props) {
-    console.log("TechFestDetailContainer received techFestId:", techFestId);
+  console.log("TechFestDetailContainer received techFestId:", techFestId);
   const { data, isLoading, error, isSuccess } = useTechFestDetails(techFestId);
 
   // impliment handlers for save, delete and toggle publish here and pass to TechFestDetail component
-  const { mutate: updateTechFest } = useUpdateTechFest(techFestId);
-  const { mutate: toggleTechFestStatus } = useToggleTechFestStatus(techFestId);
-  const { mutate: deleteTechFest } = useDeleteTechFest(techFestId);
+  const { update, toggle, remove } = useTechFestActions(techFestId);
 
   function handleSave(formData: UpdateTechFestInput) {
-    updateTechFest(formData);
+    update.mutate(formData);
   }
   function handleTogglePublish() {
-    toggleTechFestStatus();
+    toggle.mutate();
   }
   function handleDelete() {
-    deleteTechFest();
+    remove.mutate();
   }
 
   if (isLoading) {
@@ -38,9 +42,9 @@ export function TechFestDetailContainer({ techFestId }: Props) {
   return (
     <TechFestDetail
       techFest={data}
-      onDelete={handleDelete}
-      onSave={handleSave}
-      onTogglePublish={handleTogglePublish}
+      // onDelete={handleDelete}
+      // onSave={handleSave}
+      // onTogglePublish={handleTogglePublish}
     />
   );
 }

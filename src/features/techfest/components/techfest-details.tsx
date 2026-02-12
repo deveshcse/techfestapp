@@ -10,13 +10,10 @@ import {
   Pencil,
   Globe,
   Plus,
-  ClosedCaption,
-  Cross,
-  Circle,
   CircleX,
+  List,
 } from "lucide-react";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -37,8 +34,9 @@ import {
   FieldLegend,
 } from "@/components/ui/field";
 
-import { TechFestDetails } from "../types/techfest.types";
+import { TechFestDetails, UpdateTechFestInput } from "../types/techfest.types";
 import { Access } from "@/features/auth/components/permission/access";
+import { useTechFestActions } from "../utils/useTechFest";
 
 type Props = {
   techFest: TechFestDetails;
@@ -47,13 +45,19 @@ type Props = {
   onTogglePublish: () => void;
 };
 
-export function TechFestDetail({
-  techFest,
-  onSave,
-  onDelete,
-  onTogglePublish,
-}: Props) {
+export function TechFestDetail({ techFest }: Props) {
   const [isEditing, setIsEditing] = React.useState(false);
+  const { update, toggle, remove } = useTechFestActions(techFest.id);
+
+  function onSave(formData: UpdateTechFestInput) {
+    update.mutate(formData);
+  }
+  function onTogglePublish() {
+    toggle.mutate();
+  }
+  function onDelete() {
+    remove.mutate();
+  }
 
   const form = useForm<TechFestDetails>({
     defaultValues: techFest,
@@ -83,8 +87,8 @@ export function TechFestDetail({
     setIsEditing(false);
   }
 
-  async function submit(values: TechFestDetails) {
-    await onSave(values);
+  function submit(values: TechFestDetails) {
+    onSave(values);
     setIsEditing(false);
   }
 
@@ -95,13 +99,18 @@ export function TechFestDetail({
     >
       {/* ================= ACTION BAR ================= */}
       <div className="flex flex-col md:flex-row justify-end gap-2">
-        <Button size="sm" type="button" onClick={onTogglePublish}>
-          <Plus className="mr-2 h-4 w-4" />
+        <Button size="sm" type="button">
+          <List className="mr-2 h-4 w-4" />
           View Activities
         </Button>
 
         <Access resource="techfest" action="publish">
-          <Button size="sm" type="button" onClick={onTogglePublish}>
+          <Button
+            size="sm"
+            type="button"
+            onClick={onTogglePublish}
+            disabled={toggle.isPending}
+>
             <Globe className="mr-2 h-4 w-4" />
             {techFest.published ? "Unpublish" : "Publish"}
           </Button>
@@ -112,6 +121,7 @@ export function TechFestDetail({
             type="button"
             variant="destructive"
             onClick={onDelete}
+            disabled={remove.isPending}
           >
             <Trash2 className="mr-2 h-4 w-4" />
             Delete
@@ -145,11 +155,11 @@ export function TechFestDetail({
 
       {/* ================= HERO BANNER ================= */}
       <div className="overflow-hidden rounded-lg border">
-        <img
+        {/* <img
           src="/techfest-banner.png"
           alt="TechFest banner"
           className="h-48 w-full object-cover"
-        />
+        /> */}
 
         <div className="p-4">
           <Field>
@@ -171,7 +181,7 @@ export function TechFestDetail({
 
           <Badge
             data-status={techFest.published ? "published" : "unpublished"}
-            className=" data-[status=published]:bg-green-500 data-[status=published]:text-white data-[status=unpublished]:bg-muted data-[status=unpublished]:text-muted-foreground"
+            className=" data-[status=published]:bg-amber-500 data-[status=published]:text-white data-[status=unpublished]:bg-muted data-[status=unpublished]:text-muted-foreground"
           >
             {techFest.published ? "Published" : "Unpublished"}
           </Badge>
@@ -209,10 +219,10 @@ export function TechFestDetail({
                   }}
                   onSelect={(range) => {
                     if (!range) return;
-                    setValue("start_date", range.from as any, {
+                    setValue("start_date", range.from as Date, {
                       shouldDirty: true,
                     });
-                    setValue("end_date", range.to as any, {
+                    setValue("end_date", range.to as Date, {
                       shouldDirty: true,
                     });
                   }}

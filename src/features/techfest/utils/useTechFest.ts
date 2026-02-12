@@ -16,9 +16,15 @@ import { queryClient } from "@/lib/query-client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
+const techfestKeys = {
+  all: ["techfest"] as const,
+  list: () => [...techfestKeys.all, "list"] as const,
+  detail: (id: number) => [...techfestKeys.all, "detail", id] as const,
+};
+
 export function useTechFest() {
   return useQuery<TechFestListResponse>({
-    queryKey: ["techfest"],
+    queryKey: techfestKeys.list(),
     queryFn: listTechFest,
     placeholderData: keepPreviousData,
   });
@@ -28,7 +34,7 @@ export function useCreateTechFest() {
   return useMutation({
     mutationFn: createTechFest,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["techfest"] });
+      queryClient.invalidateQueries({ queryKey: techfestKeys.list() });
       toast.success("TechFest created successfully");
     },
   });
@@ -36,7 +42,7 @@ export function useCreateTechFest() {
 
 export function useTechFestDetails(id: number) {
   return useQuery<TechFestDetails>({
-    queryKey: ["techfest", id],
+    queryKey: techfestKeys.detail(id),
     queryFn: () => getTechfestDetails(id),
     placeholderData: keepPreviousData,
   });
@@ -58,7 +64,9 @@ export function useToggleTechFestStatus(id: number) {
   return useMutation({
     mutationFn: () => toggleTechFestStatus(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["techfest"] });
+      queryClient.invalidateQueries({
+        queryKey: techfestKeys.detail(id),
+      });
       toast.success("TechFest status updated successfully");
     },
   });
@@ -70,10 +78,18 @@ export function useDeleteTechFest(id: number) {
   return useMutation({
     mutationFn: () => deleteTechFest(id),
     onSuccess: () => {
-      queryClient.removeQueries({ queryKey: [id] });
-      queryClient.invalidateQueries({ queryKey: ["techfest"] });
+      queryClient.removeQueries({ queryKey: techfestKeys.detail(id) });
       toast.success("TechFest deleted successfully");
       router.push("/dashboard/techfest");
+      queryClient.invalidateQueries({ queryKey: techfestKeys.list() });
     },
   });
+}
+
+export function useTechFestActions(id: number) {
+  return {
+    update: useUpdateTechFest(id),
+    toggle: useToggleTechFestStatus(id),
+    remove: useDeleteTechFest(id),
+  };
 }
