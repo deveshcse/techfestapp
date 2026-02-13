@@ -1,3 +1,4 @@
+import { ReactNode } from "react"
 import { create } from "zustand"
 
 type ConfirmOptions = {
@@ -7,6 +8,7 @@ type ConfirmOptions = {
   cancelText?: string
   destructive?: boolean
   actionLabel?: string
+  icon?: ReactNode
   onConfirm?: () => Promise<void> | void
 }
 

@@ -12,6 +12,8 @@ import {
   CircleX,
   List,
   Save,
+  Rocket,
+  EyeOff,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -48,8 +50,7 @@ type Props = {
 export function TechFestDetail({ techFest }: Props) {
   const [isEditing, setIsEditing] = React.useState(false);
   const { update, toggle, remove } = useTechFestActions(techFest.id);
-  const confirm = useConfirm()
-
+  const confirm = useConfirm();
 
   const form = useForm<TechFestDetails>({
     defaultValues: techFest,
@@ -86,21 +87,37 @@ export function TechFestDetail({ techFest }: Props) {
     });
   }
 
-  function onTogglePublish() {
-    toggle.mutate();
+  async function onTogglePublish() {
+    await confirm({
+      title: techFest.published ? "Unpublish TechFest?" : "Publish TechFest?",
+      description: techFest.published
+        ? "Unpublishing will hide the TechFest and all its activities from public view. Are you sure you want to unpublish?"
+        : "Publishing will make the TechFest visible to all users. Are you sure you want to publish?",
+      confirmText: techFest.published ? "Unpublish" : "Publish",
+      destructive: techFest.published ? false : true, 
+      icon: techFest.published ? (
+        <EyeOff className="h-4 w-4 " />
+      ) : (
+        <Rocket className="h-4 w-4 " />
+      ),
+
+      actionLabel: techFest.published ? "Unpublishing" : "Publishing",
+      onConfirm: () => toggle.mutateAsync(),
+    });
   }
 
   const handleDelete = async () => {
-  await confirm({
-    title: "Delete TechFest?",
-    description: "This action will permanently delete the TechFest and all associated data. Are you sure you want to proceed?",
-    destructive: true,
-    confirmText: "Delete",
-    actionLabel: "Deleting",
-    onConfirm: () => remove.mutateAsync(),
-  })
-}
-
+    await confirm({
+      title: "Delete TechFest?",
+      description:
+        "This action will permanently delete the TechFest and all associated data. Are you sure you want to proceed?",
+      destructive: true,
+      confirmText: "Delete",
+      actionLabel: "Deleting",
+      icon: <Trash2 className="h-4 w-4" />,
+      onConfirm: () => remove.mutateAsync(),
+    });
+  };
 
   return (
     <form

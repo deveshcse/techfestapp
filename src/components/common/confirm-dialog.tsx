@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   AlertDialog,
@@ -9,28 +9,28 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import { useConfirmStore } from "@/store/confirm-store"
+} from "@/components/ui/alert-dialog";
+import { useConfirmStore } from "@/store/confirm-store";
 
-import { Loader2, Trash2, X } from "lucide-react"
+import { CheckCircle, Loader2, Trash2, X } from "lucide-react";
 
 export function GlobalConfirmDialog() {
-  const {
-    open,
-    options,
-    loading,
-    handleConfirm,
-    handleCancel,
-  } = useConfirmStore()
+  const { open, options, loading, handleConfirm, handleCancel } =
+    useConfirmStore();
 
-  const confirmText = options.confirmText ?? "Continue"
-  const actionLabel = options.actionLabel ?? "Processing"
+  const confirmText = options.confirmText ?? "Continue";
+  const actionLabel = options.actionLabel ?? "Processing";
+  const defaultIcon = options.destructive ? (
+    <Trash2 className="h-4 w-4" />
+  ) : (
+    <CheckCircle className="h-4 w-4" />
+  );
 
   return (
     <AlertDialog
       open={open}
       onOpenChange={() => {
-        if (!loading) handleCancel()
+        if (!loading) handleCancel();
       }}
     >
       <AlertDialogContent>
@@ -63,19 +63,19 @@ export function GlobalConfirmDialog() {
             disabled={loading}
             className={`min-w-35 ${
               options.destructive
-                ? "bg-red-600 hover:bg-red-700"
-                : ""
+                ? "bg-destructive hover:bg-red-600"
+                : "bg-green-500 hover:bg-green-600"
             }`}
           >
             <span className="flex items-center justify-center gap-2">
               {loading ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  {actionLabel}...
+                  {actionLabel}
                 </>
               ) : (
                 <>
-                  <Trash2 className="h-4 w-4" />
+                  {options.icon ?? defaultIcon}
                   {confirmText}
                 </>
               )}
@@ -84,5 +84,5 @@ export function GlobalConfirmDialog() {
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }
