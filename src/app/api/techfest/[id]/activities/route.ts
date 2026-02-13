@@ -24,7 +24,6 @@ export async function POST(request: NextRequest, { params }: Params) {
     // const activity_form_data = await request.json();
 
     if (session) {
-      // Proceed with activity creation logic
       const new_activity = await prisma.activity.create({
         data: {
           title: "Sample Activity",
@@ -36,14 +35,28 @@ export async function POST(request: NextRequest, { params }: Params) {
           createdById: session.user.id,
         },
       });
+
+      if (!new_activity) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Something went wrong: Failed to create activity",
+          },
+          { status: 500 },
+        );
+      }
       return NextResponse.json(
-        { success: true, activity: new_activity },
+        {
+          success: true,
+          message: "Activity created successfully",
+          activity: new_activity,
+        },
         { status: 201 },
       );
     }
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to process request", details: error },
+      { success: false, error: "Failed to process request", details: error },
       { status: 500 },
     );
   }
