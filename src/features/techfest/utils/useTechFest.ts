@@ -48,7 +48,6 @@ export function useTechFestDetails(id: number) {
   });
 }
 
-// add update, delete and publish/unpublish mutations here
 
 export function useUpdateTechFest(id: number) {
   return useMutation({

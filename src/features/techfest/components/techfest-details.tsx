@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller, useWatch } from "react-hook-form";
 import { format } from "date-fns";
 import {
   CalendarIcon,
@@ -9,9 +9,9 @@ import {
   Trash2,
   Pencil,
   Globe,
-  Plus,
   CircleX,
   List,
+  Save,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -37,27 +37,15 @@ import {
 import { TechFestDetails, UpdateTechFestInput } from "../types/techfest.types";
 import { Access } from "@/features/auth/components/permission/access";
 import { useTechFestActions } from "../utils/useTechFest";
+import Link from "next/link";
 
 type Props = {
   techFest: TechFestDetails;
-  onSave: (data: TechFestDetails) => void;
-  onDelete: () => void;
-  onTogglePublish: () => void;
 };
 
 export function TechFestDetail({ techFest }: Props) {
   const [isEditing, setIsEditing] = React.useState(false);
   const { update, toggle, remove } = useTechFestActions(techFest.id);
-
-  function onSave(formData: UpdateTechFestInput) {
-    update.mutate(formData);
-  }
-  function onTogglePublish() {
-    toggle.mutate();
-  }
-  function onDelete() {
-    remove.mutate();
-  }
 
   const form = useForm<TechFestDetails>({
     defaultValues: techFest,
@@ -68,14 +56,15 @@ export function TechFestDetail({ techFest }: Props) {
     register,
     handleSubmit,
     reset,
-    watch,
-    setValue,
+    control,
     formState: { errors, isDirty },
   } = form;
 
+  // ✅ useWatch instead of watch (fix compiler warning)
+  const startDate = useWatch({ control, name: "start_date" });
+  const endDate = useWatch({ control, name: "end_date" });
+
   const lock = !isEditing;
-  const startDate = watch("start_date");
-  const endDate = watch("end_date");
 
   function startEdit() {
     reset(techFest);
@@ -87,9 +76,18 @@ export function TechFestDetail({ techFest }: Props) {
     setIsEditing(false);
   }
 
-  function submit(values: TechFestDetails) {
-    onSave(values);
-    setIsEditing(false);
+  function submit(values: UpdateTechFestInput) {
+    update.mutate(values, {
+      onSuccess: () => setIsEditing(false),
+    });
+  }
+
+  function onTogglePublish() {
+    toggle.mutate();
+  }
+
+  function onDelete() {
+    remove.mutate();
   }
 
   return (
@@ -98,75 +96,92 @@ export function TechFestDetail({ techFest }: Props) {
       className="mx-auto max-w-5xl space-y-6 px-4 py-6"
     >
       {/* ================= ACTION BAR ================= */}
-      <div className="flex flex-col md:flex-row justify-end gap-2">
-        <Button size="sm" type="button">
-          <List className="mr-2 h-4 w-4" />
-          View Activities
-        </Button>
-
-        <Access resource="techfest" action="publish">
-          <Button
-            size="sm"
-            type="button"
-            onClick={onTogglePublish}
-            disabled={toggle.isPending}
->
-            <Globe className="mr-2 h-4 w-4" />
-            {techFest.published ? "Unpublish" : "Publish"}
-          </Button>
-        </Access>
-        <Access resource="techfest" action="delete">
-          <Button
-            size="sm"
-            type="button"
-            variant="destructive"
-            onClick={onDelete}
-            disabled={remove.isPending}
-          >
-            <Trash2 className="mr-2 h-4 w-4" />
-            Delete
-          </Button>
-        </Access>
-
-        <Access resource="techfest" action="update">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+        {/* LEFT SIDE — always reserve space */}
+        <div className="w-24">
           <Button
             size="sm"
             type="button"
             variant="outline"
-            onClick={isEditing ? cancelEdit : startEdit}
-            className="flex items-center justify-center gap-2 md:w-24" // fixed width
+            onClick={cancelEdit}
+            className={!isEditing ? "opacity-0 pointer-events-none" : ""}
           >
-            {/* Icon slot (same size always) */}
-            <span className="inline-flex w-4 h-4">
-              {isEditing ? (
-                <CircleX className="h-4 w-4" />
-              ) : (
-                <Pencil className="h-4 w-4" />
-              )}
-            </span>
-
-            {/* Text slot (same font, no margin change) */}
-            <span className="leading-none">
-              {isEditing ? "Cancel" : "Edit"}
-            </span>
+            <CircleX className="mr-2 h-4 w-4" />
+            Cancel
           </Button>
-        </Access>
+        </div>
+
+        {/* RIGHT SIDE */}
+        <div className="flex flex-wrap justify-end gap-2">
+          <Button size="sm" type="button" asChild>
+            <Link href={`/dashboard/techfest/${techFest.id}/activities`}>
+              <List className="mr-2 h-4 w-4" />
+              View Activities
+            </Link>
+          </Button>
+
+          <Access resource="techfest" action="publish">
+            <Button
+              size="sm"
+              type="button"
+              onClick={onTogglePublish}
+              disabled={toggle.isPending || isEditing}
+            >
+              <Globe className="mr-2 h-4 w-4" />
+              {techFest.published ? "Unpublish" : "Publish"}
+            </Button>
+          </Access>
+
+          <Access resource="techfest" action="delete">
+            <Button
+              size="sm"
+              type="button"
+              variant="destructive"
+              onClick={onDelete}
+              disabled={remove.isPending || isEditing}
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              Delete
+            </Button>
+          </Access>
+
+          {/* FIXED WIDTH SLOT for Edit/Save */}
+          <Access resource="techfest" action="update">
+            <Button
+              size="sm"
+              type={isEditing ? "submit" : "button"}
+              variant={isEditing ? "default" : "outline"}
+              onClick={!isEditing ? startEdit : undefined}
+              disabled={isEditing && (!isDirty || update.isPending)}
+              className="w-24 justify-center"
+            >
+              <span className="inline-flex w-4 h-4 mr-2">
+                {isEditing ? (
+                  <Save className="h-4 w-4" />
+                ) : (
+                  <Pencil className="h-4 w-4" />
+                )}
+              </span>
+
+              {isEditing ? "Save" : "Edit"}
+            </Button>
+          </Access>
+        </div>
       </div>
 
-      {/* ================= HERO BANNER ================= */}
+      {/* ================= HERO ================= */}
       <div className="overflow-hidden rounded-lg border">
-        {/* <img
+        <img
           src="/techfest-banner.png"
           alt="TechFest banner"
           className="h-48 w-full object-cover"
-        /> */}
+        />
 
         <div className="p-4">
           <Field>
             <Input
               {...register("title", { required: "Title is required" })}
               readOnly={lock}
-              aria-readonly={lock}
               className="font-bold"
             />
             <FieldError errors={errors.title && [errors.title]} />
@@ -181,68 +196,82 @@ export function TechFestDetail({ techFest }: Props) {
 
           <Badge
             data-status={techFest.published ? "published" : "unpublished"}
-            className=" data-[status=published]:bg-amber-500 data-[status=published]:text-white data-[status=unpublished]:bg-muted data-[status=unpublished]:text-muted-foreground"
+            className="data-[status=published]:bg-green-500 data-[status=published]:text-white data-[status=unpublished]:bg-muted data-[status=unpublished]:text-muted-foreground"
           >
             {techFest.published ? "Published" : "Unpublished"}
           </Badge>
         </div>
 
         <FieldGroup>
-          {/* Date Range */}
+          {/* ✅ CONTROLLED DATE RANGE */}
           <Field>
             <FieldLabel>Date</FieldLabel>
 
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  disabled={lock}
-                  className="justify-start text-left font-normal"
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {startDate && endDate
-                    ? `${format(new Date(startDate), "PPP")} – ${format(
-                        new Date(endDate),
-                        "PPP",
-                      )}`
-                    : "Select date range"}
-                </Button>
-              </PopoverTrigger>
+            <Controller
+              control={control}
+              name="start_date"
+              render={({ field }) => (
+                <Controller
+                  control={control}
+                  name="end_date"
+                  render={({ field: endField }) => (
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          disabled={lock}
+                          className="w-full justify-start text-left font-normal"
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {startDate && endDate
+                            ? `${format(new Date(startDate), "PPP")} – ${format(
+                                new Date(endDate),
+                                "PPP",
+                              )}`
+                            : "Select date range"}
+                        </Button>
+                      </PopoverTrigger>
 
-              <PopoverContent align="start" className="p-0">
-                <Calendar
-                  mode="range"
-                  numberOfMonths={2}
-                  selected={{
-                    from: startDate ? new Date(startDate) : undefined,
-                    to: endDate ? new Date(endDate) : undefined,
-                  }}
-                  onSelect={(range) => {
-                    if (!range) return;
-                    setValue("start_date", range.from as Date, {
-                      shouldDirty: true,
-                    });
-                    setValue("end_date", range.to as Date, {
-                      shouldDirty: true,
-                    });
-                  }}
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="range"
+                          numberOfMonths={2}
+                          selected={{
+                            from: field.value
+                              ? new Date(field.value)
+                              : undefined,
+                            to: endField.value
+                              ? new Date(endField.value)
+                              : undefined,
+                          }}
+                          onSelect={(range) => {
+                            if (!range) return;
+                            field.onChange(range.from);
+                            endField.onChange(range.to);
+                          }}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  )}
                 />
-              </PopoverContent>
-            </Popover>
+              )}
+            />
           </Field>
 
           {/* Venue */}
           <Field>
             <FieldLabel>Venue</FieldLabel>
-            <div className="flex items-center gap-2  border-2 rounded-md focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background">
+
+            <div className="flex items-center gap-2 border-2 rounded-md focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background">
               <MapPin className="mx-2 h-4 w-4 text-muted-foreground" />
+
               <Input
                 {...register("venue", { required: "Venue is required" })}
                 readOnly={lock}
-                aria-readonly={lock}
-                className="border-0 px-0 text-sm focus:ring-0  focus-visible:ring-0"
+                className="border-0 px-0 text-sm focus:ring-0 focus-visible:ring-0"
               />
             </div>
+
             <FieldError errors={errors.venue && [errors.venue]} />
           </Field>
         </FieldGroup>
@@ -259,7 +288,6 @@ export function TechFestDetail({ techFest }: Props) {
               required: "Description is required",
             })}
             readOnly={lock}
-            aria-readonly={lock}
           />
           <FieldError errors={errors.description && [errors.description]} />
         </Field>
@@ -275,15 +303,6 @@ export function TechFestDetail({ techFest }: Props) {
           <li>Respectful behavior is expected</li>
         </ul>
       </FieldSet>
-
-      {/* ================= SAVE ================= */}
-      {isEditing && (
-        <div className="flex justify-end">
-          <Button type="submit" disabled={!isDirty}>
-            Save Changes
-          </Button>
-        </div>
-      )}
     </form>
   );
 }

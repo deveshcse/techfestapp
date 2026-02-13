@@ -17,19 +17,6 @@ export function TechFestDetailContainer({ techFestId }: Props) {
   console.log("TechFestDetailContainer received techFestId:", techFestId);
   const { data, isLoading, error, isSuccess } = useTechFestDetails(techFestId);
 
-  // impliment handlers for save, delete and toggle publish here and pass to TechFestDetail component
-  const { update, toggle, remove } = useTechFestActions(techFestId);
-
-  function handleSave(formData: UpdateTechFestInput) {
-    update.mutate(formData);
-  }
-  function handleTogglePublish() {
-    toggle.mutate();
-  }
-  function handleDelete() {
-    remove.mutate();
-  }
-
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -42,9 +29,6 @@ export function TechFestDetailContainer({ techFestId }: Props) {
   return (
     <TechFestDetail
       techFest={data}
-      // onDelete={handleDelete}
-      // onSave={handleSave}
-      // onTogglePublish={handleTogglePublish}
     />
   );
 }
