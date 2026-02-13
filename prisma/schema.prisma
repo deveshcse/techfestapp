@@ -31,6 +31,11 @@ model User {
   createdTechFests TechFest[] @relation("TechFestCreatedBy")
   updatedTechFests TechFest[] @relation("TechFestUpdatedBy")
 
+  createdActivities Activity[] @relation("ActivityCreatedBy")
+  updatedActivities Activity[] @relation("ActivityUpdatedBy")
+
+  organizedActivities Activity[] @relation("ActivityOrganizedBy")
+
   @@unique([email])
   @@map("user")
 }
@@ -103,6 +108,62 @@ model TechFest {
   createdBy User  @relation("TechFestCreatedBy", fields: [createdById], references: [id])
   updatedBy User? @relation("TechFestUpdatedBy", fields: [updatedById], references: [id])
 
+  activities Activity[]
+
   @@map("tech_fest")
-  
+}
+
+enum ActivityStatus {
+  DRAFT
+  PUBLISHED
+  CANCELLED
+  COMPLETED
+}
+
+enum ActivityType {
+  WORKSHOP
+  CODING
+  ROBOTICS
+  TALK
+  CULTURAL
+  OTHER
+}
+
+model Activity {
+  id Int @id @default(autoincrement())
+
+  // relation
+  techfestId Int
+  techfest   TechFest @relation(fields: [techfestId], references: [id], onDelete: Cascade)
+
+  // basic info
+  title       String
+  description String?
+  location    String?
+  type        ActivityType @default(OTHER)
+  rules       String[] @default([])
+
+  // scheduling
+  startDateTime DateTime
+  endDateTime   DateTime
+
+  // limits
+  capacity Int? @default(100)
+
+  // status
+  status ActivityStatus @default(DRAFT)
+
+  // audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  createdById   String
+  updatedById   String?
+  organizedById String?
+
+  createdBy   User? @relation("ActivityCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User? @relation("ActivityUpdatedBy", fields: [updatedById], references: [id])
+  organizedBy User? @relation("ActivityOrganizedBy", fields: [organizedById], references: [id])
+
+  @@index([techfestId])
 }
