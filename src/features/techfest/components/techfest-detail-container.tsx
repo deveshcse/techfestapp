@@ -1,14 +1,7 @@
 "use client";
-
-import { UpdateTechFestInput } from "../types/techfest.types";
-import {
-  useDeleteTechFest,
-  useTechFestActions,
-  useTechFestDetails,
-  useToggleTechFestStatus,
-  useUpdateTechFest,
-} from "../utils/useTechFest";
+import { useTechFestDetails } from "../utils/useTechFest";
 import { TechFestDetail } from "./techfest-details";
+import { TechFestDetailSkeleton } from "./techfest-details-skeleton";
 
 type Props = {
   techFestId: number;
@@ -17,7 +10,7 @@ export function TechFestDetailContainer({ techFestId }: Props) {
   const { data, isLoading, error, isSuccess } = useTechFestDetails(techFestId);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <TechFestDetailSkeleton />;
   }
   if (error) {
     return <div className="text-red-500">Failed to load techfest details.</div>;
@@ -25,9 +18,5 @@ export function TechFestDetailContainer({ techFestId }: Props) {
   if (!isSuccess || !data) {
     return <div className="text-red-500">Failed to load techfest details.</div>;
   }
-  return (
-    <TechFestDetail
-      techFest={data}
-    />
-  );
+  return <TechFestDetail techFest={data} />;
 }

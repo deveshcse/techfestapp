@@ -11,6 +11,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useTechFest } from "../utils/useTechFest";
 import { useRouter } from "next/navigation";
+import { TechFestListSkeleton } from "./techfest-list-skeleton";
 
 export type TechFest = {
   id: number;
@@ -27,7 +28,7 @@ const statusStyles: Record<TechFestStatus, string> = {
 };
 
 export function TechFestList() {
-  const router = useRouter(); 
+  const router = useRouter();
   const { data, isPending, isError } = useTechFest();
 
   const techfests: TechFest[] =
@@ -36,7 +37,7 @@ export function TechFestList() {
     })) || [];
 
   if (isPending) {
-    return <div className="p-4">Loading techfests...</div>;
+    return <TechFestListSkeleton count={6} />;
   }
 
   if (isError) {
@@ -48,10 +49,10 @@ export function TechFestList() {
   }
 
   const options = {
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-} as const;
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  } as const;
 
   return (
     <div className="space-y-2">
@@ -73,8 +74,15 @@ export function TechFestList() {
                 <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Calendar className="h-4 w-4" />
-                    {new Date(fest.start_date).toLocaleDateString("en-US", options)} -{" "}
-                    {new Date(fest.end_date).toLocaleDateString("en-US", options)}
+                    {new Date(fest.start_date).toLocaleDateString(
+                      "en-US",
+                      options,
+                    )}{" "}
+                    -{" "}
+                    {new Date(fest.end_date).toLocaleDateString(
+                      "en-US",
+                      options,
+                    )}
                   </span>
 
                   <span className="flex items-center gap-1">
@@ -95,7 +103,7 @@ export function TechFestList() {
 
                 <Button
                   size="sm"
-                   onClick={() => router.push(`/dashboard/techfest/${fest.id}`)}
+                  onClick={() => router.push(`/dashboard/techfest/${fest.id}`)}
                   aria-label={`Open details for ${fest.title}`}
                 >
                   Open details
