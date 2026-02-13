@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
       end_date: new Date(rawBody.end_date),
     };
 
-    // Validate using Zod (THIS is the line you asked about)
+    // Validate using Zod 
     const data = createTechFestSchema.parse(parsedBody);
 
     const { start_date, end_date } = data;
