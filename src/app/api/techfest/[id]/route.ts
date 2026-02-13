@@ -1,6 +1,8 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import { authorize } from "../../_lib/authorize";
+import { getIdParam } from "../../_lib/params";
 
 type Params = {
   params: Promise<{
@@ -164,37 +166,23 @@ export async function PUT(request: NextRequest, { params }: Params) {
 }
 
 // create api to publish/unpublish techfest
+
+
 export async function PATCH(request: NextRequest, { params }: Params) {
   try {
-    const session = await auth.api.getSession({
-      headers: request.headers,
-    });
+    // Auth + permission check
+    const authResult = await authorize(request, "techfest", "publish");
 
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!authResult.success) {
+      return authResult.response;
     }
 
-    const canPublish = await auth.api.userHasPermission({
-      body: {
-        userId: session.user.id,
-        permissions: { techfest: ["publish"] },
-      },
-    });
+    const { session } = authResult;
 
-    if (!canPublish.success) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
+    // Centralized ID parsing
+    const techfestId = await getIdParam(params);
 
-    const { id } = await params;
-    const techfestId = Number(id);
-
-    if (Number.isNaN(techfestId)) {
-      return NextResponse.json(
-        { message: "Invalid TechFest ID" },
-        { status: 400 },
-      );
-    }
-
+    // Check existence
     const techfest = await prisma.techFest.findUnique({
       where: { id: techfestId },
     });
@@ -202,29 +190,42 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     if (!techfest) {
       return NextResponse.json(
         { message: "TechFest not found" },
-        { status: 404 },
+        { status: 404 }
       );
     }
 
+    // ✅ Toggle publish state
     const updatedTechFest = await prisma.techFest.update({
       where: { id: techfestId },
       data: {
         published: !techfest.published,
-        updatedById: session.user.id,
+        updatedById: session!.user.id,
       },
     });
 
     return NextResponse.json(
       {
-        message: `TechFest ${updatedTechFest.published ? "published" : "unpublished"} successfully`,
+        message: `TechFest ${
+          updatedTechFest.published ? "published" : "unpublished"
+        } successfully`,
         techfest: updatedTechFest,
       },
-      { status: 200 },
+      { status: 200 }
     );
   } catch (error) {
+    // ✅ Handle thrown Response from getIdParam
+    if (error instanceof Response) {
+      return error;
+    }
+
+    console.error("PATCH techfest error:", error);
+
     return NextResponse.json(
-      { message: "Error updating TechFest", error: (error as Error).message },
-      { status: 500 },
+      {
+        message: "Error updating TechFest",
+        error: (error as Error).message,
+      },
+      { status: 500 }
     );
   }
 }

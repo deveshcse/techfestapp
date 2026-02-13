@@ -6,7 +6,6 @@ type PageProps = {
 };
 
 export default async function page({ params }: PageProps) {
-  console.log("Page component received params:", params);
   const { id } = await params; 
   const techFestId = Number(id);
   return <TechFestDetailContainer techFestId={techFestId} />;

@@ -14,7 +14,6 @@ type Props = {
   techFestId: number;
 };
 export function TechFestDetailContainer({ techFestId }: Props) {
-  console.log("TechFestDetailContainer received techFestId:", techFestId);
   const { data, isLoading, error, isSuccess } = useTechFestDetails(techFestId);
 
   if (isLoading) {

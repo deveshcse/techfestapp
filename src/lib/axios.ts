@@ -10,7 +10,6 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  console.log("➡️ Request:", config.method?.toUpperCase(), config.url);
   return config;
 });
 
@@ -18,7 +17,6 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     toast.error(error.message || "An unexpected error occurred.");
-    console.error("❌ API Error:", error.response?.data || error.message);
     return Promise.reject(error);
   }
 );
