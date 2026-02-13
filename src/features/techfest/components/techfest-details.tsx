@@ -38,6 +38,8 @@ import { TechFestDetails, UpdateTechFestInput } from "../types/techfest.types";
 import { Access } from "@/features/auth/components/permission/access";
 import { useTechFestActions } from "../utils/useTechFest";
 import Link from "next/link";
+import Image from "next/image";
+import { useConfirm } from "@/hooks/use-confirm";
 
 type Props = {
   techFest: TechFestDetails;
@@ -46,6 +48,8 @@ type Props = {
 export function TechFestDetail({ techFest }: Props) {
   const [isEditing, setIsEditing] = React.useState(false);
   const { update, toggle, remove } = useTechFestActions(techFest.id);
+  const confirm = useConfirm()
+
 
   const form = useForm<TechFestDetails>({
     defaultValues: techFest,
@@ -86,9 +90,16 @@ export function TechFestDetail({ techFest }: Props) {
     toggle.mutate();
   }
 
-  function onDelete() {
-    remove.mutate();
-  }
+  const handleDelete = async () => {
+  await confirm({
+    title: "Delete TechFest?",
+    description: "This action will permanently delete the TechFest and all associated data. Are you sure you want to proceed?",
+    destructive: true,
+    confirmText: "Delete",
+    onConfirm: () => remove.mutateAsync(),
+  })
+}
+
 
   return (
     <form
@@ -137,7 +148,7 @@ export function TechFestDetail({ techFest }: Props) {
               size="sm"
               type="button"
               variant="destructive"
-              onClick={onDelete}
+              onClick={handleDelete}
               disabled={remove.isPending || isEditing}
             >
               <Trash2 className="mr-2 h-4 w-4" />
@@ -171,10 +182,12 @@ export function TechFestDetail({ techFest }: Props) {
 
       {/* ================= HERO ================= */}
       <div className="overflow-hidden rounded-lg border">
-        <img
-          src="/techfest-banner.png"
+        <Image
+          src="https://picsum.photos/seed/picsum/200"
           alt="TechFest banner"
           className="h-48 w-full object-cover"
+          width={400}
+          height={200}
         />
 
         <div className="p-4">

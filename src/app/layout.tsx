@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/providers/theme-provider";
 import ModalProvider from "@/components/providers/modal-provider";
 import ReactQueryClientProvider from "@/components/providers/react-query-client-provider";
 import { AuthProvider } from "@/features/auth/context/auth-context";
+import { GlobalConfirmDialog } from "@/components/common/confirm-dialog";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,6 +43,7 @@ export default async function RootLayout({
             >
               {children}
               <ModalProvider />
+              <GlobalConfirmDialog />
               <Toaster position="top-right" />
             </ThemeProvider>
           </AuthProvider>
