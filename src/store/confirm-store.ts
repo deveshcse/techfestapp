@@ -6,7 +6,7 @@ type ConfirmOptions = {
   confirmText?: string
   cancelText?: string
   destructive?: boolean
-  actionLabel?: string // NEW → Deleting, Publishing, etc.
+  actionLabel?: string
   onConfirm?: () => Promise<void> | void
 }
 

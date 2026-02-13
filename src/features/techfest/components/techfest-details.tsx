@@ -96,6 +96,7 @@ export function TechFestDetail({ techFest }: Props) {
     description: "This action will permanently delete the TechFest and all associated data. Are you sure you want to proceed?",
     destructive: true,
     confirmText: "Delete",
+    actionLabel: "Deleting",
     onConfirm: () => remove.mutateAsync(),
   })
 }
