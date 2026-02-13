@@ -11,8 +11,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { useConfirmStore } from "@/store/confirm-store"
-import { Spinner } from "../ui/spinner"
 
+import { Loader2, Trash2, X } from "lucide-react"
 
 export function GlobalConfirmDialog() {
   const {
@@ -23,11 +23,13 @@ export function GlobalConfirmDialog() {
     handleCancel,
   } = useConfirmStore()
 
+  const confirmText = options.confirmText ?? "Continue"
+  const actionLabel = options.actionLabel ?? "Processing"
+
   return (
     <AlertDialog
       open={open}
       onOpenChange={() => {
-        // prevent closing via escape/outside click while loading
         if (!loading) handleCancel()
       }}
     >
@@ -43,25 +45,41 @@ export function GlobalConfirmDialog() {
         </AlertDialogHeader>
 
         <AlertDialogFooter>
+          {/* CANCEL BUTTON */}
           <AlertDialogCancel
             onClick={handleCancel}
             disabled={loading}
+            className="min-w-28"
           >
-            {options.cancelText ?? "Cancel"}
+            <span className="flex items-center justify-center gap-2">
+              <X className="h-4 w-4" />
+              {options.cancelText ?? "Cancel"}
+            </span>
           </AlertDialogCancel>
 
+          {/* CONFIRM BUTTON */}
           <AlertDialogAction
             onClick={handleConfirm}
             disabled={loading}
-            className={
+            className={`min-w-35 ${
               options.destructive
                 ? "bg-red-600 hover:bg-red-700"
                 : ""
-            }
+            }`}
           >
-            {loading
-              ? <Spinner />
-              : options.confirmText ?? "Continue"}
+            <span className="flex items-center justify-center gap-2">
+              {loading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  {actionLabel}...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="h-4 w-4" />
+                  {confirmText}
+                </>
+              )}
+            </span>
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

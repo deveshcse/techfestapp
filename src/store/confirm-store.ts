@@ -1,24 +1,25 @@
-import { create } from "zustand";
+import { create } from "zustand"
 
 type ConfirmOptions = {
-  title?: string;
-  description?: string;
-  confirmText?: string;
-  cancelText?: string;
-  destructive?: boolean;
-  onConfirm?: () => Promise<void> | void;
-};
+  title?: string
+  description?: string
+  confirmText?: string
+  cancelText?: string
+  destructive?: boolean
+  actionLabel?: string // NEW → Deleting, Publishing, etc.
+  onConfirm?: () => Promise<void> | void
+}
 
 type ConfirmStore = {
-  open: boolean;
-  loading: boolean;
-  options: ConfirmOptions;
-  resolver: ((value: boolean) => void) | null;
+  open: boolean
+  loading: boolean
+  options: ConfirmOptions
+  resolver: ((value: boolean) => void) | null
 
-  confirm: (options: ConfirmOptions) => Promise<boolean>;
-  handleConfirm: () => Promise<void>;
-  handleCancel: () => void;
-};
+  confirm: (options: ConfirmOptions) => Promise<boolean>
+  handleConfirm: () => Promise<void>
+  handleCancel: () => void
+}
 
 export const useConfirmStore = create<ConfirmStore>((set, get) => ({
   open: false,
@@ -26,52 +27,46 @@ export const useConfirmStore = create<ConfirmStore>((set, get) => ({
   options: {},
   resolver: null,
 
-  confirm: (options) => {
-    return new Promise<boolean>((resolve) => {
+  confirm: (options) =>
+    new Promise<boolean>((resolve) => {
       set({
         open: true,
         options,
         resolver: resolve,
         loading: false,
-      });
-    });
-  },
+      })
+    }),
 
   handleConfirm: async () => {
-    const { options, resolver } = get();
+    const { options, resolver } = get()
 
     try {
-      set({ loading: true });
+      set({ loading: true })
+      await options.onConfirm?.()
 
-      // run async action if provided
-      await options.onConfirm?.();
-
-      resolver?.(true);
+      resolver?.(true)
 
       set({
         open: false,
         loading: false,
         resolver: null,
-      });
-    } catch (error) {
-      // keep dialog open if error
-      console.error(error);
-      set({ loading: false });
+      })
+    } catch (err) {
+      console.error(err)
+      set({ loading: false }) // keep dialog open
     }
   },
 
   handleCancel: () => {
-    const { loading, resolver } = get();
+    const { loading, resolver } = get()
+    if (loading) return
 
-    // prevent closing while loading
-    if (loading) return;
-
-    resolver?.(false);
+    resolver?.(false)
 
     set({
       open: false,
       loading: false,
       resolver: null,
-    });
+    })
   },
-}));
+}))
