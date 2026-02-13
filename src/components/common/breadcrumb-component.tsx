@@ -15,10 +15,6 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
-/**
- * Convert slug → readable text
- * techfest-details → Techfest Details
- */
 function formatLabel(segment: string) {
   return decodeURIComponent(segment)
     .replace(/-/g, " ")
@@ -28,8 +24,13 @@ function formatLabel(segment: string) {
 export default function BreadcrumbComponent() {
   const pathname = usePathname();
 
-  // remove empty segments
-  const segments = pathname.split("/").filter(Boolean);
+  // split + remove empty
+  let segments = pathname.split("/").filter(Boolean);
+
+  // remove "dashboard" because we show it manually
+  if (segments[0] === "dashboard") {
+    segments = segments.slice(1);
+  }
 
   return (
     <header className="flex h-16 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
@@ -43,15 +44,21 @@ export default function BreadcrumbComponent() {
 
         <Breadcrumb>
           <BreadcrumbList>
-            {/* Home / Dashboard */}
-            {/* <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href="/dashboard">Dashboard</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem> */}
+            {/* Always show Dashboard once */}
+            <BreadcrumbItem>
+              {segments.length === 0 ? (
+                <BreadcrumbPage>Dashboard</BreadcrumbPage>
+              ) : (
+                <BreadcrumbLink asChild>
+                  <Link href="/dashboard">Dashboard</Link>
+                </BreadcrumbLink>
+              )}
+            </BreadcrumbItem>
 
+            {/* Other segments */}
             {segments.map((segment, index) => {
-              const href = "/" + segments.slice(0, index + 1).join("/");
+              const href =
+                "/dashboard/" + segments.slice(0, index + 1).join("/");
               const isLast = index === segments.length - 1;
 
               return (
@@ -65,7 +72,9 @@ export default function BreadcrumbComponent() {
                       </BreadcrumbPage>
                     ) : (
                       <BreadcrumbLink asChild>
-                        <Link href={href}>{formatLabel(segment)}</Link>
+                        <Link href={href}>
+                          {formatLabel(segment)}
+                        </Link>
                       </BreadcrumbLink>
                     )}
                   </BreadcrumbItem>
