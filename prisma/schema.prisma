@@ -139,7 +139,7 @@ model Activity {
   // basic info
   title       String
   description String?
-  location    String?
+  venue    String?
   type        ActivityType @default(OTHER)
   rules       String[] @default([])
 
