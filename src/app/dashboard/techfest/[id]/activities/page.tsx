@@ -1,3 +1,5 @@
+import CreateActivityButton from "@/features/activities/components/create-activity-button";
+
 type PageProps = {
   params: Promise<{
     id: string;
@@ -5,9 +7,12 @@ type PageProps = {
 };
 
 export default async function page({ params }: PageProps) {
-  const { id } = await params; 
+  const { id } = await params;
   const techFestId = Number(id);
-  return <div>
-    <pre>{JSON.stringify({ id, techFestId }, null, 2)}</pre>
-  </div>;
+  return (
+    <div>
+      <CreateActivityButton />
+      <pre>{JSON.stringify({ id, techFestId }, null, 2)}</pre>
+    </div>
+  );
 }
