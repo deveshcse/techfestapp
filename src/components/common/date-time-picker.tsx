@@ -17,6 +17,7 @@ interface Props {
   label: string;
   value?: Date;
   onChange: (date?: Date) => void;
+  disabled?: boolean;
 
   // NEW
   minDate?: Date; // techfest start
@@ -29,6 +30,7 @@ export function DateTimePicker({
   onChange,
   minDate,
   maxDate,
+  disabled,
 }: Props) {
   const [open, setOpen] = React.useState(false);
 
@@ -93,7 +95,7 @@ export function DateTimePicker({
               captionLayout="dropdown"
               defaultMonth={value}
               onSelect={handleDateChange}
-              disabled={isDateDisabled} 
+              disabled={disabled}
             />
           </PopoverContent>
         </Popover>
@@ -108,6 +110,7 @@ export function DateTimePicker({
           value={timeValue}
           onChange={(e) => handleTimeChange(e.target.value)}
           step="1"
+          disabled={disabled}
           className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden"
         />
       </Field>

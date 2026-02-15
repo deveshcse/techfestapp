@@ -48,6 +48,8 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { cn } from "@/lib/utils";
 import { ac } from "@/lib/permissions";
 import { DateTimePicker } from "@/components/common/date-time-picker";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { UpdateActivitySchema } from "../schemas/activity.schema";
 
 type Props = {
     techfestId: number;
@@ -64,12 +66,12 @@ const statusStyles: Record<ActivityStatus, string> = {
 export function ActivityDetails({ techfestId, activity }: Props) {
 
 
-
     const [isEditing, setIsEditing] = React.useState(false);
     const { update_activity, delete_activity } = useActivityActions(techfestId, activity.id);
     const confirm = useConfirm();
 
     const form = useForm<UpdateActivityInput>({
+        resolver: zodResolver(UpdateActivitySchema),
         defaultValues: activity,
         mode: "onBlur",
     });
@@ -124,29 +126,27 @@ export function ActivityDetails({ techfestId, activity }: Props) {
     };
 
     return (
-        <form onSubmit={handleSubmit(submit)} className="mx-auto max-w-5xl space-y-6">
-            {/* Action Bar */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-muted/30 p-4 rounded-lg border">
-                <div className="flex items-center gap-2">
-                    <Button
-                        size="sm"
-                        type="button"
-                        variant="ghost"
-                        onClick={cancelEdit}
-                        className={cn(!isEditing && "hidden")}
-                    >
-                        <CircleX className="mr-2 h-4 w-4" />
-                        Cancel
-                    </Button>
-                    {!isEditing && (
-                        <div>
-                            <h2 className="text-xl font-bold tracking-tight">Activity Details</h2>
-                            <p className="text-xs text-muted-foreground">Manage and view activity information</p>
-                        </div>
-                    )}
+        <form
+            onSubmit={handleSubmit(submit)}
+            className="mx-auto max-w-4xl space-y-8 pb-10"
+        >
+            {/* HEADER / ACTION BAR */}
+            <div className="sticky top-0 z-10 flex justify-between items-center gap-4 bg-background/80 backdrop-blur border rounded-lg p-4">
+                <div>
+                    <h2 className="text-xl font-semibold">Activity Details</h2>
+                    <p className="text-sm text-muted-foreground">
+                        Manage and update activity information
+                    </p>
                 </div>
 
-                <div className="flex flex-wrap gap-2">
+                <div className="flex gap-2">
+                    {isEditing && (
+                        <Button size="sm" type="button" variant="ghost" onClick={cancelEdit}>
+                            <CircleX className="mr-2 h-4 w-4" />
+                            Cancel
+                        </Button>
+                    )}
+
                     <Button
                         size="sm"
                         type="button"
@@ -164,296 +164,240 @@ export function ActivityDetails({ techfestId, activity }: Props) {
                         variant={isEditing ? "default" : "outline"}
                         onClick={!isEditing ? startEdit : undefined}
                         disabled={isEditing && (!isDirty || update_activity.isPending)}
-                        className="min-w-24"
                     >
                         {isEditing ? (
-                            <><Save className="mr-2 h-4 w-4" /> Save Changes</>
+                            <>
+                                <Save className="mr-2 h-4 w-4" />
+                                {update_activity.isPending ? "Saving..." : "Save Changes"}
+                            </>
                         ) : (
-                            <><Pencil className="mr-2 h-4 w-4" /> Edit Activity</>
+                            <>
+                                <Pencil className="mr-2 h-4 w-4" />
+                                Edit
+                            </>
                         )}
                     </Button>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Main Info */}
-                <div className="lg:col-span-2 space-y-6">
-                    <FieldSet>
-                        <FieldLegend>Core Information</FieldLegend>
-                        <FieldGroup>
-                            <Field>
-                                <FieldLabel>Activity Title</FieldLabel>
-                                <Input
-                                    {...register("title", { required: "Title is required" })}
-                                    readOnly={lock}
-                                    className={cn("text-lg font-semibold", !lock && "bg-background")}
-                                />
-                                <FieldError errors={errors.title && [errors.title]} />
-                            </Field>
+            {/* CORE INFORMATION */}
+            <Card>
+                <CardContent className="p-6 space-y-6">
+                    <h3 className="font-semibold text-lg">Core Information</h3>
 
-                            <Field>
-                                <FieldLabel>Description</FieldLabel>
-                                <Textarea
-                                    rows={4}
-                                    {...register("description")}
-                                    readOnly={lock}
-                                    placeholder="Enter activity description..."
-                                    className={cn(!lock && "bg-background")}
-                                />
-                                <FieldError errors={errors.description && [errors.description]} />
-                            </Field>
-                        </FieldGroup>
-                    </FieldSet>
+                    <FieldGroup>
+                        <Field>
+                            <FieldLabel>Title</FieldLabel>
+                            <Input
+                                {...register("title", { required: "Title is required" })}
+                                readOnly={lock}
+                                className={cn(
+                                    lock && "border-0 bg-transparent px-0 shadow-none",
+                                    !lock && "bg-background"
+                                )}
+                            />
+                            <FieldError errors={errors.title && [errors.title]} />
+                        </Field>
 
-                    <FieldSet>
-                        <FieldLegend>Guidelines & Rules</FieldLegend>
+                        <Field>
+                            <FieldLabel>Description</FieldLabel>
+                            <Textarea
+                                rows={4}
+                                {...register("description")}
+                                readOnly={lock}
+                                placeholder="Enter activity description..."
+                                className={cn(
+                                    lock && "border-0 bg-transparent px-0 shadow-none",
+                                    !lock && "bg-background"
+                                )}
+                            />
+                        </Field>
+                    </FieldGroup>
+                </CardContent>
+            </Card>
 
-                        <div className="space-y-4">
+            {/* SCHEDULE + DETAILS */}
+            <Card>
+                <CardContent className="p-6 space-y-6">
+                    <h3 className="font-semibold text-lg">Schedule & Details</h3>
 
-                            {/* VIEW MODE */}
-                            {lock ? (
-                                fields.length > 0 ? (
-                                    <ul className="list-disc pl-5 space-y-1">
-                                        {fields.map((field, index) => (
-                                            <li key={field.id} className="text-sm">
-                                                {form.getValues(`rules.${index}.value`)}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                ) : (
-                                    <p className="text-sm text-muted-foreground">
-                                        No rules defined for this activity.
-                                    </p>
-                                )
-                            ) : (
-                                <>
-                                    {/* EDIT MODE */}
+                    <div className="grid md:grid-cols-2 gap-6">
+                        {/* STATUS */}
+                        <Field>
+                            <FieldLabel>Status</FieldLabel>
+                            <Controller
+                                control={control}
+                                name="status"
+                                render={({ field }) =>
+                                    <Select value={field.value} onValueChange={field.onChange}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select status" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {Object.values(ActivityStatus).map((s) => (
+                                                <SelectItem key={s} value={s}>
+                                                    {s}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                }
+                            />
+                        </Field>
 
-                                    <div className="space-y-3">
-                                        {fields.map((field, index) => (
-                                            <div key={field.id} className="flex gap-2 items-start">
+                        {/* TYPE */}
+                        <Field>
+                            <FieldLabel>Type</FieldLabel>
+                            <Controller
+                                control={control}
+                                name="type"
+                                render={({ field }) =>
+                                    <Select value={field.value} onValueChange={field.onChange}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select type" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {Object.values(ActivityType).map((t) => (
+                                                <SelectItem key={t} value={t}>
+                                                    {t.replace("_", " ")}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                }
+                            />
+                        </Field>
 
-                                                <Controller
-                                                    control={control}
-                                                    name={`rules.${index}.value`}
-                                                    render={({ field }) => (
-                                                        <Input
-                                                            {...field}
-                                                            placeholder={`Rule ${index + 1}`}
-                                                        />
-                                                    )}
-                                                />
+                        {/* START */}
+                        <Field>
 
-                                                <Button
-                                                    type="button"
-                                                    variant="destructive"
-                                                    size="icon"
-                                                    onClick={() => remove(index)}
-                                                >
-                                                    <Trash2 className="h-4 w-4" />
-                                                </Button>
-                                            </div>
-                                        ))}
+                            <Controller
+                                control={control}
+                                name="startDateTime"
+                                rules={{ required: "Start time is required" }}
+                                render={({ field }) => (
+                                    <div className="min-h-[60px]">
+                                        <DateTimePicker
+                                            label="Start Date and Time"
+                                            value={field.value ? new Date(field.value) : undefined}
+                                            onChange={field.onChange}
+                                            disabled={!isEditing}
+
+
+                                        />
                                     </div>
+                                )}
+                            />
 
-                                    {/* ADD RULE BUTTON */}
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        onClick={() => append({ value: "" })}
-                                    >
-                                        + Add Rule
-                                    </Button>
-                                </>
-                            )}
-                        </div>
-                    </FieldSet>
+                            <FieldError errors={errors.startDateTime && [errors.startDateTime]} />
+                        </Field>
 
-                </div>
 
-                {/* Sidebar Info */}
-                <div className="space-y-6">
-                    <Card>
-                        <CardContent className="p-4 space-y-4">
-                            <div className="space-y-1">
-                                <span className="text-xs font-semibold text-muted-foreground uppercase">Status</span>
-                                <div className="flex items-center gap-2">
-                                    <Field>
-                                        <FieldLabel>Status</FieldLabel>
 
-                                        <Controller
-                                            control={control}
-                                            name="status"
-                                            render={({ field }) =>
-                                                lock ? (
-                                                    <Badge className={cn("capitalize", statusStyles[field.value])}>
-                                                        {field.value}
-                                                    </Badge>
-                                                ) : (
-                                                    <Select value={field.value} onValueChange={field.onChange}>
-                                                        <SelectTrigger className="w-full">
-                                                            <SelectValue placeholder="Select status" />
-                                                        </SelectTrigger>
+                        {/* END */}
+                        <Field>
 
-                                                        <SelectContent>
-                                                            {Object.values(ActivityStatus).map((s) => (
-                                                                <SelectItem key={s} value={s}>
-                                                                    {s}
-                                                                </SelectItem>
-                                                            ))}
-                                                        </SelectContent>
-                                                    </Select>
-                                                )
-                                            }
+                            <Controller
+                                control={control}
+                                name="endDateTime"
+
+                                render={({ field }) => (
+                                    <div className="min-h-[60px]">
+                                        <DateTimePicker
+                                            label="End Date and Time"
+                                            value={field.value ? new Date(field.value) : undefined}
+                                            onChange={field.onChange}
+                                            disabled={!isEditing}
                                         />
+                                    </div>
+                                )}
+                            />
 
-                                        <FieldError errors={errors.status && [errors.status]} />
-                                    </Field>
+                            <FieldError errors={errors.endDateTime && [errors.endDateTime]} />
+                        </Field>
 
-                                </div>
-                            </div>
 
-                            <div className="space-y-1">
-                                <span className="text-xs font-semibold text-muted-foreground uppercase">Type</span>
-                                <div className="flex items-center gap-2">
-                                    <Field>
-                                        <FieldLabel>Type</FieldLabel>
+                        {/* VENUE */}
+                        <Field>
+                            <FieldLabel>Venue</FieldLabel>
+                            <Controller
+                                control={control}
+                                name="venue"
+                                render={({ field }) =>
+                                    <Input {...field} disabled={!isEditing}/>
+                                }
+                            /> <FieldError errors={errors.venue && [errors.venue]} />
+                        </Field>
 
-                                        <Controller
-                                            control={control}
-                                            name="type"
-                                            render={({ field }) =>
-                                                lock ? (
-                                                    <Badge variant="outline" className="capitalize">
-                                                        {field.value?.replace("_", " ")}
-                                                    </Badge>
-                                                ) : (
-                                                    <Select value={field.value} onValueChange={field.onChange}>
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder="Select type" />
-                                                        </SelectTrigger>
-
-                                                        <SelectContent>
-                                                            {Object.values(ActivityType).map((t) => (
-                                                                <SelectItem key={t} value={t}>
-                                                                    {t.replace("_", " ")}
-                                                                </SelectItem>
-                                                            ))}
-                                                        </SelectContent>
-                                                    </Select>
-                                                )
-                                            }
-                                        />
-                                    </Field>
-
-                                </div>
-                            </div>
-
-                            <div className="pt-2 space-y-4">
-                                <div className="flex items-start gap-3">
-                                    <CalendarIcon className="h-5 w-5 text-primary shrink-0" />
-                                    <Controller
-                                        control={control}
-                                        name="startDateTime"
-                                        render={({ field }) =>
-                                            lock ? (
-                                                <div className="space-y-1">
-                                                    <p className="text-sm font-medium">Start</p>
-                                                    <p className="text-sm text-muted-foreground">
-                                                        {field.value ? format(new Date(field.value), "PPPP p") : "—"}
-                                                    </p>
-                                                </div>
-                                            ) : (
-                                                <DateTimePicker
-                                                    label="Start"
-                                                    value={field.value ? new Date(field.value) : undefined}
-                                                    onChange={field.onChange}
-                                                />
-                                            )
+                        {/* CAPACITY */}
+                        <Field>
+                            <FieldLabel>Capacity</FieldLabel>
+                            <Controller
+                                control={control}
+                                name="capacity"
+                                render={({ field }) =>
+                                    <Input
+                                        type="number"
+                                        value={field.value ?? ""}
+                                        onChange={(e) =>
+                                            field.onChange(Number(e.target.value))
                                         }
+                                        disabled={!isEditing}
+
                                     />
+                                }
+                            />  <FieldError errors={errors.capacity && [errors.capacity]} />
 
-                                </div>
+                        </Field>
+                    </div>
+                </CardContent>
+            </Card>
 
-                                <div className="flex items-start gap-3">
-                                    <Clock className="h-5 w-5 text-primary shrink-0" />
-                                    <Controller
-                                        control={control}
-                                        name="endDateTime"
-                                        render={({ field }) =>
-                                            lock ? (
-                                                <div className="space-y-1">
-                                                    <p className="text-sm font-medium">End</p>
-                                                    <p className="text-sm text-muted-foreground">
-                                                        {field.value ? format(new Date(field.value), "PPPP p") : "—"}
-                                                    </p>
-                                                </div>
-                                            ) : (
-                                                <DateTimePicker
-                                                    label="End"
-                                                    value={field.value ? new Date(field.value) : undefined}
-                                                    onChange={field.onChange}
-                                                />
-                                            )
-                                        }
-                                    />
+            {/* RULES */}
+            <Card>
+                <CardContent className="p-6 space-y-6">
+                    <h3 className="font-semibold text-lg">Guidelines & Rules</h3>
 
-                                </div>
-
-                                <div className="flex items-start gap-3">
-                                    <MapPin className="h-5 w-5 text-primary shrink-0" />
-                                    <Field>
-                                        <FieldLabel>Venue</FieldLabel>
-
-                                        <Controller
-                                            control={control}
-                                            name="venue"
-                                            render={({ field }) =>
-                                                lock ? (
-                                                    <p className="text-sm text-muted-foreground">
-                                                        {field.value || "No venue assigned"}
-                                                    </p>
-                                                ) : (
-                                                    <Input {...field} />
-                                                )
-                                            }
-                                        />
-                                    </Field>
-
-                                </div>
-
-                                <div className="flex items-start gap-3">
-                                    <Users className="h-5 w-5 text-primary shrink-0" />
-                                    <Field>
-                                        <FieldLabel>Capacity</FieldLabel>
-
-                                        <Controller
-                                            control={control}
-                                            name="capacity"
-                                            render={({ field }) =>
-                                                lock ? (
-                                                    <p className="text-sm text-muted-foreground">
-                                                        {field.value ? `${field.value} Participants` : "Unlimited"}
-                                                    </p>
-                                                ) : (
-                                                    <Input
-                                                        type="number"
-                                                        value={field.value ?? ""}
-                                                        onChange={(e) => field.onChange(Number(e.target.value))}
-                                                    />
-                                                )
-                                            }
-                                        />
-                                    </Field>
-
-                                </div>
+                    <div className="space-y-3">
+                        {fields.map((field, index) => (
+                            <div
+                                key={field.id}
+                                className="flex items-center gap-2 border rounded-md p-2"
+                            >
+                                <Controller
+                                    control={control}
+                                    name={`rules.${index}.value`}
+                                    render={({ field }) => (
+                                        <Input {...field} className="flex-1" disabled={!isEditing} />
+                                    )}
+                                />
+                                <FieldError
+                                    errors={errors.rules?.[index]?.value && [
+                                        errors.rules[index]?.value,
+                                    ]}
+                                />
+                                <Button
+                                    type="button"
+                                    variant="destructive"
+                                    size="icon"
+                                    onClick={() => remove(index)}
+                                >
+                                    <Trash2 className="h-4 w-4" />
+                                </Button>
                             </div>
-                        </CardContent>
-                    </Card>
+                        ))}
+                    </div>
 
-
-                </div>
-            </div>
+                    <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={() => append({ value: "" })}
+                    >
+                        + Add Rule
+                    </Button>
+                </CardContent>
+            </Card>
         </form>
     );
+
 }
