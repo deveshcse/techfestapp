@@ -166,4 +166,5 @@ model Activity {
   organizedBy User? @relation("ActivityOrganizedBy", fields: [organizedById], references: [id])
 
   @@index([techfestId])
+  @@map("activities")
 }

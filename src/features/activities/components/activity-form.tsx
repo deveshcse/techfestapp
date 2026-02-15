@@ -19,6 +19,8 @@ import {
 import { CreateActivityFormDataSchema } from "../schemas/activity.schema";
 
 import { DateTimePicker } from "@/components/common/date-time-picker";
+import { useCreateActivity } from "../utils/useActivities";
+import { useModalStore } from "@/store/useModalStore";
 
 import {
   Select,
@@ -29,8 +31,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTechFestDetails } from "@/features/techfest/utils/useTechFest";
 
-export function CreateActivityForm() {
+export function CreateActivityForm({ techfestId }: { techfestId: number }) {
+  const { close } = useModalStore();
+
+
+
+  const { data } = useTechFestDetails(techfestId);
+
+  const techfest = {
+    startDateTime: new Date(data!.start_date),
+    endDateTime: new Date(data!.end_date),
+  }
+
   /* ================= FORM ================= */
 
   const form = useForm<CreateActivityFormData>({
@@ -64,29 +78,26 @@ export function CreateActivityForm() {
 
   /* ================= SUBMIT ================= */
 
+  const createActivityMutation = useCreateActivity(techfestId);
+
   async function onSubmit(data: CreateActivityFormData) {
     try {
-      console.log("Create activity payload →", data);
-
-      // await createActivityMutation.mutateAsync(data)
       const payload: CreateActivityInput = {
         ...data,
         rules: data.rules.map((rule) => rule.value),
       };
 
-      console.log("Transformed payload →", payload);
-
-      reset();
+      await createActivityMutation.mutateAsync(payload, {
+        onSuccess: () => {
+          reset();
+          close();
+        },
+      });
     } catch (error) {
       console.error(error);
     }
   }
 
-  // ✅ mock techfest range
-  const techfest = {
-    startDateTime: new Date("2026-03-10T09:00:00"),
-    endDateTime: new Date("2026-03-15T18:00:00"),
-  };
   /* ================= UI ================= */
 
   return (

@@ -53,9 +53,15 @@ export const UpdateActivitySchema = ActivityBaseSchema.partial().extend({
   status: z.enum(ActivityStatus),
 });
 
-export const ActivitySchema = ActivityBaseSchema.safeExtend({
+export const ActivitySchema = ActivityBaseSchema.omit({
+  rules: true,
+}).safeExtend({
   id: z.number().int(),
-
+  organizedBy: z.object({
+    name: z.string(),
+  }),
+  status: z.enum(ActivityStatus),
+  rules: z.array(z.string()),
   createdAt: z.date(),
   updatedAt: z.date(),
 });

@@ -9,9 +9,9 @@ const statement = {
     "update",
     "delete",
     "read",
-    "publish",
     "register",
     "assign-organizer",
+    "update-status",
   ],
 } as const;
 
@@ -24,12 +24,12 @@ export const user = ac.newRole({
 
 export const admin = ac.newRole({
   techfest: ["create", "update", "delete", "read", "publish"],
-  activity: ["read", "assign-organizer"],
+  activity: ["read", "assign-organizer", "update", "delete", "update-status"],
 
   ...adminAc.statements,
 });
 
 export const organizer = ac.newRole({
   techfest: ["create", "update", "read"],
-  activity: ["create", "update", "delete", "read", "publish"],
+  activity: ["create", "update","read"],
 });

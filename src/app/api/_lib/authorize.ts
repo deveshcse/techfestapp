@@ -33,7 +33,7 @@ export async function authorize<R extends Resource>(
       return {
         success: false,
         response: NextResponse.json(
-          { error: "Unauthorized" },
+          { error: "Unauthorized: user is not logged in" },
           { status: 401 }
         ),
       };
@@ -53,7 +53,7 @@ export async function authorize<R extends Resource>(
       return {
         success: false,
         response: NextResponse.json(
-          { error: "Forbidden" },
+          { error: "Forbidden: user does not have permission to perform this action" },
           { status: 403 }
         ),
       };
