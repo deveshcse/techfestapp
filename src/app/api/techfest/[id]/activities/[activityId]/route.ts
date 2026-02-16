@@ -89,6 +89,27 @@ export async function PUT(request: NextRequest, { params }: Params) {
             );
         }
 
+        // check if the activity is cancelled or completed then dont need to update
+        const activity = await prisma.activity.findUnique({
+            where: {
+                id: parsedActivityId.data,
+            },
+        });
+
+        if (!activity) {
+            return NextResponse.json(
+                { success: false, error: "Activity not found" },
+                { status: 404 },
+            );
+        }
+
+        if (activity.status === "CANCELLED" || activity.status === "COMPLETED") {
+            return NextResponse.json(
+                { success: false, error: "Activity is cancelled or completed" },
+                { status: 400 },
+            );
+        }
+
         const body = await request.json();
 
         // Transform dates if they are strings
@@ -126,7 +147,8 @@ export async function PUT(request: NextRequest, { params }: Params) {
             where: {
                 id: parsedActivityId.data,
             },
-            data: finalUpdateData,
+            data: { ...finalUpdateData, updatedById: session.user.id },
+
         });
 
         return NextResponse.json(
@@ -147,7 +169,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
 
 export async function DELETE(request: NextRequest, { params }: Params) {
     try {
-        const { session } = await authorize(request, "activity", "delete");
+        await authorize(request, "activity", "delete");
 
         const { activityId } = await params;
         const parsedActivityId = activityIdSchema.safeParse(activityId);
