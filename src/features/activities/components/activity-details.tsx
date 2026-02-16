@@ -23,6 +23,7 @@ import { cn } from "@/lib/utils";
 import { useModalStore } from "@/store/useModalStore";
 import { ActivityCreateUpdateForm } from "./activity-create-update-form";
 import { ActivityStatusUpdateForm } from "./activity-status-update-form";
+import { ActivityOrganizerAssignForm } from "./activity-organizer-assign-form";
 import { Access } from "@/features/auth/components/permission/access";
 
 type Props = {
@@ -63,6 +64,18 @@ export function ActivityDetails({ techfestId, activity }: Props) {
             />,
             "Update Status",
             "Change the current status of this activity."
+        );
+    };
+
+    const handleAssignClick = () => {
+        open(
+            <ActivityOrganizerAssignForm
+                techfestId={techfestId}
+                activityId={activity.id}
+                initialOrganizerIds={activity.organizers.map(o => o.id)}
+            />,
+            "Assign Organizers",
+            "Select users to manage this activity."
         );
     };
 
@@ -120,6 +133,19 @@ export function ActivityDetails({ techfestId, activity }: Props) {
                             <AlertCircle className="mr-2 h-4 w-4" />
                             Update Status
                         </Button></Access>
+
+
+                    <Access resource="activity" action="assign-organizer">
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            className="flex-1 sm:flex-none"
+                            onClick={handleAssignClick}
+                        >
+                            <Users className="mr-2 h-4 w-4" />
+                            Assign Organizer
+                        </Button>
+                    </Access>
 
                     <Access resource="activity" action="register">
                         <Button
@@ -268,11 +294,19 @@ export function ActivityDetails({ techfestId, activity }: Props) {
                             <CardTitle className="text-base font-semibold">Organized By</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="flex items-center gap-3">
-                                <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center font-bold text-muted-foreground">
-                                    {activity.organizedBy?.name?.charAt(0) || "U"}
-                                </div>
-                                <p className="font-medium">{activity.organizedBy?.name || "Unknown Organizer"}</p>
+                            <div className="space-y-4">
+                                {activity.organizers && activity.organizers.length > 0 ? (
+                                    activity.organizers.map((organizer) => (
+                                        <div key={organizer.id} className="flex items-center gap-3">
+                                            <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center font-bold text-muted-foreground uppercase">
+                                                {organizer.name?.charAt(0) || "U"}
+                                            </div>
+                                            <p className="font-medium">{organizer.name}</p>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-sm text-muted-foreground italic">No organizers assigned.</p>
+                                )}
                             </div>
                         </CardContent>
                     </Card>

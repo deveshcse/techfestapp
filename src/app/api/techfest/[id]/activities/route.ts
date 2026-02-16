@@ -119,7 +119,9 @@ export async function POST(request: NextRequest, { params }: Params) {
         ...activityData,
         techfestId: techfestId,
         createdById: session.user.id,
-        organizedById: session.user.id,
+        organizers: {
+          connect: { id: session.user.id },
+        },
       },
     });
 

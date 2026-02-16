@@ -6,6 +6,8 @@ import {
     listActivities,
     updateActivity,
     updateActivityStatus,
+    assignActivityOrganizers,
+    listPotentialOrganizers,
 } from "./activity-apis";
 import { CreateUpdateActivityInput, ActivityStatus } from "../types/activity.types";
 import { queryClient } from "@/lib/query-client";
@@ -85,6 +87,23 @@ export function useDeleteActivity(techfestId: number, activityId: number) {
             router.push(`/dashboard/techfest/${techfestId}/activities`);
             queryClient.invalidateQueries({ queryKey: activityKeys.list(techfestId) });
         },
+    });
+}
+
+export function useAssignActivityOrganizers(techfestId: number, activityId: number) {
+    return useMutation({
+        mutationFn: (userIds: string[]) => assignActivityOrganizers(techfestId, activityId, userIds),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: activityKeys.detail(techfestId, activityId) });
+            toast.success("Organizers updated successfully");
+        },
+    });
+}
+
+export function usePotentialOrganizers() {
+    return useQuery({
+        queryKey: ["users", "organizers"],
+        queryFn: listPotentialOrganizers,
     });
 }
 

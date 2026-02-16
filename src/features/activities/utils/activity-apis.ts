@@ -42,3 +42,17 @@ export const updateActivityStatus = async (
     const response = await api.patch(`/api/techfest/${techfestId}/activities/${activityId}/status`, { status });
     return response.data;
 };
+
+export const assignActivityOrganizers = async (
+    techfestId: number,
+    activityId: number,
+    userIds: string[],
+) => {
+    const response = await api.patch(`/api/techfest/${techfestId}/activities/${activityId}/organizers`, { userIds });
+    return response.data;
+};
+
+export const listPotentialOrganizers = async () => {
+    const response = await api.get("/api/users/organizers");
+    return response.data;
+};

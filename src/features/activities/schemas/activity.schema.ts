@@ -56,6 +56,10 @@ export const UpdateActivityStatusSchema = z.object({
   status: z.enum(ActivityStatus),
 });
 
+export const AssignOrganizersSchema = z.object({
+  userIds: z.array(z.string().min(1)),
+});
+
 export const ActivityResponseSchema = ActivityBaseSchema.omit({
   id: true,
 }).safeExtend({
