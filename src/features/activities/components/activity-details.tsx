@@ -24,6 +24,7 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { cn } from "@/lib/utils";
 import { useModalStore } from "@/store/useModalStore";
 import { ActivityCreateUpdateForm } from "./activity-create-update-form";
+import { Access } from "@/features/auth/components/permission/access";
 
 type Props = {
     techfestId: number;
@@ -84,46 +85,56 @@ export function ActivityDetails({ techfestId, activity }: Props) {
                 </div>
 
                 <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={handleUpdateClick}
-                        className="flex-1 sm:flex-none"
-                    >
-                        <Pencil className="mr-2 h-4 w-4" />
-                        Edit Activity
-                    </Button>
 
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        className="flex-1 sm:flex-none"
-                        onClick={() => console.log("Update Status")}
-                    >
-                        <AlertCircle className="mr-2 h-4 w-4" />
-                        Update Status
-                    </Button>
+                    <Access resource="activity" action="update">
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={handleUpdateClick}
+                            className="flex-1 sm:flex-none"
+                        >
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Edit Activity
+                        </Button>
+                    </Access>
 
-                    <Button
-                        size="sm"
-                        variant="default"
-                        className="flex-1 sm:flex-none"
-                        onClick={() => console.log("Register")}
-                    >
-                        <CheckCircle2 className="mr-2 h-4 w-4" />
-                        Register Now
-                    </Button>
 
-                    <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={handleDelete}
-                        disabled={delete_activity.isPending}
-                        className="flex-1 sm:flex-none"
-                    >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
-                    </Button>
+                    <Access resource="activity" action="update-status">
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            className="flex-1 sm:flex-none"
+                            onClick={() => console.log("Update Status")}
+                        >
+                            <AlertCircle className="mr-2 h-4 w-4" />
+                            Update Status
+                        </Button></Access>
+
+                    <Access resource="activity" action="register">
+                        <Button
+                            size="sm"
+                            variant="default"
+                            className="flex-1 sm:flex-none"
+                            onClick={() => console.log("Register")}
+                        >
+                            <CheckCircle2 className="mr-2 h-4 w-4" />
+                            Register Now
+                        </Button>
+                    </Access>
+
+
+                    <Access resource="activity" action="delete">
+                        <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={handleDelete}
+                            disabled={delete_activity.isPending}
+                            className="flex-1 sm:flex-none"
+                        >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete
+                        </Button>
+                    </Access>
                 </div>
             </div>
 

@@ -12,6 +12,12 @@ type Params = {
 
 export async function GET(request: NextRequest, { params }: Params) {
   try {
+
+    const authResult = await authorize(request, "activity", "read");
+
+    if (!authResult.success) {
+      return authResult.response;
+    }
     const techfestId = await getIdParam(params);
 
     const activities = await prisma.activity.findMany({

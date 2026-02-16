@@ -15,6 +15,12 @@ const activityIdSchema = z.coerce.number().int().positive();
 
 export async function GET(request: NextRequest, { params }: Params) {
     try {
+
+        const authResult = await authorize(request, "activity", "read");
+
+        if (!authResult.success) {
+            return authResult.response;
+        }
         const { activityId } = await params;
         const parsedActivityId = activityIdSchema.safeParse(activityId);
 
