@@ -5,8 +5,9 @@ import {
     getActivityDetails,
     listActivities,
     updateActivity,
+    updateActivityStatus,
 } from "./activity-apis";
-import { CreateUpdateActivityInput } from "../types/activity.types";
+import { CreateUpdateActivityInput, ActivityStatus } from "../types/activity.types";
 import { queryClient } from "@/lib/query-client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -33,14 +34,13 @@ export function useActivityDetails(techfestId: number, activityId: number) {
         select: (response) => {
             return {
                 ...response,
-                data:{
+                data: {
                     ...response.data,
-                    
-                    rules: response.data.rules.map((rule)=>({value: rule}))
+                    rules: response.data.rules.map((rule) => ({ value: rule }))
                 }
             }
         },
-        
+
     });
 }
 
@@ -50,6 +50,16 @@ export function useCreateActivity(techfestId: number) {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: activityKeys.list(techfestId) });
             toast.success("Activity created successfully");
+        },
+    });
+}
+
+export function useUpdateActivityStatus(techfestId: number, activityId: number) {
+    return useMutation({
+        mutationFn: (status: ActivityStatus) => updateActivityStatus(techfestId, activityId, status),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: activityKeys.all });
+            toast.success("Activity status updated successfully");
         },
     });
 }
@@ -82,5 +92,6 @@ export function useActivityActions(techfestId: number, activityId: number) {
     return {
         update_activity: useUpdateActivity(techfestId, activityId),
         delete_activity: useDeleteActivity(techfestId, activityId),
+        update_status: useUpdateActivityStatus(techfestId, activityId),
     };
 }

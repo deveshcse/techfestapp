@@ -13,16 +13,26 @@ type Params = {
 export async function GET(request: NextRequest, { params }: Params) {
   try {
 
-    const authResult = await authorize(request, "activity", "read");
+    const { session } = await authorize(request, "activity", "read");
 
-    if (!authResult.success) {
-      return authResult.response;
-    }
     const techfestId = await getIdParam(params);
+
+
+    // visibility logic
+    const isElevatedUser =
+      session.user.role === "admin" ||
+      session.user.role === "organizer";
 
     const activities = await prisma.activity.findMany({
       where: {
-        techfestId: techfestId,
+        techfestId,
+        // normal users → only published
+        // admin/organizer → no filter
+        ...(isElevatedUser
+          ? {}
+          : {
+            status: "PUBLISHED",
+          }),
       },
 
       select: {
@@ -58,13 +68,8 @@ export async function GET(request: NextRequest, { params }: Params) {
 
 export async function POST(request: NextRequest, { params }: Params) {
   try {
-    const authResult = await authorize(request, "activity", "create");
+    const { session } = await authorize(request, "activity", "create");
 
-    if (!authResult.success) {
-      return authResult.response;
-    }
-
-    const { session } = authResult;
     const techfestId = await getIdParam(params);
 
     const body = await request.json();

@@ -12,35 +12,9 @@ type Params = {
 
 export async function GET(request: NextRequest, { params }: Params) {
   try {
-    const session = await auth.api.getSession({
-      headers: request.headers,
-    });
+    const { session } = await authorize(request, "techfest", "read");
 
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const canRead = await auth.api.userHasPermission({
-      body: {
-        userId: session.user.id,
-        permissions: { techfest: ["read"] },
-      },
-    });
-
-    if (!canRead.success) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-
-    const { id } = await params;
-
-    const techfestId = Number(id);
-
-    if (Number.isNaN(techfestId)) {
-      return NextResponse.json(
-        { message: "Invalid TechFest ID" },
-        { status: 400 },
-      );
-    }
+    const techfestId = await getIdParam(params);
 
     const techfest = await prisma.techFest.findUnique({
       where: { id: techfestId },
@@ -67,33 +41,9 @@ export async function GET(request: NextRequest, { params }: Params) {
 
 export async function DELETE(request: NextRequest, { params }: Params) {
   try {
-    const session = await auth.api.getSession({
-      headers: request.headers,
-    });
+    await authorize(request, "techfest", "delete");
 
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const canDelete = await auth.api.userHasPermission({
-      body: {
-        userId: session.user.id,
-        permissions: { techfest: ["delete"] },
-      },
-    });
-
-    if (!canDelete.success) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-    const { id } = await params;
-    const techfestId = Number(id);
-
-    if (Number.isNaN(techfestId)) {
-      return NextResponse.json(
-        { message: "Invalid TechFest ID" },
-        { status: 400 },
-      );
-    }
+    const techfestId = await getIdParam(params);
 
     await prisma.techFest.delete({
       where: { id: techfestId },
@@ -171,13 +121,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
 export async function PATCH(request: NextRequest, { params }: Params) {
   try {
     // Auth + permission check
-    const authResult = await authorize(request, "techfest", "publish");
-
-    if (!authResult.success) {
-      return authResult.response;
-    }
-
-    const { session } = authResult;
+    const { session } = await authorize(request, "techfest", "publish");
 
     // Centralized ID parsing
     const techfestId = await getIdParam(params);

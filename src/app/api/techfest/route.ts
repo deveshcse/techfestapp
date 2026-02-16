@@ -2,39 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { createTechFestSchema } from "@/features/techfest/schemas/techfest.schema";
+import { authorize } from "../_lib/authorize";
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth.api.getSession({
-      headers: request.headers,
-    });
+    const { session } = await authorize(request, "techfest", "read");
 
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    // 1️⃣ Must be allowed to read
-    const canRead = await auth.api.userHasPermission({
-      body: {
-        userId: session.user.id,
-        permissions: {
-          techfest: ["read"],
-        },
-      },
-    });
-
-    if (!canRead.success) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-
-    // 2️⃣ Visibility logic (NOT permission-based)
     const elevatedRoles = ["admin", "organizer"];
     const isElevatedUser = elevatedRoles.includes(session.user.role || "user");
 
-    // 3️⃣ Dynamic where
     const whereClause = isElevatedUser ? {} : { published: true };
-
-    // 4️⃣ Query
     const [data, total] = await Promise.all([
       prisma.techFest.findMany({
         where: whereClause,

@@ -2,77 +2,53 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { Action, Resource } from "@/lib/access-types";
 
-type AuthorizeSuccess = {
-  success: true;
-  session: Awaited<ReturnType<typeof auth.api.getSession>>;
-};
+type Session = NonNullable<
+  Awaited<ReturnType<typeof auth.api.getSession>>
+>;
 
-type AuthorizeFailure = {
-  success: false;
-  response: NextResponse;
-};
-
-export type AuthorizeResult = AuthorizeSuccess | AuthorizeFailure;
-
-/**
- * Auth + permission guard
- * Does NOT control execution — just validates.
- */
 export async function authorize<R extends Resource>(
   request: NextRequest,
   resource: R,
   action: Action<R>
-): Promise<AuthorizeResult> {
+): Promise<{ session: Session }> {
   try {
-    // ✅ 1. Session check
+    // 1️⃣ session check
     const session = await auth.api.getSession({
       headers: request.headers,
     });
 
     if (!session) {
-      return {
-        success: false,
-        response: NextResponse.json(
-          { error: "Unauthorized: user is not logged in" },
-          { status: 401 }
-        ),
-      };
+      throw NextResponse.json(
+        { error: "Unauthorized: user is not logged in" },
+        { status: 401 }
+      );
     }
 
-    // ✅ 2. Permission check
+    // 2️⃣ permission check
     const permission = await auth.api.userHasPermission({
       body: {
         userId: session.user.id,
-        permissions: {
-          [resource]: [action],
-        },
+        permissions: { [resource]: [action] },
       },
     });
 
-    if (!permission.success) {
-      return {
-        success: false,
-        response: NextResponse.json(
-          { error: "Forbidden: user does not have permission to perform this action" },
-          { status: 403 }
-        ),
-      };
+    if (!permission?.success) {
+      throw NextResponse.json(
+        { error: "Forbidden: insufficient permissions" },
+        { status: 403 }
+      );
     }
 
-    // ✅ authorized
-    return {
-      success: true,
-      session,
-    };
+    return { session };
   } catch (error) {
-    console.error("Auth Error:", error);
+    // If we already threw a response → rethrow
+    if (error instanceof NextResponse) throw error;
 
-    return {
-      success: false,
-      response: NextResponse.json(
-        { error: "Internal Server Error" },
-        { status: 500 }
-      ),
-    };
+    console.error("Authorize error:", error);
+
+    throw NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

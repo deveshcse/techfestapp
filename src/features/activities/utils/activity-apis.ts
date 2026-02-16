@@ -1,5 +1,5 @@
 import api from "@/lib/axios";
-import { ActivityResponse, ActivityServer, CreateUpdateActivityInput } from "../types/activity.types";
+import { ActivityResponse, ActivityServer, CreateUpdateActivityInput, ActivityStatus } from "../types/activity.types";
 
 export const listActivities = async (techfestId: number): Promise<{ success: boolean; data: ActivityResponse[] }> => {
     const response = await api.get(`/api/techfest/${techfestId}/activities`);
@@ -31,5 +31,14 @@ export const updateActivity = async (
     formData: CreateUpdateActivityInput,
 ) => {
     const response = await api.put(`/api/techfest/${techfestId}/activities/${activityId}`, formData);
+    return response.data;
+};
+
+export const updateActivityStatus = async (
+    techfestId: number,
+    activityId: number,
+    status: ActivityStatus,
+) => {
+    const response = await api.patch(`/api/techfest/${techfestId}/activities/${activityId}/status`, { status });
     return response.data;
 };

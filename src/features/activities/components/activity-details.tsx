@@ -22,6 +22,7 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { cn } from "@/lib/utils";
 import { useModalStore } from "@/store/useModalStore";
 import { ActivityCreateUpdateForm } from "./activity-create-update-form";
+import { ActivityStatusUpdateForm } from "./activity-status-update-form";
 import { Access } from "@/features/auth/components/permission/access";
 
 type Props = {
@@ -50,6 +51,18 @@ export function ActivityDetails({ techfestId, activity }: Props) {
             />,
             "Update Activity",
             "Modify the details of this activity."
+        );
+    };
+
+    const handleStatusUpdateClick = () => {
+        open(
+            <ActivityStatusUpdateForm
+                techfestId={techfestId}
+                activityId={activity.id}
+                initialStatus={activity.status}
+            />,
+            "Update Status",
+            "Change the current status of this activity."
         );
     };
 
@@ -102,7 +115,7 @@ export function ActivityDetails({ techfestId, activity }: Props) {
                             size="sm"
                             variant="outline"
                             className="flex-1 sm:flex-none"
-                            onClick={() => console.log("Update Status")}
+                            onClick={handleStatusUpdateClick}
                         >
                             <AlertCircle className="mr-2 h-4 w-4" />
                             Update Status
