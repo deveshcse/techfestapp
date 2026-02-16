@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
 
     // 2️⃣ Visibility logic (NOT permission-based)
     const elevatedRoles = ["admin", "organizer"];
-    const isElevatedUser = elevatedRoles.includes(session.user.role);
+    const isElevatedUser = elevatedRoles.includes(session.user.role || "user");
 
     // 3️⃣ Dynamic where
     const whereClause = isElevatedUser ? {} : { published: true };
