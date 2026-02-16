@@ -88,26 +88,50 @@ export async function POST(request: NextRequest, { params }: Params) {
     }
 
     const activityData = result.data;
+    const techfest = await prisma.techFest.findUnique({
+      where: {
+        id: techfestId,
+      },
+    });
 
-    if (session) {
-      const new_activity = await prisma.activity.create({
-        data: {
-          ...activityData,
-          techfestId: techfestId,
-          createdById: session.user.id,
-          organizedById: session.user.id,
-        },
-      });
-
+    if (!techfest) {
       return NextResponse.json(
         {
-          success: true,
-          message: "Activity created successfully",
-          activity: new_activity,
+          success: false,
+          error: "Techfest not found",
         },
-        { status: 201 },
+        { status: 404 },
       );
     }
+
+    if (techfest.end_date < new Date()) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "cant create activity after techfest end date",
+        },
+        { status: 400 },
+      );
+    }
+
+    const new_activity = await prisma.activity.create({
+      data: {
+        ...activityData,
+        techfestId: techfestId,
+        createdById: session.user.id,
+        organizedById: session.user.id,
+      },
+    });
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Activity created successfully",
+        activity: new_activity,
+      },
+      { status: 201 },
+    );
+
   } catch (error) {
     return NextResponse.json(
       { success: false, error: "Failed to process request", details: error },
