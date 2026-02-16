@@ -3,6 +3,7 @@ import { ActivityList } from "@/features/activities/components/activity-list";
 import { ChevronLeft, Plus } from "lucide-react";
 import Link from "next/link";
 import CreateActivityButton from "@/features/activities/components/create-activity-button";
+import { Access } from "@/features/auth/components/permission/access";
 
 type PageProps = {
   params: Promise<{
@@ -31,7 +32,9 @@ export default async function page({ params }: PageProps) {
         </div>
 
         <div className="flex items-center gap-2">
-          <CreateActivityButton techfestId={techFestId} />
+          <Access resource="activity" action="create">
+            <CreateActivityButton techfestId={techFestId} />
+          </Access>
         </div>
       </header>
 

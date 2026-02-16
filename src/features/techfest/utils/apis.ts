@@ -19,7 +19,6 @@ export const createTechFest = async (formData: CreateTechFestInput) => {
 export const getTechfestDetails = async (
   id: number,
 ): Promise<TechFestDetails> => {
-  console.log("Fetching details for TechFest ID:", id);
   const response = await api.get(`/api/techfest/${id}`);
   return response.data;
 };

@@ -35,12 +35,28 @@ export function DateTimePicker({
   const [open, setOpen] = React.useState(false);
 
   /* ===== check if date is within allowed range ===== */
-  function isDateDisabled(date: Date) {
-    if (minDate && date < new Date(minDate.setHours(0, 0, 0, 0))) return true;
-    if (maxDate && date > new Date(maxDate.setHours(23, 59, 59, 999)))
-      return true;
-    return false;
-  }
+  const disabledDays = React.useCallback(
+    (date: Date) => {
+      if (minDate && date < new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate())) {
+        return true;
+      }
+
+      if (maxDate && date > new Date(maxDate.getFullYear(), maxDate.getMonth(), maxDate.getDate(), 23, 59, 59)) {
+        return true;
+      }
+
+      return false;
+    },
+    [minDate, maxDate]
+  );
+
+  const defaultMonth = React.useMemo(() => {
+    if (value) return value;        // selected date
+    if (minDate) return minDate;    // techfest start
+    return new Date();              // fallback
+  }, [value, minDate]);
+
+
 
   /* ===== update only date ===== */
   function handleDateChange(selected?: Date) {
@@ -67,8 +83,8 @@ export function DateTimePicker({
 
   const timeValue = value
     ? `${String(value.getHours()).padStart(2, "0")}:${String(
-        value.getMinutes(),
-      ).padStart(2, "0")}`
+      value.getMinutes(),
+    ).padStart(2, "0")}`
     : "";
 
   return (
@@ -93,9 +109,9 @@ export function DateTimePicker({
               mode="single"
               selected={value}
               captionLayout="dropdown"
-              defaultMonth={value}
+              defaultMonth={defaultMonth}
               onSelect={handleDateChange}
-              disabled={disabled}
+              disabled={disabledDays}
             />
           </PopoverContent>
         </Popover>

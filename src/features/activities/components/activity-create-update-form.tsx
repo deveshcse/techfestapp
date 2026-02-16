@@ -30,6 +30,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { useTechFestDetails } from "@/features/techfest/utils/useTechFest";
+import { useMemo } from "react";
 
 interface ActivityCreateUpdateFormProps {
     techfestId: number;
@@ -46,10 +47,15 @@ export function ActivityCreateUpdateForm({
 
     const { data } = useTechFestDetails(techfestId);
 
-    const techfestLimits = {
-        startDateTime: data?.start_date ? new Date(data.start_date) : undefined,
-        endDateTime: data?.end_date ? new Date(data.end_date) : undefined,
-    };
+    const techfestLimits = useMemo(() => {
+        if (!data) return undefined;
+
+        return {
+            startDateTime: new Date(data.start_date),
+            endDateTime: new Date(data.end_date),
+        };
+    }, [data]);
+
 
     /* ================= FORM ================= */
 
@@ -270,8 +276,8 @@ export function ActivityCreateUpdateForm({
                                 label="Start Date & Time"
                                 value={field.value}
                                 onChange={field.onChange}
-                                minDate={techfestLimits.startDateTime}
-                                maxDate={techfestLimits.endDateTime}
+                                minDate={techfestLimits?.startDateTime}
+                                maxDate={techfestLimits?.endDateTime}
                             />
                             {errors.startDateTime && (
                                 <p className="text-sm text-red-500">
@@ -292,8 +298,8 @@ export function ActivityCreateUpdateForm({
                                 label="End Date & Time"
                                 value={field.value}
                                 onChange={field.onChange}
-                                minDate={techfestLimits.startDateTime}
-                                maxDate={techfestLimits.endDateTime}
+                                minDate={techfestLimits?.startDateTime}
+                                maxDate={techfestLimits?.endDateTime}
                             />
                             {errors.endDateTime && (
                                 <p className="text-sm text-red-500">
