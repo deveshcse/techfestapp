@@ -60,9 +60,12 @@ export const ActivityResponseSchema = ActivityBaseSchema.omit({
   id: true,
 }).safeExtend({
   id: z.number().int(),
-  organizedBy: z.object({
-    name: z.string(),
-  }),
+  organizers: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+    }),
+  ),
   status: z.enum(ActivityStatus),
   createdAt: z.date(),
   updatedAt: z.date(),

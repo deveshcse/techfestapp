@@ -34,7 +34,7 @@ model User {
   createdActivities Activity[] @relation("ActivityCreatedBy")
   updatedActivities Activity[] @relation("ActivityUpdatedBy")
 
-  organizedActivities Activity[] @relation("ActivityOrganizedBy")
+  organizedActivities Activity[] @relation("ActivityOrganizers")
 
   @@unique([email])
   @@map("user")
@@ -163,8 +163,7 @@ model Activity {
 
   createdBy   User? @relation("ActivityCreatedBy", fields: [createdById], references: [id])
   updatedBy   User? @relation("ActivityUpdatedBy", fields: [updatedById], references: [id])
-  organizedBy User? @relation("ActivityOrganizedBy", fields: [organizedById], references: [id])
-
+  organizers User[] @relation("ActivityOrganizers")
   @@index([techfestId])
   @@map("activities")
 }

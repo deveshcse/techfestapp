@@ -43,8 +43,9 @@ export async function GET(request: NextRequest, { params }: Params) {
                 endDateTime: true,
                 capacity: true,
                 rules: true,
-                organizedBy: {
+                organizers: {
                     select: {
+                        id: true,
                         name: true,
                     }
                 }
