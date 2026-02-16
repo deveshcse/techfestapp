@@ -4,7 +4,7 @@ import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ActivityType } from "@/generated/prisma/enums";
 
-import { Field, FieldLabel } from "@/components/ui/field";
+import { Field, FieldLabel, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -144,9 +144,7 @@ export function ActivityCreateUpdateForm({
                     <Field>
                         <FieldLabel>Title</FieldLabel>
                         <Input {...field} placeholder="Activity title" />
-                        {errors.title && (
-                            <p className="text-sm text-red-500">{errors.title.message}</p>
-                        )}
+                        <FieldError errors={errors.title && [errors.title]} />
                     </Field>
                 )}
             />
@@ -159,11 +157,7 @@ export function ActivityCreateUpdateForm({
                     <Field>
                         <FieldLabel>Description</FieldLabel>
                         <Textarea {...field} placeholder="Activity description" />
-                        {errors.description && (
-                            <p className="text-sm text-red-500">
-                                {errors.description.message}
-                            </p>
-                        )}
+                        <FieldError errors={errors.description && [errors.description]} />
                     </Field>
                 )}
             />
@@ -177,9 +171,7 @@ export function ActivityCreateUpdateForm({
                         <Field>
                             <FieldLabel>Venue</FieldLabel>
                             <Input {...field} placeholder="Venue" />
-                            {errors.venue && (
-                                <p className="text-sm text-red-500">{errors.venue.message}</p>
-                            )}
+                            <FieldError errors={errors.venue && [errors.venue]} />
                         </Field>
                     )}
                 />
@@ -210,9 +202,7 @@ export function ActivityCreateUpdateForm({
                                 </SelectContent>
                             </Select>
 
-                            {errors.type && (
-                                <p className="text-sm text-red-500">{errors.type.message}</p>
-                            )}
+                            <FieldError errors={errors.type && [errors.type]} />
                         </Field>
                     )}
                 />
@@ -247,11 +237,7 @@ export function ActivityCreateUpdateForm({
                             </Button>
                         </div>
 
-                        {errors.rules?.[index]?.value && (
-                            <p className="text-sm text-red-500">
-                                {errors.rules[index]?.value?.message}
-                            </p>
-                        )}
+                        <FieldError errors={errors.rules?.[index]?.value && [errors.rules[index].value]} />
                     </div>
                 ))}
 
@@ -271,7 +257,7 @@ export function ActivityCreateUpdateForm({
                     control={control}
                     name="startDateTime"
                     render={({ field }) => (
-                        <div>
+                        <Field>
                             <DateTimePicker
                                 label="Start Date & Time"
                                 value={field.value}
@@ -279,12 +265,8 @@ export function ActivityCreateUpdateForm({
                                 minDate={techfestLimits?.startDateTime}
                                 maxDate={techfestLimits?.endDateTime}
                             />
-                            {errors.startDateTime && (
-                                <p className="text-sm text-red-500">
-                                    {errors.startDateTime.message}
-                                </p>
-                            )}
-                        </div>
+                            <FieldError errors={errors.startDateTime && [errors.startDateTime]} />
+                        </Field>
                     )}
                 />
 
@@ -293,7 +275,7 @@ export function ActivityCreateUpdateForm({
                     control={control}
                     name="endDateTime"
                     render={({ field }) => (
-                        <div>
+                        <Field>
                             <DateTimePicker
                                 label="End Date & Time"
                                 value={field.value}
@@ -301,12 +283,8 @@ export function ActivityCreateUpdateForm({
                                 minDate={techfestLimits?.startDateTime}
                                 maxDate={techfestLimits?.endDateTime}
                             />
-                            {errors.endDateTime && (
-                                <p className="text-sm text-red-500">
-                                    {errors.endDateTime.message}
-                                </p>
-                            )}
-                        </div>
+                            <FieldError errors={errors.endDateTime && [errors.endDateTime]} />
+                        </Field>
                     )}
                 />
             </div>
@@ -325,9 +303,7 @@ export function ActivityCreateUpdateForm({
                             onChange={(e) => field.onChange(Number(e.target.value))}
                         />
 
-                        {errors.capacity && (
-                            <p className="text-sm text-red-500">{errors.capacity.message}</p>
-                        )}
+                        <FieldError errors={errors.capacity && [errors.capacity]} />
                     </Field>
                 )}
             />

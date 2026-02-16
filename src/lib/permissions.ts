@@ -24,7 +24,7 @@ export const user = ac.newRole({
 
 export const admin = ac.newRole({
   techfest: ["create", "update", "delete", "read", "publish"],
-  activity: ["read", "assign-organizer", "update", "delete", "update-status"],
+  activity: ["read", "assign-organizer", "update", "delete", "update-status", "create"],
 
   ...adminAc.statements,
 });
