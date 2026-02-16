@@ -6,7 +6,7 @@ import {
     listActivities,
     updateActivity,
 } from "./activity-apis";
-import { Activity, CreateActivityInput, UpdateActivityInput } from "../types/activity.types";
+import { CreateUpdateActivityInput } from "../types/activity.types";
 import { queryClient } from "@/lib/query-client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -30,21 +30,24 @@ export function useActivityDetails(techfestId: number, activityId: number) {
         queryKey: activityKeys.detail(techfestId, activityId),
         queryFn: () => getActivityDetails(techfestId, activityId),
         enabled: !!techfestId && !!activityId,
-        select: (response) => ({
-            ...response,
-            data: {
-                ...response.data,
-                rules: response.data.rules?.map((rule: string) => ({
-                    value: rule,
-                })),
-            },
-        }),
+        select: (response) => {
+            console.log(response.data.rules)
+            return {
+                ...response,
+                data:{
+                    ...response.data,
+                    
+                    rules: response.data.rules.map((rule)=>({value: rule}))
+                }
+            }
+        },
+        
     });
 }
 
 export function useCreateActivity(techfestId: number) {
     return useMutation({
-        mutationFn: (formData: CreateActivityInput) => createActivity(techfestId, formData),
+        mutationFn: (formData: CreateUpdateActivityInput) => createActivity(techfestId, formData),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: activityKeys.list(techfestId) });
             toast.success("Activity created successfully");
@@ -54,7 +57,7 @@ export function useCreateActivity(techfestId: number) {
 
 export function useUpdateActivity(techfestId: number, activityId: number) {
     return useMutation({
-        mutationFn: (formData: UpdateActivityInput) => updateActivity(techfestId, activityId, formData),
+        mutationFn: (formData: CreateUpdateActivityInput) => updateActivity(techfestId, activityId, formData),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: activityKeys.all });
             toast.success("Activity updated successfully");

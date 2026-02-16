@@ -1,6 +1,4 @@
 "use client";
-
-import * as React from "react";
 import { format } from "date-fns";
 import {
     CalendarIcon,
@@ -18,7 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
-import { Activity, ActivityStatus } from "../types/activity.types";
+import { ActivityResponse, ActivityStatus } from "../types/activity.types";
 import { useActivityActions } from "../utils/useActivities";
 import { useConfirm } from "@/hooks/use-confirm";
 import { cn } from "@/lib/utils";
@@ -28,7 +26,7 @@ import { Access } from "@/features/auth/components/permission/access";
 
 type Props = {
     techfestId: number;
-    activity: Activity;
+    activity: ActivityResponse;
 };
 
 const statusStyles: Record<ActivityStatus, string> = {
@@ -197,7 +195,7 @@ export function ActivityDetails({ techfestId, activity }: Props) {
                                     </div>
                                     <div>
                                         <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Date</p>
-                                        <p className="text-sm font-semibold">{format(new Date(activity.startDateTime), "PPP")}</p>
+                                        {/* <p className="text-sm font-semibold">{format(new Date(activity.startDateTime), "PPP")}</p> */}
                                     </div>
                                 </div>
 
@@ -208,7 +206,7 @@ export function ActivityDetails({ techfestId, activity }: Props) {
                                     <div>
                                         <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Time</p>
                                         <p className="text-sm font-semibold">
-                                            {format(new Date(activity.startDateTime), "p")} - {format(new Date(activity.endDateTime), "p")}
+                                            {/* {format(new Date(activity.startDateTime), "p")} - {format(new Date(activity.endDateTime), "p")} */}
                                         </p>
                                     </div>
                                 </div>

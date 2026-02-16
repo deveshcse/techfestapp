@@ -14,7 +14,7 @@ interface Props {
 export function ActivityDetailsPage({ params }: Props) {
     const { techfestId, activityId } = params;
  const { data, isLoading, error } = useActivityDetails(techfestId, activityId);
-
+    console.log("data in page",data)
     if (isLoading) {
         return (
             <div className="p-8 space-y-6">
@@ -28,7 +28,7 @@ export function ActivityDetailsPage({ params }: Props) {
         );
     }
 
-    if (error || !data?.success) {
+    if (error || !data?.data) {
         return (
             <div className="p-8 flex flex-col items-center justify-center min-h-[50vh] space-y-4">
                 <div className="bg-destructive/10 p-3 rounded-full">
@@ -47,7 +47,7 @@ export function ActivityDetailsPage({ params }: Props) {
         );
     }
 
-    const activity = data.data;
+    const activity = data?.data;
 
     return (
         <div className="max-w-7xl mx-auto md:px-8 space-y-6">

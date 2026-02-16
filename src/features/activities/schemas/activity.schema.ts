@@ -41,6 +41,8 @@ export const ActivityBaseSchema = z
     }
   });
 
+
+
 export const CreateUpdateActivityFormDataSchema = ActivityBaseSchema;
 
 export const CreateUpdateActivityInputSchema = ActivityBaseSchema.omit({
@@ -54,9 +56,8 @@ export const UpdateActivityStatusSchema = z.object({
   status: z.enum(ActivityStatus),
 });
 
-export const ActivitySchema = ActivityBaseSchema.omit({
+export const ActivityResponseSchema = ActivityBaseSchema.omit({
   id: true,
-  
 }).safeExtend({
   id: z.number().int(),
   organizedBy: z.object({
@@ -65,4 +66,10 @@ export const ActivitySchema = ActivityBaseSchema.omit({
   status: z.enum(ActivityStatus),
   createdAt: z.date(),
   updatedAt: z.date(),
+});
+
+export const ActivityServerSchema = ActivityResponseSchema.omit({
+  rules: true,
+}).safeExtend({
+  rules: z.array(z.string()),
 });
