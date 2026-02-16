@@ -14,7 +14,6 @@ interface Props {
 export function ActivityDetailsPage({ params }: Props) {
     const { techfestId, activityId } = params;
  const { data, isLoading, error } = useActivityDetails(techfestId, activityId);
-    console.log("data in page",data)
     if (isLoading) {
         return (
             <div className="p-8 space-y-6">

@@ -31,7 +31,6 @@ export function useActivityDetails(techfestId: number, activityId: number) {
         queryFn: () => getActivityDetails(techfestId, activityId),
         enabled: !!techfestId && !!activityId,
         select: (response) => {
-            console.log(response.data.rules)
             return {
                 ...response,
                 data:{

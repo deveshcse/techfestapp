@@ -195,7 +195,7 @@ export function ActivityDetails({ techfestId, activity }: Props) {
                                     </div>
                                     <div>
                                         <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Date</p>
-                                        {/* <p className="text-sm font-semibold">{format(new Date(activity.startDateTime), "PPP")}</p> */}
+                                        <p className="text-sm font-semibold">{format(new Date(activity.startDateTime), "PPP")}</p>
                                     </div>
                                 </div>
 
@@ -206,7 +206,7 @@ export function ActivityDetails({ techfestId, activity }: Props) {
                                     <div>
                                         <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Time</p>
                                         <p className="text-sm font-semibold">
-                                            {/* {format(new Date(activity.startDateTime), "p")} - {format(new Date(activity.endDateTime), "p")} */}
+                                            {format(new Date(activity.startDateTime), "p")} - {format(new Date(activity.endDateTime), "p")}
                                         </p>
                                     </div>
                                 </div>
