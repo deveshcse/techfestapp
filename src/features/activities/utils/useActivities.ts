@@ -8,6 +8,8 @@ import {
     updateActivityStatus,
     assignActivityOrganizers,
     listPotentialOrganizers,
+    registerActivity,
+    unregisterActivity,
 } from "./activity-apis";
 import { CreateUpdateActivityInput, ActivityStatus } from "../types/activity.types";
 import { queryClient } from "@/lib/query-client";
@@ -107,10 +109,46 @@ export function usePotentialOrganizers() {
     });
 }
 
+
+export function useRegisterActivity(techfestId: number, activityId: number) {
+    return useMutation({
+        mutationFn: () => registerActivity(techfestId, activityId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: activityKeys.detail(techfestId, activityId) });
+            // Invalidate activities list too since isRegistered might be there later
+            queryClient.invalidateQueries({ queryKey: activityKeys.list(techfestId) });
+            toast.success("Registration successful!");
+        },
+        onError: (error: any) => {
+            const message = error.response?.data?.error || "Registration failed";
+            toast.error(message);
+        },
+    });
+}
+
+export function useUnregisterActivity(techfestId: number, activityId: number) {
+    return useMutation({
+        mutationFn: () => unregisterActivity(techfestId, activityId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: activityKeys.detail(techfestId, activityId) });
+            queryClient.invalidateQueries({ queryKey: activityKeys.list(techfestId) });
+            toast.success("Successfully unregistered");
+        },
+        onError: (error: any) => {
+            const message = error.response?.data?.error || "Failed to unregister";
+            toast.error(message);
+        },
+    });
+}
+
+
 export function useActivityActions(techfestId: number, activityId: number) {
     return {
         update_activity: useUpdateActivity(techfestId, activityId),
         delete_activity: useDeleteActivity(techfestId, activityId),
         update_status: useUpdateActivityStatus(techfestId, activityId),
+        assign_organizers: useAssignActivityOrganizers(techfestId, activityId),
+        register: useRegisterActivity(techfestId, activityId),
+        unregister: useUnregisterActivity(techfestId, activityId),
     };
 }

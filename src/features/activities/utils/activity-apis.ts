@@ -56,3 +56,19 @@ export const listPotentialOrganizers = async () => {
     const response = await api.get("/api/users/organizers");
     return response.data;
 };
+
+export const registerActivity = async (
+    techfestId: number,
+    activityId: number,
+) => {
+    const response = await api.post(`/api/techfest/${techfestId}/activities/${activityId}/registration`);
+    return response.data;
+};
+
+export const unregisterActivity = async (
+    techfestId: number,
+    activityId: number,
+) => {
+    const response = await api.delete(`/api/techfest/${techfestId}/activities/${activityId}/registration`);
+    return response.data;
+};

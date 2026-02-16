@@ -15,8 +15,7 @@ const activityIdSchema = z.coerce.number().int().positive();
 
 export async function GET(request: NextRequest, { params }: Params) {
     try {
-
-        await authorize(request, "activity", "read");
+        const { session } = await authorize(request, "activity", "read");
 
         const { activityId } = await params;
         const parsedActivityId = activityIdSchema.safeParse(activityId);
@@ -61,16 +60,40 @@ export async function GET(request: NextRequest, { params }: Params) {
             );
         }
 
+        // Check if user is registered
+        const registration = await prisma.registration.findFirst({
+            where: {
+                activityId: parsedActivityId.data,
+                userId: session.user.id,
+                status: "CONFIRMED",
+            },
+        });
+
+        // Get total registration count
+        const registrationCount = await prisma.registration.count({
+            where: {
+                activityId: parsedActivityId.data,
+                status: "CONFIRMED",
+            },
+        });
+
+        const data = {
+            ...activity,
+            isRegistered: !!registration,
+            registrationCount,
+        };
+
         return NextResponse.json(
             {
                 success: true,
-                data: activity,
+                message: "Activity details fetched successfully",
+                data,
             },
             { status: 200 },
         );
     } catch (error) {
         return NextResponse.json(
-            { success: false, error: "Failed to fetch activity details", details: error },
+            { success: false, error: "Failed to fetch activity details", details: error instanceof Error ? error.message : String(error) },
             { status: 500 },
         );
     }

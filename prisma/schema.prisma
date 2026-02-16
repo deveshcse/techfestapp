@@ -36,6 +36,13 @@ model User {
 
   organizedActivities Activity[] @relation("ActivityOrganizers")
 
+  // registrations done by this user
+  registrations Registration[] @relation("UserRegistrations")
+
+  // registrations this user checked-in (organizer/volunteer role)
+  markedAttendances Registration[] @relation("AttendanceMarkedBy")
+
+
   @@unique([email])
   @@map("user")
 }
@@ -164,6 +171,51 @@ model Activity {
   createdBy   User? @relation("ActivityCreatedBy", fields: [createdById], references: [id])
   updatedBy   User? @relation("ActivityUpdatedBy", fields: [updatedById], references: [id])
   organizers User[] @relation("ActivityOrganizers")
+
+  registrations Registration[] @relation("ActivityRegistrations")
+
   @@index([techfestId])
   @@map("activities")
+}
+
+
+enum RegistrationStatus {
+  PENDING    // For events requiring manual approval
+  CONFIRMED  // Standard active registration
+  CANCELLED  // User withdrew
+  WAITLISTED // Activity was full
+  ATTENDED   // User actually showed up
+}
+
+
+model Registration {
+  id         Int                @id @default(autoincrement())
+  userId     String
+  activityId Int
+  status     RegistrationStatus @default(CONFIRMED)
+  
+  // --- Attendance Tracking ---
+  attended           Boolean   @default(false)
+  attendedAt         DateTime?
+  attendanceMarkedBy String?   // Record WHICH organizer/volunteer checked them in
+
+  // --- Feedback/Audit ---
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  feedback   String?   @db.Text   // Post-event feedback from the user
+  rating     Int?                 // 1-5 star rating
+  
+  // --- Future Proofing ---
+  metadata   Json?     @default("{}") // Store arbitrary data (e.g., custom form responses)
+  notes      String?   @db.Text       // Internal notes for organizers
+
+  // --- Relations ---
+  user       User     @relation("UserRegistrations", fields: [userId], references: [id], onDelete: Cascade)
+  activity   Activity @relation("ActivityRegistrations", fields: [activityId], references: [id], onDelete: Cascade)
+  checkInBy  User?    @relation("AttendanceMarkedBy", fields: [attendanceMarkedBy], references: [id])
+
+  @@unique([userId, activityId])
+  @@index([userId])
+  @@index([activityId])
+  @@map("registrations")
 }

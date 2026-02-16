@@ -39,7 +39,7 @@ const statusStyles: Record<ActivityStatus, string> = {
 };
 
 export function ActivityDetails({ techfestId, activity }: Props) {
-    const { delete_activity } = useActivityActions(techfestId, activity.id);
+    const { delete_activity, register, unregister } = useActivityActions(techfestId, activity.id);
     const { open } = useModalStore();
     const confirm = useConfirm();
 
@@ -88,6 +88,21 @@ export function ActivityDetails({ techfestId, activity }: Props) {
             actionLabel: "Deleting",
             icon: <Trash2 className="h-4 w-4" />,
             onConfirm: () => delete_activity.mutateAsync(),
+        });
+    };
+
+    const handleRegister = () => {
+        register.mutate();
+    };
+
+    const handleUnregister = async () => {
+        await confirm({
+            title: "Unregister?",
+            description: "Are you sure you want to unregister from this activity?",
+            destructive: true,
+            confirmText: "Unregister",
+            actionLabel: "Unregistering",
+            onConfirm: () => unregister.mutateAsync(),
         });
     };
 
@@ -148,15 +163,29 @@ export function ActivityDetails({ techfestId, activity }: Props) {
                     </Access>
 
                     <Access resource="activity" action="register">
-                        <Button
-                            size="sm"
-                            variant="default"
-                            className="flex-1 sm:flex-none"
-                            onClick={() => console.log("Register")}
-                        >
-                            <CheckCircle2 className="mr-2 h-4 w-4" />
-                            Register Now
-                        </Button>
+                        {activity.isRegistered ? (
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                className="flex-1 sm:flex-none border-red-200 text-red-600 hover:bg-red-50"
+                                onClick={handleUnregister}
+                                disabled={unregister.isPending}
+                            >
+                                <Users className="mr-2 h-4 w-4" />
+                                Unregister
+                            </Button>
+                        ) : (
+                            <Button
+                                size="sm"
+                                variant="default"
+                                className="flex-1 sm:flex-none"
+                                onClick={handleRegister}
+                                disabled={register.isPending || (activity.capacity !== undefined && (activity.registrationCount || 0) >= activity.capacity)}
+                            >
+                                <CheckCircle2 className="mr-2 h-4 w-4" />
+                                {activity.capacity !== undefined && (activity.registrationCount || 0) >= activity.capacity ? "Full Capacity" : "Register Now"}
+                            </Button>
+                        )}
                     </Access>
 
 
@@ -267,8 +296,8 @@ export function ActivityDetails({ techfestId, activity }: Props) {
                                         <Users className="h-4 w-4 text-primary" />
                                     </div>
                                     <div>
-                                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Capacity</p>
-                                        <p className="text-sm font-semibold">{activity.capacity} Participants</p>
+                                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Registration</p>
+                                        <p className="text-sm font-semibold">{activity.registrationCount || 0} / {activity.capacity || "∞"} Enrolled</p>
                                     </div>
                                 </div>
 

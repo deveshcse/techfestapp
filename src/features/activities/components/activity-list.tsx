@@ -64,9 +64,16 @@ export function ActivityList({ techfestId }: Props) {
                                         <h3 className="text-lg font-bold leading-none">{activity.title}</h3>
                                         <p className="text-sm text-muted-foreground line-clamp-1">{activity.description}</p>
                                     </div>
-                                    <Badge variant="outline" className={cn("capitalize", statusStyles[activity.status])}>
-                                        {activity.status.toLowerCase()}
-                                    </Badge>
+                                    <div className="flex items-center gap-2">
+                                        {activity.isRegistered && (
+                                            <Badge variant="default" className="bg-blue-100 text-blue-800 border-blue-200">
+                                                Registered
+                                            </Badge>
+                                        )}
+                                        <Badge variant="outline" className={cn("capitalize", statusStyles[activity.status])}>
+                                            {activity.status.toLowerCase()}
+                                        </Badge>
+                                    </div>
                                 </div>
 
                                 <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground pt-1">

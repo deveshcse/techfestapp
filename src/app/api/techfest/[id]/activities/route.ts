@@ -44,6 +44,15 @@ export async function GET(request: NextRequest, { params }: Params) {
         startDateTime: true,
         endDateTime: true,
         capacity: true,
+        registrations: {
+          where: {
+            userId: session.user.id,
+            status: "CONFIRMED",
+          },
+          select: {
+            id: true,
+          },
+        },
       },
 
       orderBy: {
@@ -54,7 +63,11 @@ export async function GET(request: NextRequest, { params }: Params) {
     return NextResponse.json(
       {
         success: true,
-        data: activities,
+        data: activities.map(activity => ({
+          ...activity,
+          isRegistered: activity.registrations.length > 0,
+          registrations: undefined, // cleanup
+        })),
       },
       { status: 200 },
     );
