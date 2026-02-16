@@ -1,59 +1,33 @@
 "use client";
 
 import * as React from "react";
-import { useForm, Controller, useWatch, useFieldArray } from "react-hook-form";
 import { format } from "date-fns";
 import {
     CalendarIcon,
     MapPin,
     Trash2,
     Pencil,
-    CircleX,
-    Save,
     Clock,
     Users,
     Info,
+    CheckCircle2,
+    AlertCircle,
 } from "lucide-react";
-import {
-    Select,
-    SelectTrigger,
-    SelectContent,
-    SelectItem,
-    SelectValue,
-} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-    Popover,
-    PopoverTrigger,
-    PopoverContent,
-} from "@/components/ui/popover";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 
-import {
-    Field,
-    FieldGroup,
-    FieldLabel,
-    FieldError,
-    FieldSet,
-    FieldLegend,
-} from "@/components/ui/field";
-
-import { Activity, UpdateActivityInput, ActivityStatus, ActivityType } from "../types/activity.types";
+import { Activity, ActivityStatus } from "../types/activity.types";
 import { useActivityActions } from "../utils/useActivities";
 import { useConfirm } from "@/hooks/use-confirm";
 import { cn } from "@/lib/utils";
-import { ac } from "@/lib/permissions";
-import { DateTimePicker } from "@/components/common/date-time-picker";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { UpdateActivitySchema } from "../schemas/activity.schema";
+import { useModalStore } from "@/store/useModalStore";
+import { ActivityCreateUpdateForm } from "./activity-create-update-form";
 
 type Props = {
     techfestId: number;
-    activity: UpdateActivityInput;
+    activity: Activity;
 };
 
 const statusStyles: Record<ActivityStatus, string> = {
@@ -64,54 +38,21 @@ const statusStyles: Record<ActivityStatus, string> = {
 };
 
 export function ActivityDetails({ techfestId, activity }: Props) {
-
-
-    const [isEditing, setIsEditing] = React.useState(false);
-    const { update_activity, delete_activity } = useActivityActions(techfestId, activity.id);
+    const { delete_activity } = useActivityActions(techfestId, activity.id);
+    const { open } = useModalStore();
     const confirm = useConfirm();
 
-    const form = useForm<UpdateActivityInput>({
-        resolver: zodResolver(UpdateActivitySchema),
-        defaultValues: activity,
-        mode: "onBlur",
-    });
-
-    const {
-        register,
-        handleSubmit,
-        reset,
-        control,
-        formState: { errors, isDirty },
-    } = form;
-
-    const startDateTime = useWatch({ control, name: "startDateTime" });
-    const endDateTime = useWatch({ control, name: "endDateTime" });
-
-    const lock = !isEditing;
-
-    function startEdit() {
-        reset(activity);
-        setIsEditing(true);
-    }
-
-    function cancelEdit() {
-        reset(activity);
-        setIsEditing(false);
-    }
-
-    function submit(values: UpdateActivityInput) {
-        update_activity.mutate(values, {
-            onSuccess: () => setIsEditing(false),
-        });
-    }
-
-    const { fields, append, remove } = useFieldArray<
-        UpdateActivityInput,
-        "rules"
-    >({
-        control,
-        name: "rules",
-    });
+    const handleUpdateClick = () => {
+        open(
+            <ActivityCreateUpdateForm
+                techfestId={techfestId}
+                activityId={activity.id}
+                initialData={activity}
+            />,
+            "Update Activity",
+            "Modify the details of this activity."
+        );
+    };
 
     const handleDelete = async () => {
         await confirm({
@@ -126,278 +67,195 @@ export function ActivityDetails({ techfestId, activity }: Props) {
     };
 
     return (
-        <form
-            onSubmit={handleSubmit(submit)}
-            className="mx-auto max-w-4xl space-y-8 pb-10"
-        >
+        <div className="mx-auto max-w-5xl space-y-6 pb-10">
             {/* HEADER / ACTION BAR */}
-            <div className="sticky top-0 z-10 flex justify-between items-center gap-4 bg-background/80 backdrop-blur border rounded-lg p-4">
-                <div>
-                    <h2 className="text-xl font-semibold">Activity Details</h2>
-                    <p className="text-sm text-muted-foreground">
-                        Manage and update activity information
-                    </p>
+            <div className="sticky top-0 z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-background/95 backdrop-blur border rounded-xl p-6 shadow-sm">
+                <div className="space-y-1">
+                    <div className="flex items-center gap-3">
+                        <h1 className="text-2xl font-bold tracking-tight">{activity.title}</h1>
+                        <Badge className={cn("px-2.5 py-0.5 font-semibold transition-colors", statusStyles[activity.status])}>
+                            {activity.status}
+                        </Badge>
+                    </div>
+                    {/* <p className="text-muted-foreground flex items-center gap-2">
+                        <Info className="h-4 w-4" />
+                        ID: {activity.id} • Last updated {format(new Date(activity.updatedAt), "PPp")}
+                    </p> */}
                 </div>
 
-                <div className="flex gap-2">
-                    {isEditing && (
-                        <Button size="sm" type="button" variant="ghost" onClick={cancelEdit}>
-                            <CircleX className="mr-2 h-4 w-4" />
-                            Cancel
-                        </Button>
-                    )}
+                <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={handleUpdateClick}
+                        className="flex-1 sm:flex-none"
+                    >
+                        <Pencil className="mr-2 h-4 w-4" />
+                        Edit Activity
+                    </Button>
 
                     <Button
                         size="sm"
-                        type="button"
+                        variant="outline"
+                        className="flex-1 sm:flex-none"
+                        onClick={() => console.log("Update Status")}
+                    >
+                        <AlertCircle className="mr-2 h-4 w-4" />
+                        Update Status
+                    </Button>
+
+                    <Button
+                        size="sm"
+                        variant="default"
+                        className="flex-1 sm:flex-none"
+                        onClick={() => console.log("Register")}
+                    >
+                        <CheckCircle2 className="mr-2 h-4 w-4" />
+                        Register Now
+                    </Button>
+
+                    <Button
+                        size="sm"
                         variant="destructive"
                         onClick={handleDelete}
-                        disabled={delete_activity.isPending || isEditing}
+                        disabled={delete_activity.isPending}
+                        className="flex-1 sm:flex-none"
                     >
                         <Trash2 className="mr-2 h-4 w-4" />
                         Delete
                     </Button>
-
-                    <Button
-                        size="sm"
-                        type={isEditing ? "submit" : "button"}
-                        variant={isEditing ? "default" : "outline"}
-                        onClick={!isEditing ? startEdit : undefined}
-                        disabled={isEditing && (!isDirty || update_activity.isPending)}
-                    >
-                        {isEditing ? (
-                            <>
-                                <Save className="mr-2 h-4 w-4" />
-                                {update_activity.isPending ? "Saving..." : "Save Changes"}
-                            </>
-                        ) : (
-                            <>
-                                <Pencil className="mr-2 h-4 w-4" />
-                                Edit
-                            </>
-                        )}
-                    </Button>
                 </div>
             </div>
 
-            {/* CORE INFORMATION */}
-            <Card>
-                <CardContent className="p-6 space-y-6">
-                    <h3 className="font-semibold text-lg">Core Information</h3>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Main Content */}
+                <div className="lg:col-span-2 space-y-6">
+                    {/* Description */}
+                    <Card className="shadow-sm">
+                        <CardHeader>
+                            <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                                <Info className="h-5 w-5 text-primary" />
+                                Description
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
+                                {activity.description || "No description provided."}
+                            </p>
+                        </CardContent>
+                    </Card>
 
-                    <FieldGroup>
-                        <Field>
-                            <FieldLabel>Title</FieldLabel>
-                            <Input
-                                {...register("title", { required: "Title is required" })}
-                                readOnly={lock}
-                                className={cn(
-                                    lock && "border-0 bg-transparent px-0 shadow-none",
-                                    !lock && "bg-background"
-                                )}
-                            />
-                            <FieldError errors={errors.title && [errors.title]} />
-                        </Field>
+                    {/* Rules */}
+                    <Card className="shadow-sm">
+                        <CardHeader>
+                            <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                                <AlertCircle className="h-5 w-5 text-primary" />
+                                Guidelines & Rules
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            {activity.rules && activity.rules.length > 0 ? (
+                                <ul className="space-y-4">
+                                    {activity.rules.map((rule, index) => (
+                                        <li key={index} className="flex gap-3">
+                                            <span className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">
+                                                {index + 1}
+                                            </span>
+                                            <p className="text-muted-foreground">{rule.value}</p>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p className="text-muted-foreground italic">No rules specified for this activity.</p>
+                            )}
+                        </CardContent>
+                    </Card>
+                </div>
 
-                        <Field>
-                            <FieldLabel>Description</FieldLabel>
-                            <Textarea
-                                rows={4}
-                                {...register("description")}
-                                readOnly={lock}
-                                placeholder="Enter activity description..."
-                                className={cn(
-                                    lock && "border-0 bg-transparent px-0 shadow-none",
-                                    !lock && "bg-background"
-                                )}
-                            />
-                        </Field>
-                    </FieldGroup>
-                </CardContent>
-            </Card>
-
-            {/* SCHEDULE + DETAILS */}
-            <Card>
-                <CardContent className="p-6 space-y-6">
-                    <h3 className="font-semibold text-lg">Schedule & Details</h3>
-
-                    <div className="grid md:grid-cols-2 gap-6">
-                        {/* STATUS */}
-                        <Field>
-                            <FieldLabel>Status</FieldLabel>
-                            <Controller
-                                control={control}
-                                name="status"
-                                render={({ field }) =>
-                                    <Select value={field.value} onValueChange={field.onChange}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select status" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {Object.values(ActivityStatus).map((s) => (
-                                                <SelectItem key={s} value={s}>
-                                                    {s}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                }
-                            />
-                        </Field>
-
-                        {/* TYPE */}
-                        <Field>
-                            <FieldLabel>Type</FieldLabel>
-                            <Controller
-                                control={control}
-                                name="type"
-                                render={({ field }) =>
-                                    <Select value={field.value} onValueChange={field.onChange}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select type" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {Object.values(ActivityType).map((t) => (
-                                                <SelectItem key={t} value={t}>
-                                                    {t.replace("_", " ")}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                }
-                            />
-                        </Field>
-
-                        {/* START */}
-                        <Field>
-
-                            <Controller
-                                control={control}
-                                name="startDateTime"
-                                rules={{ required: "Start time is required" }}
-                                render={({ field }) => (
-                                    <div className="min-h-[60px]">
-                                        <DateTimePicker
-                                            label="Start Date and Time"
-                                            value={field.value ? new Date(field.value) : undefined}
-                                            onChange={field.onChange}
-                                            disabled={!isEditing}
-
-
-                                        />
+                {/* Sidebar Info */}
+                <div className="space-y-6">
+                    <Card className="shadow-sm border-primary/10">
+                        <CardHeader className="bg-primary/5">
+                            <CardTitle className="text-lg font-semibold">Event Details</CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-6 space-y-4">
+                            <div className="space-y-4">
+                                <div className="flex gap-3 items-start">
+                                    <div className="bg-primary/10 p-2 rounded-lg">
+                                        <CalendarIcon className="h-4 w-4 text-primary" />
                                     </div>
-                                )}
-                            />
-
-                            <FieldError errors={errors.startDateTime && [errors.startDateTime]} />
-                        </Field>
-
-
-
-                        {/* END */}
-                        <Field>
-
-                            <Controller
-                                control={control}
-                                name="endDateTime"
-
-                                render={({ field }) => (
-                                    <div className="min-h-[60px]">
-                                        <DateTimePicker
-                                            label="End Date and Time"
-                                            value={field.value ? new Date(field.value) : undefined}
-                                            onChange={field.onChange}
-                                            disabled={!isEditing}
-                                        />
+                                    <div>
+                                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Date</p>
+                                        <p className="text-sm font-semibold">{format(new Date(activity.startDateTime), "PPP")}</p>
                                     </div>
-                                )}
-                            />
+                                </div>
 
-                            <FieldError errors={errors.endDateTime && [errors.endDateTime]} />
-                        </Field>
+                                <div className="flex gap-3 items-start">
+                                    <div className="bg-primary/10 p-2 rounded-lg">
+                                        <Clock className="h-4 w-4 text-primary" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Time</p>
+                                        <p className="text-sm font-semibold">
+                                            {format(new Date(activity.startDateTime), "p")} - {format(new Date(activity.endDateTime), "p")}
+                                        </p>
+                                    </div>
+                                </div>
 
+                                <Separator />
 
-                        {/* VENUE */}
-                        <Field>
-                            <FieldLabel>Venue</FieldLabel>
-                            <Controller
-                                control={control}
-                                name="venue"
-                                render={({ field }) =>
-                                    <Input {...field} disabled={!isEditing}/>
-                                }
-                            /> <FieldError errors={errors.venue && [errors.venue]} />
-                        </Field>
+                                <div className="flex gap-3 items-start">
+                                    <div className="bg-primary/10 p-2 rounded-lg">
+                                        <MapPin className="h-4 w-4 text-primary" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Venue</p>
+                                        <p className="text-sm font-semibold">{activity.venue || "TBD"}</p>
+                                    </div>
+                                </div>
 
-                        {/* CAPACITY */}
-                        <Field>
-                            <FieldLabel>Capacity</FieldLabel>
-                            <Controller
-                                control={control}
-                                name="capacity"
-                                render={({ field }) =>
-                                    <Input
-                                        type="number"
-                                        value={field.value ?? ""}
-                                        onChange={(e) =>
-                                            field.onChange(Number(e.target.value))
-                                        }
-                                        disabled={!isEditing}
+                                <div className="flex gap-3 items-start">
+                                    <div className="bg-primary/10 p-2 rounded-lg">
+                                        <Users className="h-4 w-4 text-primary" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Capacity</p>
+                                        <p className="text-sm font-semibold">{activity.capacity} Participants</p>
+                                    </div>
+                                </div>
 
-                                    />
-                                }
-                            />  <FieldError errors={errors.capacity && [errors.capacity]} />
-
-                        </Field>
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* RULES */}
-            <Card>
-                <CardContent className="p-6 space-y-6">
-                    <h3 className="font-semibold text-lg">Guidelines & Rules</h3>
-
-                    <div className="space-y-3">
-                        {fields.map((field, index) => (
-                            <div
-                                key={field.id}
-                                className="flex items-center gap-2 border rounded-md p-2"
-                            >
-                                <Controller
-                                    control={control}
-                                    name={`rules.${index}.value`}
-                                    render={({ field }) => (
-                                        <Input {...field} className="flex-1" disabled={!isEditing} />
-                                    )}
-                                />
-                                <FieldError
-                                    errors={errors.rules?.[index]?.value && [
-                                        errors.rules[index]?.value,
-                                    ]}
-                                />
-                                <Button
-                                    type="button"
-                                    variant="destructive"
-                                    size="icon"
-                                    onClick={() => remove(index)}
-                                >
-                                    <Trash2 className="h-4 w-4" />
-                                </Button>
+                                <div className="flex gap-3 items-start">
+                                    <div className="bg-primary/10 p-2 rounded-lg">
+                                        <Badge variant="outline" className="h-4 w-4 p-0 flex items-center justify-center border-primary/20">
+                                            <span className="text-[10px] font-bold text-primary">T</span>
+                                        </Badge>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Activity Type</p>
+                                        <Badge variant="secondary" className="mt-1 capitalize">
+                                            {activity.type.toLowerCase().replace("_", " ")}
+                                        </Badge>
+                                    </div>
+                                </div>
                             </div>
-                        ))}
-                    </div>
+                        </CardContent>
+                    </Card>
 
-                    <Button
-                        type="button"
-                        variant="secondary"
-                        onClick={() => append({ value: "" })}
-                    >
-                        + Add Rule
-                    </Button>
-                </CardContent>
-            </Card>
-        </form>
+                    <Card className="shadow-sm">
+                        <CardHeader>
+                            <CardTitle className="text-base font-semibold">Organized By</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex items-center gap-3">
+                                <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center font-bold text-muted-foreground">
+                                    {activity.organizedBy?.name?.charAt(0) || "U"}
+                                </div>
+                                <p className="font-medium">{activity.organizedBy?.name || "Unknown Organizer"}</p>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+        </div>
     );
-
 }

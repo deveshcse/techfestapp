@@ -2,7 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { authorize } from "@/app/api/_lib/authorize";
 import { getIdParam } from "@/app/api/_lib/params";
 import prisma from "@/lib/prisma";
-import { CreateActivityInputSchema } from "@/features/activities/schemas/activity.schema";
+import { CreateUpdateActivityInputSchema } from "@/features/activities/schemas/activity.schema";
 
 type Params = {
   params: Promise<{
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest, { params }: Params) {
 
     const body = await request.json();
     const payload = { ...body, startDateTime: new Date(body.startDateTime), endDateTime: new Date(body.endDateTime) }
-    const result = CreateActivityInputSchema.safeParse(payload);
+    const result = CreateUpdateActivityInputSchema.safeParse(payload);
 
     if (!result.success) {
       return NextResponse.json(

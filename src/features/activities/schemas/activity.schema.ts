@@ -3,6 +3,7 @@ import { ActivityType, ActivityStatus } from "@/generated/prisma/enums";
 
 export const ActivityBaseSchema = z
   .object({
+    id: z.number().int().optional(),
     title: z.string().trim().min(1, { message: "Title is required." }),
 
     description: z.string().optional(),
@@ -40,28 +41,28 @@ export const ActivityBaseSchema = z
     }
   });
 
-export const CreateActivityFormDataSchema = ActivityBaseSchema;
+export const CreateUpdateActivityFormDataSchema = ActivityBaseSchema;
 
-export const CreateActivityInputSchema = ActivityBaseSchema.omit({
+export const CreateUpdateActivityInputSchema = ActivityBaseSchema.omit({
   rules: true,
 }).safeExtend({
   rules: z.array(z.string()),
 });
 
-export const UpdateActivitySchema = ActivityBaseSchema.partial().extend({
+export const UpdateActivityStatusSchema = z.object({
   id: z.number().int(),
   status: z.enum(ActivityStatus),
 });
 
 export const ActivitySchema = ActivityBaseSchema.omit({
-  rules: true,
+  id: true,
+  
 }).safeExtend({
   id: z.number().int(),
   organizedBy: z.object({
     name: z.string(),
   }),
   status: z.enum(ActivityStatus),
-  rules: z.array(z.string()),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
