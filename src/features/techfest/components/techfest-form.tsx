@@ -25,8 +25,8 @@ import { TechFestFormValues } from "../types/techfest.types";
 import { TechFestFormSchema } from "../schemas/techfest.schema";
 import { useCreateTechFest, useTechFest } from "../utils/useTechFest";
 import { Spinner } from "@/components/ui/spinner";
-import { useAuth } from "@/features/auth/context/auth-context";
-import { authClient } from "@/lib/auth-client";
+// import { useAuth } from "@/features/auth/context/auth-context";
+// import { authClient } from "@/lib/auth-client";
 
 
 interface EventFormProps {
@@ -35,17 +35,17 @@ interface EventFormProps {
 
 
 export function EventCreateUpdateForm({ initialData }: EventFormProps) {
-  const { user, isAuthenticated } = useAuth();
+  // const { user, isAuthenticated } = useAuth();
 
-  if (user && isAuthenticated) {
-    const canCreateTechfest = authClient.admin.checkRolePermission({
-      permission: {
-        techfest: ["create"],
-      },
-      role: user?.role,
-    });
-    console.log("User can create techfest:", canCreateTechfest);
-  }
+  // if (user && isAuthenticated) {
+  //   const canCreateTechfest = authClient.admin.checkRolePermission({
+  //     permission: {
+  //       techfest: ["create"],
+  //     },
+  //     role: user?.role,
+  //   });
+  //   console.log("User can create techfest:", canCreateTechfest);
+  // }
 
   const { mutate: createTechFest, isPending } = useCreateTechFest();
 
