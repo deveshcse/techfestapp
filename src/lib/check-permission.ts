@@ -14,7 +14,7 @@ export function checkPermission<R extends Resource>({
   action,
 }: PermissionInput<R>) {
   return authClient.admin.checkRolePermission({
-    role,
+    role: role ?? "user",
     permissions: {
       [resource]: [action],
     },
