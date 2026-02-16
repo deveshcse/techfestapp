@@ -51,6 +51,7 @@ export async function GET(request: NextRequest, { params }: Params) {
           },
           select: {
             id: true,
+            status: true,
           },
         },
       },
@@ -66,6 +67,7 @@ export async function GET(request: NextRequest, { params }: Params) {
         data: activities.map(activity => ({
           ...activity,
           isRegistered: activity.registrations.length > 0,
+          registrationStatus: activity.registrations[0]?.status,
           registrations: undefined, // cleanup
         })),
       },

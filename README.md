@@ -25,10 +25,25 @@ The TechFest Management System is a comprehensive solution for managing multiple
 - **Dynamic Rules System**: Multi-field array for managing competition rules dynamically.
 - **Status Workflows**: Specific flow for updating activity states (Draft, Published, Completed, Cancelled).
 
+### 🫂 Activity Registration & Multi-Organizer
+- **Join Events**: Seamless registration for students with automatic schedule conflict detection.
+- **Smart Waitlisting**: Automatically queues users when activities reach capacity and promotes them when slots open up.
+- **Many-to-Many Curators**: Assign multiple organizers to a single activity to share management responsibilities.
+
 ### 📊 Modern UI/UX
 - **Shadcn UI + Tailwind CSS 4**: A sleek, professional interface using highly accessible components.
 - **Responsive Design**: Fully optimized for mobile, tablet, and desktop views.
 - **Real-time Feedback**: Integrated `sonner` for toast notifications and `useConfirm` for critical actions.
+
+---
+
+## 🗺️ Future Roadmap
+
+- **Check-in System**: QR code-based attendance tracking for volunteers.
+- **Manual Approval Workflow**: Optional "Pending" state for high-stakes workshops requiring profile review.
+- **Automated SMTP Integration**: Email notifications for registration confirmations and schedule changes.
+- **Certificate Generation**: Dynamic PDF generation for students who mark as `ATTENDED`.
+- **Feedback & Ratings**: Post-event collection of scores and qualitative reviews to improve future TechFests.
 
 ---
 

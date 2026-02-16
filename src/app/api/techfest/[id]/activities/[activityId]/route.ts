@@ -65,7 +65,9 @@ export async function GET(request: NextRequest, { params }: Params) {
             where: {
                 activityId: parsedActivityId.data,
                 userId: session.user.id,
-                status: "CONFIRMED",
+                status: {
+                    in: ["CONFIRMED", "WAITLISTED", "PENDING", "ATTENDED"]
+                }
             },
         });
 
@@ -80,6 +82,7 @@ export async function GET(request: NextRequest, { params }: Params) {
         const data = {
             ...activity,
             isRegistered: !!registration,
+            registrationStatus: registration?.status,
             registrationCount,
         };
 

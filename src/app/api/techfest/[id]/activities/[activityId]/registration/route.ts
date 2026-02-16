@@ -45,12 +45,10 @@ export async function POST(request: NextRequest, { params }: Params) {
             );
         }
 
-        // 2. Check Capacity
+        // 2. Determine initial status based on Capacity
+        let initialStatus: "CONFIRMED" | "WAITLISTED" = "CONFIRMED";
         if (activity.capacity && activity._count.registrations >= activity.capacity) {
-            return NextResponse.json(
-                { success: false, error: "Activity is full. Registration is currently closed." },
-                { status: 400 },
-            );
+            initialStatus = "WAITLISTED";
         }
 
         // 3. Check for existing registration
@@ -121,16 +119,18 @@ export async function POST(request: NextRequest, { params }: Params) {
             create: {
                 userId: session.user.id,
                 activityId: parsedActivityId.data,
-                status: "CONFIRMED",
+                status: initialStatus,
             },
             update: {
-                status: "CONFIRMED",
+                status: initialStatus,
             },
         });
 
         return NextResponse.json({
             success: true,
-            message: "Successfully registered for activity",
+            message: initialStatus === "CONFIRMED"
+                ? "Successfully registered for activity"
+                : "Activity is full. You have been added to the waitlist.",
             data: registration,
         }, { status: 201 });
     } catch (error) {
@@ -158,7 +158,7 @@ export async function DELETE(request: NextRequest, { params }: Params) {
         }
 
         // We mark as CANCELLED instead of deleting to keep a record (audit trail)
-        await prisma.registration.update({
+        const cancelledRegistration = await prisma.registration.update({
             where: {
                 userId_activityId: {
                     userId: session.user.id,
@@ -169,6 +169,26 @@ export async function DELETE(request: NextRequest, { params }: Params) {
                 status: "CANCELLED",
             },
         });
+
+        // If the user was CONFIRMED, promote the next person in the waitlist
+        if (cancelledRegistration.status === "CONFIRMED") {
+            const nextInWaitlist = await prisma.registration.findFirst({
+                where: {
+                    activityId: parsedActivityId.data,
+                    status: "WAITLISTED",
+                },
+                orderBy: {
+                    createdAt: "asc",
+                },
+            });
+
+            if (nextInWaitlist) {
+                await prisma.registration.update({
+                    where: { id: nextInWaitlist.id },
+                    data: { status: "CONFIRMED" },
+                });
+            }
+        }
 
         return NextResponse.json({
             success: true,

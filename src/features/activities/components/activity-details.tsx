@@ -96,12 +96,15 @@ export function ActivityDetails({ techfestId, activity }: Props) {
     };
 
     const handleUnregister = async () => {
+        const isWaitlisted = activity.registrationStatus === "WAITLISTED";
         await confirm({
-            title: "Unregister?",
-            description: "Are you sure you want to unregister from this activity?",
+            title: isWaitlisted ? "Leave Waitlist?" : "Unregister?",
+            description: isWaitlisted
+                ? "Are you sure you want to remove yourself from the waitlist?"
+                : "Are you sure you want to unregister from this activity?",
             destructive: true,
-            confirmText: "Unregister",
-            actionLabel: "Unregistering",
+            confirmText: isWaitlisted ? "Leave Waitlist" : "Unregister",
+            actionLabel: isWaitlisted ? "Leaving" : "Unregistering",
             onConfirm: () => unregister.mutateAsync(),
         });
     };
@@ -167,23 +170,26 @@ export function ActivityDetails({ techfestId, activity }: Props) {
                             <Button
                                 size="sm"
                                 variant="outline"
-                                className="flex-1 sm:flex-none border-red-200 text-red-600 hover:bg-red-50"
+                                className={cn(
+                                    "flex-1 sm:flex-none border-red-200 text-red-600 hover:bg-red-50",
+                                    activity.registrationStatus === "WAITLISTED" && "border-yellow-200 text-yellow-600 hover:bg-yellow-50"
+                                )}
                                 onClick={handleUnregister}
                                 disabled={unregister.isPending}
                             >
                                 <Users className="mr-2 h-4 w-4" />
-                                Unregister
+                                {activity.registrationStatus === "WAITLISTED" ? "Leave Waitlist" : "Unregister"}
                             </Button>
                         ) : (
                             <Button
                                 size="sm"
-                                variant="default"
+                                variant={activity.capacity !== undefined && (activity.registrationCount || 0) >= activity.capacity ? "outline" : "default"}
                                 className="flex-1 sm:flex-none"
                                 onClick={handleRegister}
-                                disabled={register.isPending || (activity.capacity !== undefined && (activity.registrationCount || 0) >= activity.capacity)}
+                                disabled={register.isPending}
                             >
                                 <CheckCircle2 className="mr-2 h-4 w-4" />
-                                {activity.capacity !== undefined && (activity.registrationCount || 0) >= activity.capacity ? "Full Capacity" : "Register Now"}
+                                {activity.capacity !== undefined && (activity.registrationCount || 0) >= activity.capacity ? "Join Waitlist" : "Register Now"}
                             </Button>
                         )}
                     </Access>

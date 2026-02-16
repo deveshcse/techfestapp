@@ -72,6 +72,7 @@ export const ActivityResponseSchema = ActivityBaseSchema.omit({
   ),
   status: z.enum(ActivityStatus),
   isRegistered: z.boolean().optional(),
+  registrationStatus: z.enum(["CONFIRMED", "WAITLISTED", "CANCELLED", "PENDING", "ATTENDED"]).optional(),
   registrationCount: z.number().int().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
