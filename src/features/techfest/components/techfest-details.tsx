@@ -323,17 +323,6 @@ export function TechFestDetail({ techFest }: Props) {
           <FieldError errors={errors.description && [errors.description]} />
         </Field>
       </FieldSet>
-
-      {/* ================= RULES ================= */}
-      <FieldSet>
-        <FieldLegend>Event Rules & Guidelines</FieldLegend>
-
-        <ul className="list-disc space-y-2 pl-6 text-sm text-muted-foreground">
-          <li>Participants must carry a valid ID</li>
-          <li>Follow all safety guidelines</li>
-          <li>Respectful behavior is expected</li>
-        </ul>
-      </FieldSet>
     </form>
   );
 }
