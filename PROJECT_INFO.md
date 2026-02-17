@@ -87,6 +87,13 @@ The project follows a modular "Features" based architecture within the `src` dir
   - **Purpose**: Create an activity under a techfest.
   - **Payload**: `{ title, description, venue, type, startDateTime, endDateTime, capacity, rules }`
 
+- **POST/DELETE `/api/techfest/[id]/activities/[activityId]/registration`**
+  - **Purpose**: Register or unregister for an activity.
+  - **Key Logic**: 
+    - **Waitlist**: Automatically marks as `WAITLISTED` if `capacity` is reached.
+    - **Waitlist Promotion**: If a `CONFIRMED` registration is cancelled, the next person in the waitlist is automatically promoted to `CONFIRMED`.
+    - **Conflict Detection**: Prevents registering for overlapping activities in the same TechFest.
+
 - **GET/PUT/DELETE `/api/techfest/[id]/activities/[activityId]`**
   - **Purpose**: Detailed management of a specific activity.
 
@@ -138,13 +145,13 @@ Managed via **Better-Auth** with a custom Permission System in `src/lib/permissi
   - [ ] Bulk mark attendance functionality.
   - [ ] Filter registrations by attendance status.
   - [ ] CSV Export for activity-wise attendance.
-- [ ] **Activity Status Workflow**:
+- [ ] **Activity Status Workflow (Schema Enhancement)**:
+  - [ ] Add `REGISTRATION_CLOSED` to `ActivityStatus` enum.
   - [ ] Implement transitions: `DRAFT` → `PUBLISHED` → `REGISTRATION_CLOSED` → `COMPLETED`.
-  - [ ] Auto-close registrations when capacity is full or end-date passes.
-- [ ] **Capacity & Limits**:
-  - [ ] Rigid capacity enforcement during registration.
-  - [ ] Remaining seats display on activity cards.
-  - [ ] Automated waitlist system for popular activities.
+  - [ ] Auto-close registrations (set status to `REGISTRATION_CLOSED`) when capacity is full or end-date passes.
+- [ ] **Resource Optimization**:
+  - [ ] Prevent any new registrations when status is `REGISTRATION_CLOSED`.
+  - [ ] Show "Registration Closed" badge on the UI.
 
 ### 🥈 Phase 2: Analytics & Engagement (Mid Priority)
 - [ ] **Enhanced Dashboard Metrics**:
@@ -166,7 +173,7 @@ Managed via **Better-Auth** with a custom Permission System in `src/lib/permissi
   - [ ] Dynamic PDF certificate generation for users who marked 'ATTENDED'.
 
 ### 🧠 Strategic Recommendations
-For a SaaS-level portfolio project, focus on **Attendance** and **Dashboard Metrics** first. This completes the data loop from creation to verification, making the application feel "live" and production-ready.
+For a SaaS-level portfolio project, focus on **Attendance** and **Dashboard Metrics** first. The **Waitlist System** is already implemented and handled automatically during registration!
 
 ---
 *Last Updated: February 17, 2026*
