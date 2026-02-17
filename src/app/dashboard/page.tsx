@@ -7,7 +7,6 @@ export default async function Page() {
         <ComingSoon
           title="Dashboard"
           description="We're currently enhancing the dashboard features."
-          returnTo="/dashboard/techfest"
         />
       </div>
     </div>
