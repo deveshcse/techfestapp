@@ -1,7 +1,6 @@
-import { MyRegistrationsList } from "@/features/registrations/components/my-registrations-list";
+import { MyRegistrationsSkeleton } from "@/features/registrations/components/my-registrations-skeleton";
 
-export default function MyRegistrationsPage() {
-
+export default function Loading() {
     return (
         <div className="space-y-6 px-4">
             <div>
@@ -10,7 +9,7 @@ export default function MyRegistrationsPage() {
                     Manage and view all your registered activities.
                 </p>
             </div>
-            <MyRegistrationsList />
+            <MyRegistrationsSkeleton />
         </div>
     );
 }

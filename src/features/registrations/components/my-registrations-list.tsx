@@ -1,6 +1,5 @@
-import prisma from "@/lib/prisma";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,64 +7,28 @@ import { Calendar, MapPin, Clock, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import Link from "next/link";
-import { ActivityStatus } from "@/features/activities/types/activity.types";
+import { useRegistrations } from "../utils/hooks/use-registrations";
+import { MyRegistrationsSkeleton } from "./my-registrations-skeleton";
 
-const statusStyles: Record<ActivityStatus, string> = {
-    DRAFT: "bg-yellow-100 text-yellow-800 border-yellow-200",
-    PUBLISHED: "bg-green-100 text-green-800 border-green-200",
-    CANCELLED: "bg-red-100 text-red-800 border-red-200",
-    COMPLETED: "bg-blue-100 text-blue-800 border-blue-200",
-};
+export function MyRegistrationsList() {
+    const { data: response, isLoading, isError, error } = useRegistrations();
 
-export async function MyRegistrationsList() {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
+    if (isLoading) {
+        return <MyRegistrationsSkeleton />;
+    }
 
-    if (!session) {
+    if (isError) {
         return (
-            <div className="p-8 text-center border-2 border-dashed rounded-xl">
-                <p className="text-muted-foreground">Please sign in to view your registrations.</p>
+            <div className="p-8 text-center border-2 border-dashed border-destructive/50 rounded-xl bg-destructive/5">
+                <p className="text-destructive font-medium">Failed to load registrations</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                    {error instanceof Error ? error.message : "Please try again later."}
+                </p>
             </div>
         );
     }
 
-    const registrations = await prisma.registration.findMany({
-        where: {
-            userId: session.user.id,
-            status: {
-                in: ["CONFIRMED", "WAITLISTED", "PENDING", "ATTENDED"]
-            }
-        },
-        include: {
-            activity: {
-                select: {
-                    id: true,
-                    title: true,
-                    description: true,
-                    venue: true,
-                    type: true,
-                    startDateTime: true,
-                    endDateTime: true,
-                    capacity: true,
-                    techfest: {
-                        select: {
-                            id: true,
-                            title: true,
-                        }
-                    },
-                  
-                }
-            }
-        },
-        orderBy: {
-            activity: {
-                startDateTime: "asc"
-            }
-        }
-    });
-
-console.log(JSON.stringify(registrations, null, 2));
+    const registrations = response?.data || [];
 
     if (registrations.length === 0) {
         return (
