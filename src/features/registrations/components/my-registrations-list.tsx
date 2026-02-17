@@ -9,6 +9,8 @@ import { format } from "date-fns";
 import Link from "next/link";
 import { useRegistrations } from "../utils/hooks/use-registrations";
 import { MyRegistrationsSkeleton } from "./my-registrations-skeleton";
+import { ErrorState } from "@/components/common/error-state";
+import { EmptyState } from "@/components/common/empty-state";
 
 export function MyRegistrationsList() {
     const { data: response, isLoading, isError, error } = useRegistrations();
@@ -19,12 +21,10 @@ export function MyRegistrationsList() {
 
     if (isError) {
         return (
-            <div className="p-8 text-center border-2 border-dashed border-destructive/50 rounded-xl bg-destructive/5">
-                <p className="text-destructive font-medium">Failed to load registrations</p>
-                <p className="text-sm text-muted-foreground mt-1">
-                    {error instanceof Error ? error.message : "Please try again later."}
-                </p>
-            </div>
+            <ErrorState
+                title="Failed to load registrations"
+                message={error instanceof Error ? error.message : "Please try again later."}
+            />
         );
     }
 
@@ -32,20 +32,16 @@ export function MyRegistrationsList() {
 
     if (registrations.length === 0) {
         return (
-            <div className="flex flex-col items-center justify-center p-12 text-center border-2 border-dashed rounded-xl bg-muted/30">
-                <div className="bg-primary/10 p-4 rounded-full mb-4">
-                    <Calendar className="h-8 w-8 text-primary" />
-                </div>
-                <h3 className="text-lg font-semibold">No registrations yet</h3>
-                <p className="text-sm text-muted-foreground mt-1 max-w-xs">
-                    You haven't registered for any activities. Browse the events to join!
-                </p>
-                <Link href="/dashboard/techfest">
-                    <Button className="mt-6">
-                        Explore Techfests
-                    </Button>
-                </Link>
-            </div>
+            <EmptyState
+                icon={Calendar}
+                title="No registrations yet"
+                description="You haven't registered for any activities. Browse the events to join!"
+                action={
+                    <Link href="/dashboard/techfest">
+                        <Button>Explore Techfests</Button>
+                    </Link>
+                }
+            />
         );
     }
 
