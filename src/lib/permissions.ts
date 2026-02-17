@@ -14,6 +14,7 @@ const statement = {
     "update-status",
   ],
   registration: ["read"],
+  attendance: ["mark", "view-list"],
 } as const;
 
 export const ac = createAccessControl(statement);
@@ -28,11 +29,13 @@ export const admin = ac.newRole({
   techfest: ["create", "update", "delete", "read", "publish"],
   activity: ["read", "assign-organizer", "update", "delete", "update-status", "create"],
   registration: ["read"],
+  attendance: ["mark", "view-list"],
   ...adminAc.statements,
 });
 
 export const organizer = ac.newRole({
   techfest: ["create", "update", "read"],
-  activity: ["create", "update","read"],
+  activity: ["create", "update", "read"],
   registration: ["read"],
+  attendance: ["mark", "view-list"],
 });

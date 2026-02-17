@@ -10,11 +10,13 @@ import {
     Info,
     CheckCircle2,
     AlertCircle,
+    UserCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
 
 import { ActivityResponse, ActivityStatus } from "../types/activity.types";
 import { useActivityActions } from "../utils/useActivities";
@@ -162,6 +164,20 @@ export function ActivityDetails({ techfestId, activity }: Props) {
                         >
                             <Users className="mr-2 h-4 w-4" />
                             Assign Organizer
+                        </Button>
+                    </Access>
+
+                    <Access resource="attendance" action="view-list">
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            className="flex-1 sm:flex-none"
+                            asChild
+                        >
+                            <Link href={`/dashboard/techfest/${techfestId}/activity/${activity.id}/attendance`}>
+                                <UserCheck className="mr-2 h-4 w-4" />
+                                Attendance
+                            </Link>
                         </Button>
                     </Access>
 

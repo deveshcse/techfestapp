@@ -143,6 +143,53 @@ export async function POST(request: NextRequest, { params }: Params) {
     }
 }
 
+export async function GET(request: NextRequest, { params }: Params) {
+    try {
+        await authorize(request, "attendance", "view-list");
+
+        const { activityId } = await params;
+        const parsedActivityId = activityIdSchema.safeParse(activityId);
+
+        if (!parsedActivityId.success) {
+            return NextResponse.json(
+                { success: false, error: "Invalid activity ID" },
+                { status: 400 },
+            );
+        }
+
+        const registrations = await prisma.registration.findMany({
+            where: {
+                activityId: parsedActivityId.data,
+            },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        image: true,
+                    },
+                },
+            },
+            orderBy: {
+                createdAt: "asc",
+            },
+        });
+
+        return NextResponse.json({
+            success: true,
+            data: registrations,
+        });
+    } catch (error) {
+        if (error instanceof Response) return error;
+        console.error("Fetch Registrations Error:", error);
+        return NextResponse.json(
+            { success: false, error: "Internal Server Error", details: error },
+            { status: 500 },
+        );
+    }
+}
+
 export async function DELETE(request: NextRequest, { params }: Params) {
     try {
         const { session } = await authorize(request, "activity", "register");
