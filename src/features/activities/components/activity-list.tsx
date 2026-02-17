@@ -9,6 +9,8 @@ import { useActivities } from "../utils/useActivities";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { ActivityStatus } from "../types/activity.types";
+import { ErrorState } from "@/components/common/error-state";
+import { EmptyState } from "@/components/common/empty-state";
 
 type Props = {
     techfestId: number;
@@ -23,7 +25,7 @@ const statusStyles: Record<ActivityStatus, string> = {
 
 export function ActivityList({ techfestId }: Props) {
     const router = useRouter();
-    const { data, isPending, isError } = useActivities(techfestId);
+    const { data, isPending, isError, refetch } = useActivities(techfestId);
 
     if (isPending) {
         return (
@@ -36,16 +38,27 @@ export function ActivityList({ techfestId }: Props) {
     }
 
     if (isError) {
-        return <div className="p-4 text-red-500">Failed to load activities.</div>;
+        return (
+            <ErrorState
+                title="Failed to load activities"
+                action={
+                    <Button variant="outline" onClick={() => refetch()}>
+                        Try Again
+                    </Button>
+                }
+            />
+        );
     }
 
     const activities = data?.data || [];
 
     if (activities.length === 0) {
         return (
-            <div className="flex flex-col items-center justify-center p-8 text-center border-2 border-dashed rounded-lg">
-                <p className="text-sm text-muted-foreground">No activities found for this techfest.</p>
-            </div>
+            <EmptyState
+                icon={Calendar}
+                title="No activities found"
+                description="There are no activities listed for this techfest at the moment."
+            />
         );
     }
 

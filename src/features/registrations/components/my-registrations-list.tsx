@@ -24,6 +24,11 @@ export function MyRegistrationsList() {
             <ErrorState
                 title="Failed to load registrations"
                 message={error instanceof Error ? error.message : "Please try again later."}
+                action={
+                    <Button variant="outline" onClick={() => window.history.back()}>
+                        Go Back
+                    </Button>
+                }
             />
         );
     }

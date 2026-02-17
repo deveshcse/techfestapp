@@ -12,6 +12,8 @@ import { cn } from "@/lib/utils";
 import { useTechFest } from "../utils/useTechFest";
 import { useRouter } from "next/navigation";
 import { TechFestListSkeleton } from "./techfest-list-skeleton";
+import { ErrorState } from "@/components/common/error-state";
+import { EmptyState } from "@/components/common/empty-state";
 
 export type TechFest = {
   id: number;
@@ -29,7 +31,7 @@ const statusStyles: Record<TechFestStatus, string> = {
 
 export function TechFestList() {
   const router = useRouter();
-  const { data, isPending, isError } = useTechFest();
+  const { data, isPending, isError, refetch } = useTechFest();
 
   const techfests: TechFest[] =
     data?.data.map((fest) => ({
@@ -41,11 +43,26 @@ export function TechFestList() {
   }
 
   if (isError) {
-    return <div className="p-4 text-red-500">Failed to load techfests.</div>;
+    return (
+      <ErrorState
+        title="Failed to load techfests"
+        action={
+          <Button variant="outline" onClick={() => refetch()}>
+            Try Again
+          </Button>
+        }
+      />
+    );
   }
 
   if (techfests.length === 0) {
-    return <p className="text-sm text-muted-foreground">No techfests found.</p>;
+    return (
+      <EmptyState
+        icon={Calendar}
+        title="No techfests found"
+        description="There are no techfests available at the moment. Check back later!"
+      />
+    );
   }
 
   const options = {
