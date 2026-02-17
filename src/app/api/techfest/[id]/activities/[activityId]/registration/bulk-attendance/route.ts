@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { authorize } from "@/app/api/_lib/authorize";
 import { z } from "zod";
+import { RegistrationStatus } from "@/generated/prisma/enums";
 
 type Params = {
     params: Promise<{
@@ -41,6 +42,7 @@ export async function POST(request: NextRequest, { params }: Params) {
                 attended,
                 attendedAt: attended ? new Date() : null,
                 attendanceMarkedBy: attended ? session.user.id : null,
+                status: attended ? RegistrationStatus.ATTENDED : RegistrationStatus.CONFIRMED,
             },
         });
 

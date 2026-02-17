@@ -52,7 +52,7 @@ The project follows a modular "Features" based architecture within the `src` dir
 | **User** | System users (Admin, Organizer, User) | `id`, `name`, `email`, `role`, `image` |
 | **TechFest** | High-level event (e.g., "TechFest 2026") | `id`, `title`, `description`, `start_date`, `end_date`, `venue`, `published` |
 | **Activity** | Specific event within a TechFest | `id`, `techfestId`, `title`, `description`, `type`, `status`, `capacity`, `rules` |
-| **Registration**| Links a User to an Activity | `userId`, `activityId`, `status`, `attended`, `feedback`, `rating` |
+| **Registration**| Links a User to an Activity | `userId`, `activityId`, `status` (Syncs with `attended`), `attended`, `attendedAt`, `attendanceMarkedBy` |
 
 ---
 
@@ -97,6 +97,21 @@ The project follows a modular "Features" based architecture within the `src` dir
 - **GET/PUT/DELETE `/api/techfest/[id]/activities/[activityId]`**
   - **Purpose**: Detailed management of a specific activity.
 
+### Attendance Endpoints (`/api/techfest/[id]/activities/[activityId]/registration`)
+
+- **GET `/.../registration`**
+  - **Purpose**: List all participants for an organizer (distinct from user-specific registration lists).
+  - **Permissions**: `attendance:view-list`.
+
+- **PATCH `/.../attendance`**
+  - **Purpose**: Mark individual student presence.
+  - **Logic**: Updates `attended: true/false` and syncs `status: ATTENDED` or `CONFIRMED`.
+  - **Permissions**: `attendance:mark`.
+
+- **POST `/.../bulk-attendance`**
+  - **Purpose**: Batch update attendance for multiple registration IDs.
+  - **Permissions**: `attendance:mark`.
+
 ---
 
 ## 🛠️ UI Component Library
@@ -114,6 +129,7 @@ The project follows a modular "Features" based architecture within the `src` dir
 - **Auth**: `LoginForm`, `SignUpForm`, `ForgotPasswordForm`.
 - **TechFest**: `TechFestList`, `TechFestDetails`, `TechFestForm` (Handles complex date range logic).
 - **Activities**: `ActivityList`, `ActivityDetails`, `ActivityCreateUpdateForm`.
+- **Attendance**: `AttendanceTable` (TanStack Table), `AttendanceTableContainer`, `AttendancePage`.
 - **Registrations**: `MyRegistrationsList` (Displays user's confirmed/waitlisted events).
 
 ---
@@ -124,8 +140,12 @@ Managed via **Better-Auth** with a custom Permission System in `src/lib/permissi
 
 ### Roles
 - **user**: Can read techfests, register for activities.
-- **organizer**: Can create/update techfests and activities.
-- **admin**: Full system access, including user management.
+- **organizer**: Can create/update techfests and activities, manage attendance.
+- **admin**: Full system access, including user management and attendance.
+
+### Permissions (Resource: `attendance`)
+- `view-list`: Access to participant lists.
+- `mark`: Ability to update individual or bulk attendance status.
 
 ---
 
@@ -140,11 +160,11 @@ Managed via **Better-Auth** with a custom Permission System in `src/lib/permissi
 ## 🔮 Future Feature Roadmap
 
 ### 🥇 Phase 1: Core Lifecycle & Mastery (High Priority)
-- [ ] **Attendance Management**:
-  - [ ] Mark individual student attendance.
-  - [ ] Bulk mark attendance functionality.
-  - [ ] Filter registrations by attendance status.
-  - [ ] CSV Export for activity-wise attendance.
+- [x] **Attendance Management**:
+  - [x] Mark individual student attendance.
+  - [x] Bulk mark attendance functionality.
+  - [x] Filter registrations by attendance status.
+  - [x] CSV Export for activity-wise attendance.
 - [ ] **Activity Status Workflow (Schema Enhancement)**:
   - [ ] Add `REGISTRATION_CLOSED` to `ActivityStatus` enum.
   - [ ] Implement transitions: `DRAFT` → `PUBLISHED` → `REGISTRATION_CLOSED` → `COMPLETED`.

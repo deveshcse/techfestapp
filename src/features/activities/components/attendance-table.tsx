@@ -17,6 +17,7 @@ import { ArrowUpDown, ChevronDown, CheckCircle, XCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Spinner } from "@/components/ui/spinner";
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
@@ -41,9 +42,19 @@ interface AttendanceTableProps {
     registrations: RegistrationWithUser[];
     onMarkAttendance: (registrationId: number, attended: boolean) => void;
     onBulkMarkAttendance: (registrationIds: number[], attended: boolean) => void;
+    isMarking: boolean;
+    markingVariables?: { registrationId: number; attended: boolean };
+    isBulkMarking: boolean;
 }
 
-export function AttendanceTable({ registrations, onMarkAttendance, onBulkMarkAttendance }: AttendanceTableProps) {
+export function AttendanceTable({
+    registrations,
+    onMarkAttendance,
+    onBulkMarkAttendance,
+    isMarking,
+    markingVariables,
+    isBulkMarking,
+}: AttendanceTableProps) {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
@@ -100,9 +111,11 @@ export function AttendanceTable({ registrations, onMarkAttendance, onBulkMarkAtt
             cell: ({ row }) => {
                 const status = row.getValue("status") as string;
                 return (
-                    <Badge variant={status === "CONFIRMED" ? "default" : "secondary"}>
-                        {status}
-                    </Badge>
+                    <div className="">
+                        <Badge className="w-24">
+                            {status}
+                        </Badge>
+                    </div>
                 )
             },
         },
@@ -111,13 +124,18 @@ export function AttendanceTable({ registrations, onMarkAttendance, onBulkMarkAtt
             header: "Attended",
             cell: ({ row }) => {
                 const attended = row.getValue("attended") as boolean;
+                const isCurrentlyMarking = isMarking && markingVariables?.registrationId === row.original.id;
+
                 return (
                     <div className="flex items-center gap-2">
                         <Switch
                             checked={attended}
                             onCheckedChange={(checked) => onMarkAttendance(row.original.id, checked)}
+                            disabled={isCurrentlyMarking || isBulkMarking}
                         />
-                        {attended ? (
+                        {isCurrentlyMarking ? (
+                            <Spinner className="text-primary" />
+                        ) : attended ? (
                             <CheckCircle className="h-4 w-4 text-green-500" />
                         ) : (
                             <XCircle className="h-4 w-4 text-gray-300" />
@@ -158,6 +176,9 @@ export function AttendanceTable({ registrations, onMarkAttendance, onBulkMarkAtt
     const selectedRows = table.getFilteredSelectedRowModel().rows;
     const selectedIds = selectedRows.map(row => row.original.id);
 
+    const allSelectedAttended = selectedRows.length > 0 && selectedRows.every(row => row.original.attended);
+    const allSelectedAbsent = selectedRows.length > 0 && selectedRows.every(row => !row.original.attended);
+
     return (
         <div className="w-full">
             <div className="flex items-center py-4 gap-2">
@@ -173,8 +194,23 @@ export function AttendanceTable({ registrations, onMarkAttendance, onBulkMarkAtt
                 {selectedIds.length > 0 && (
                     <div className="flex items-center gap-2 ml-auto">
                         <span className="text-sm text-muted-foreground hidden sm:inline">{selectedIds.length} selected</span>
-                        <Button size="sm" onClick={() => onBulkMarkAttendance(selectedIds, true)}>Mark Present</Button>
-                        <Button size="sm" variant="outline" onClick={() => onBulkMarkAttendance(selectedIds, false)}>Mark Absent</Button>
+                        <Button
+                            size="sm"
+                            onClick={() => onBulkMarkAttendance(selectedIds, true)}
+                            disabled={isBulkMarking || allSelectedAttended}
+                        >
+                            {isBulkMarking ? <Spinner className="mr-2" /> : null}
+                            Mark Present
+                        </Button>
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => onBulkMarkAttendance(selectedIds, false)}
+                            disabled={isBulkMarking || allSelectedAbsent}
+                        >
+                            {isBulkMarking ? <Spinner className="mr-2" /> : null}
+                            Mark Absent
+                        </Button>
                     </div>
                 )}
 

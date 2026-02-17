@@ -90,6 +90,9 @@ export function AttendanceTableContainer({ techfestId, activityId }: AttendanceT
                     registrations={registrations}
                     onMarkAttendance={(id, attended) => markAttendance.mutate({ registrationId: id, attended })}
                     onBulkMarkAttendance={(ids, attended) => bulkMarkAttendance.mutate({ registrationIds: ids, attended })}
+                    isMarking={markAttendance.isPending}
+                    markingVariables={markAttendance.variables}
+                    isBulkMarking={bulkMarkAttendance.isPending}
                 />
             </CardContent>
         </Card>
