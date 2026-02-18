@@ -166,6 +166,94 @@ Managed via **Better-Auth** with a custom Permission System in `src/lib/permissi
 
 ---
 
+## In app notifications examples:
+- Here's how you could implement notifications for waitlist promotions. There are two main approaches depending on the type of notification:
+
+### Approach 1: In-App Notifications (Recommended first)
+This fits naturally into your existing architecture.
+
+1. Add a Notification model to Prisma
+```prisma
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  type      String   // e.g., "WAITLIST_PROMOTED", "REGISTRATION_CONFIRMED"
+  link      String?  // e.g., "/dashboard/techfest/1/activity/5"
+  createdAt DateTime @default(now())
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId])
+  @@map("notifications")
+}
+```
+2. Create a notification helper
+```typescript
+// src/app/api/_lib/notifications.ts
+export async function createNotification(data: {
+    userId: string;
+    title: string;
+    message: string;
+    type: string;
+    link?: string;
+}) {
+    return prisma.notification.create({ data });
+}
+```
+3. Call it right after the promotion
+```typescript
+// In registration DELETE handler, after promoting the waitlisted user:
+if (nextInWaitlist) {
+    await prisma.registration.update({
+        where: { id: nextInWaitlist.id },
+        data: { status: RegistrationStatus.CONFIRMED },
+    });
+    // 🔔 Notify the promoted user
+    await createNotification({
+        userId: nextInWaitlist.userId,
+        title: "You're In! 🎉",
+        message: `A spot opened up for "${activity.title}" and you've been promoted from the waitlist.`,
+        type: "WAITLIST_PROMOTED",
+        link: `/dashboard/techfest/${techfestId}/activity/${activityId}`,
+    });
+}
+```
+
+4. Frontend: Bell icon + notification dropdown
+API: GET /api/notifications (fetch user's notifications), PATCH /api/notifications/:id (mark as read)
+Hook: useNotifications() with React Query (poll every 30s or use refetch)
+UI: A bell icon in the sidebar header with an unread badge + dropdown listing recent notifications
+Approach 2: Email Notifications (Phase 3 feature)
+This is already on your roadmap as "Email Automation". It would layer on top of the in-app system:
+```typescript
+// After creating the in-app notification:
+await sendEmail({
+    to: promotedUser.email,
+    subject: `You're confirmed for ${activity.title}!`,
+    template: "waitlist-promoted",
+    data: { userName: promotedUser.name, activityTitle: activity.title },
+});
+```
+You'd use a service like Resend, Nodemailer, or SendGrid for this.
+
+Architecture Summary
+```mermaid
+User cancels registration
+        │
+        ▼
+Promote next waitlisted user (existing)
+        │
+        ├──► Create in-app Notification (DB row)
+        │          │
+        │          ▼
+        │    Frontend polls/fetches → shows bell badge
+        │
+        └──► (Optional) Send email via Resend/SendGrid
+The in-app notification is simpler to implement first since it requires no external services — just a new Prisma model, a small API, and a UI component in the sidebar. Would you like me to plan and implement the in-app notification system?
+```
+
+---
 ## 🧠 Global State & Store
 
 - **`useConfirmStore`**: Manages confirmation dialogs system-wide. Returns a promise for easy await-based confirmation.
@@ -190,6 +278,8 @@ Managed via **Better-Auth** with a custom Permission System in `src/lib/permissi
 - [ ] **QR Code Attendance System**: Generate and scan unique codes.
 - [ ] **Email Automation**: Reminder and confirmation emails.
 - [ ] **Certificate Generation**: Dynamic PDFs for those who attended.
+
+
 
 ---
 *Last Updated: February 18, 2026*

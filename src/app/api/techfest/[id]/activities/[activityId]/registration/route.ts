@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { z } from "zod";
 import { authorize } from "@/app/api/_lib/authorize";
 import { getIdParam } from "@/app/api/_lib/params";
+import { RegistrationStatus } from "@/generated/prisma/enums";
 
 type Params = {
     params: Promise<{
@@ -223,25 +224,37 @@ export async function DELETE(request: NextRequest, { params }: Params) {
             );
         }
 
-        // We mark as CANCELLED instead of deleting to keep a record (audit trail)
-        const cancelledRegistration = await prisma.registration.update({
+        // 1. Fetch the current registration to capture its status BEFORE updating
+        const existingReg = await prisma.registration.findUnique({
             where: {
                 userId_activityId: {
                     userId: session.user.id,
                     activityId: parsedActivityId.data,
                 },
             },
-            data: {
-                status: "CANCELLED",
-            },
         });
 
-        // If the user was CONFIRMED, promote the next person in the waitlist
-        if (cancelledRegistration.status === "CONFIRMED") {
+        if (!existingReg) {
+            return NextResponse.json(
+                { success: false, error: "Registration not found" },
+                { status: 404 },
+            );
+        }
+
+        const originalStatus = existingReg.status;
+
+        // 2. Mark as CANCELLED (soft delete for audit trail)
+        await prisma.registration.update({
+            where: { id: existingReg.id },
+            data: { status: RegistrationStatus.CANCELLED },
+        });
+
+        // 3. If the user was CONFIRMED, promote the next person in the waitlist
+        if (originalStatus === RegistrationStatus.CONFIRMED) {
             const nextInWaitlist = await prisma.registration.findFirst({
                 where: {
                     activityId: parsedActivityId.data,
-                    status: "WAITLISTED",
+                    status: RegistrationStatus.WAITLISTED,
                 },
                 orderBy: {
                     createdAt: "asc",
@@ -251,7 +264,7 @@ export async function DELETE(request: NextRequest, { params }: Params) {
             if (nextInWaitlist) {
                 await prisma.registration.update({
                     where: { id: nextInWaitlist.id },
-                    data: { status: "CONFIRMED" },
+                    data: { status: RegistrationStatus.CONFIRMED },
                 });
             }
         }
