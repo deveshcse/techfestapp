@@ -7,12 +7,12 @@ This file provides a comprehensive overview of the TechFestApp project, its arch
 **TechFestApp** is a modern platform for managing and participating in technical festivals (TechFests). It allows organizers to create events, manage activities, and handle registrations, while users can browse upcoming fests and register for specific activities.
 
 ### Core Tech Stack
-- **Framework**: Next.js 15 (App Router)
+- **Framework**: Next.js 16.1.1 (App Router, Turbopack)
 - **Language**: TypeScript
 - **Database**: PostgreSQL (via Prisma ORM)
 - **Authentication**: Better-Auth
 - **State Management**: Zustand & React Query
-- **Styling**: Tailwind CSS & Lucide Icons
+- **Styling**: Tailwind CSS 4 & Lucide Icons
 - **UI Components**: Radix UI & Shadcn UI
 
 ---
@@ -29,16 +29,20 @@ The project follows a modular "Features" based architecture within the `src` dir
 - `app/`: Next.js App Router (pages and API routes).
 - `components/`:
   - `ui/`: Fundamental UI building blocks (Shadcn components).
-  - `common/`: Shared application-wide components (Sidebar, DateTimePicker, etc.).
+  - `common/`: Shared application-wide components (Sidebar, DateTimePicker, EmptyState, ErrorState, etc.).
 - `features/`: Business logic divided by domain:
-  - `auth/`: User authentication and authorization.
-  - `techfest/`: TechFest management logic.
-  - `activities/`: Event activities and scheduling.
-  - `registrations/`: User registration and attendance tracking.
+  - `auth/`: User authentication, context (`useAuth`), and authorization.
+  - `techfest/`: TechFest management logic and components.
+  - `activities/`: Event activities, scheduling, and attendance tables.
+  - `registrations/`: User registration and personalized involvement lists.
+  - `dashboard/`: Role-specific analytics and overview metrics.
+    - `utils/api/`: Role-aware data fetching (stats.api.ts).
+    - `utils/hooks/`: Analytics state management (useDashboardStats.ts).
+    - `components/`: `AdminOverview`, `OrganizerOverview`, `UserOverview`, and Shadcn UI charts.
   - `landing/`: Public-facing landing page components.
 - `hooks/`: Global React hooks.
-- `lib/`: Shared utilities, configurations (Prisma, Auth client).
-- `store/`: Zustand global state stores.
+- `lib/`: Shared utilities, configurations (Prisma, Auth client, Axios `api` helper).
+- `store/`: Zustand global state stores (`useConfirmStore`, `useModalStore`).
 - `types/`: Global TypeScript definitions.
 
 ---
@@ -49,19 +53,33 @@ The project follows a modular "Features" based architecture within the `src` dir
 
 | Model | Description | Primary Fields |
 | :--- | :--- | :--- |
-| **User** | System users (Admin, Organizer, User) | `id`, `name`, `email`, `role`, `image` |
-| **TechFest** | High-level event (e.g., "TechFest 2026") | `id`, `title`, `description`, `start_date`, `end_date`, `venue`, `published` |
-| **Activity** | Specific event within a TechFest | `id`, `techfestId`, `title`, `description`, `type`, `status`, `capacity`, `rules` |
-| **Registration**| Links a User to an Activity | `userId`, `activityId`, `status` (Syncs with `attended`), `attended`, `attendedAt`, `attendanceMarkedBy` |
+| **User** | System users | `id`, `name`, `email`, `role` (admin, organizer, user) |
+| **TechFest** | High-level event | `title`, `description`, `start_date`, `end_date`, `venue`, `published` |
+| **Activity** | Specific event | `techfestId`, `title`, `description`, `type`, `status`, `capacity`, `rules` |
+| **Registration**| Link User-Activity | `userId`, `activityId`, `status`, `attended`, `attendedAt`, `attendanceMarkedBy` |
+
+### Registration Logic
+- **Waitlist**: Automatically handled when `capacity` is reached.
+- **Promotion**: When a `CONFIRMED` user cancels, the next `WAITLISTED` user is automatically promoted.
+- **Statuses**: `PENDING`, `CONFIRMED`, `CANCELLED`, `WAITLISTED`, `ATTENDED`.
 
 ---
 
 ## 🔌 API Reference
 
+### Dashboard Endpoints (`/api/dashboard`)
+
+- **GET `/api/dashboard/stats`**
+  - **Purpose**: Fetch role-specific statistics and analytics.
+  - **Logic**:
+    - **Admin**: Returns system-wide totals, 14-day registration trends, and activity type breakdown.
+    - **Organizer**: Scoped to owned TechFests, assigned Activities, and personal check-in counts.
+    - **User**: Scoped to personal registrations (Confirmed, Attended, Waitlisted).
+
 ### TechFest Endpoints (`/api/techfest`)
 
 - **GET `/api/techfest`**
-  - **Purpose**: Fetch all techfests.
+  - **Purpose**: Fetch all festivals.
   - **Permissions**: Public (if published), Admin/Organizer (all).
   - **Response**: `{ success: boolean, data: TechFest[], total: number }`
 
@@ -75,7 +93,7 @@ The project follows a modular "Features" based architecture within the `src` dir
   - **Payload**: `{ title, venue, description, start_date, end_date }`
 
 - **PATCH `/api/techfest/[id]`**
-  - **Purpose**: Toggle publish/unpublish status.
+  - **Purpose**: Toggle publishing (Status change).
 
 ### Activity Endpoints (`/api/techfest/[id]/activities`)
 
@@ -117,20 +135,19 @@ The project follows a modular "Features" based architecture within the `src` dir
 ## 🛠️ UI Component Library
 
 ### Common Components (`src/components/common`)
-- **`AppSidebar`**: Main navigation sidebar using Radix.
-- **`DateTimePicker`**: Custom popover implementation for date and time selection.
-- **`ConfirmDialog`**: Integrated with `useConfirmStore` for secondary confirmations.
-- **`ErrorState` / `EmptyState`**: Standardized placeholders for data fetching states.
+- **`AppSidebar`**: Main navigation using Radix.
+- **`DateTimePicker`**: Custom popover for selection.
+- **`ConfirmDialog`**: Integrated with `useConfirmStore`.
+- **`ErrorState` / `EmptyState`**: Standardized fallback UI.
 
-### UI Primitives (`src/components/ui`)
-- Standard Shadcn library components (Button, Card, Badge, Dialog, Form, Input, etc.).
+### Dashboard Feature components
+- **`Admin/Organizer/UserOverview`**: Tailored summary boards using `StatsCard`.
+- **`RegistrationTrendChart`**: Shadcn UI Area chart showing 14-day growth.
+- **`ActivityBreakdownChart`**: Shadcn UI Bar chart showing distribution by type.
 
-### Feature Components
-- **Auth**: `LoginForm`, `SignUpForm`, `ForgotPasswordForm`.
-- **TechFest**: `TechFestList`, `TechFestDetails`, `TechFestForm` (Handles complex date range logic).
-- **Activities**: `ActivityList`, `ActivityDetails`, `ActivityCreateUpdateForm`.
-- **Attendance**: `AttendanceTable` (TanStack Table), `AttendanceTableContainer`, `AttendancePage`.
-- **Registrations**: `MyRegistrationsList` (Displays user's confirmed/waitlisted events).
+### Attendance Feature components
+- **`AttendanceTable`**: TanStack Table with row selection and status management.
+- **`AttendanceTableContainer`**: Orchestrates data fetching and CSV Export.
 
 ---
 
@@ -159,41 +176,20 @@ Managed via **Better-Auth** with a custom Permission System in `src/lib/permissi
 
 ## 🔮 Future Feature Roadmap
 
-### 🥇 Phase 1: Core Lifecycle & Mastery (High Priority)
-- [x] **Attendance Management**:
-  - [x] Mark individual student attendance.
-  - [x] Bulk mark attendance functionality.
-  - [x] Filter registrations by attendance status.
-  - [x] CSV Export for activity-wise attendance.
-- [ ] **Activity Status Workflow (Schema Enhancement)**:
-  - [ ] Add `REGISTRATION_CLOSED` to `ActivityStatus` enum.
-  - [ ] Implement transitions: `DRAFT` → `PUBLISHED` → `REGISTRATION_CLOSED` → `COMPLETED`.
-  - [ ] Auto-close registrations (set status to `REGISTRATION_CLOSED`) when capacity is full or end-date passes.
-- [ ] **Resource Optimization**:
-  - [ ] Prevent any new registrations when status is `REGISTRATION_CLOSED`.
-  - [ ] Show "Registration Closed" badge on the UI.
+### 🥇 Phase 1: Core Lifecycle & Mastery (Complete)
+- [x] **Attendance Management**: Mark presence, bulk actions, filters, CSV Export.
+- [x] **Waitlist System**: Automated capacity handling and promotion logic.
 
-### 🥈 Phase 2: Analytics & Engagement (Mid Priority)
-- [ ] **Enhanced Dashboard Metrics**:
-  - [ ] Summary cards for total fests, activities, and registrations.
-  - [ ] Recharts integration for attendance trends and status breakdowns.
-  - [ ] "Today's Schedule" quick-view for organizers.
-- [ ] **Public Landing Page Improvements**:
-  - [ ] Featured techfests showcase.
-  - [ ] Public registration CTA and event discovery flow.
+### 🥈 Phase 2: Analytics & Engagement (Complete)
+- [x] **Enhanced Dashboard Metrics**: Role-specific summary boards.
+- [x] **Interactive Analytics**: Shadcn-styled trends and breakdowns using Recharts.
+- [ ] **Activity Status Workflow**: Implement `REGISTRATION_CLOSED` logic and auto-transitions.
+- [ ] **Today's Schedule**: Quick-view for organizers.
 
 ### 🥉 Phase 3: Advanced Portfolio Features (Pro Level)
-- [ ] **QR Code Attendance System**:
-  - [ ] Generate unique QR codes for confirmed registrations.
-  - [ ] Scanner interface for organizers to auto-mark attendance.
-- [ ] **Email Automation**:
-  - [ ] Registration confirmation & reminder emails.
-  - [ ] Organizer assignment notifications.
-- [ ] **Certificate Generation**:
-  - [ ] Dynamic PDF certificate generation for users who marked 'ATTENDED'.
-
-### 🧠 Strategic Recommendations
-For a SaaS-level portfolio project, focus on **Attendance** and **Dashboard Metrics** first. The **Waitlist System** is already implemented and handled automatically during registration!
+- [ ] **QR Code Attendance System**: Generate and scan unique codes.
+- [ ] **Email Automation**: Reminder and confirmation emails.
+- [ ] **Certificate Generation**: Dynamic PDFs for those who attended.
 
 ---
-*Last Updated: February 17, 2026*
+*Last Updated: February 18, 2026*
