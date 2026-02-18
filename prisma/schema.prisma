@@ -125,6 +125,7 @@ enum ActivityStatus {
   PUBLISHED
   CANCELLED
   COMPLETED
+  REGISTRATION_CLOSED
 }
 
 enum ActivityType {
