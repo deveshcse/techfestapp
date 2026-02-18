@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { authorize } from "@/app/api/_lib/authorize";
+import { autoCompletePastActivities } from "@/app/api/_lib/activity-status.utils";
 
 export async function GET(request: NextRequest) {
     try {
+        // Lazily auto-complete past activities before computing stats
+        await autoCompletePastActivities();
+
         const { session } = await authorize(request, "techfest", "read");
         const role = session.user.role;
         const userId = session.user.id;

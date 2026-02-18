@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { authorize } from "@/app/api/_lib/authorize";
 import { getIdParam } from "@/app/api/_lib/params";
+import { autoCompletePastActivities } from "@/app/api/_lib/activity-status.utils";
 import prisma from "@/lib/prisma";
 import { CreateUpdateActivityInputSchema } from "@/features/activities/schemas/activity.schema";
 
@@ -12,6 +13,8 @@ type Params = {
 
 export async function GET(request: NextRequest, { params }: Params) {
   try {
+    // Lazily auto-complete past activities before listing
+    await autoCompletePastActivities();
 
     const { session } = await authorize(request, "activity", "read");
 

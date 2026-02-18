@@ -6,6 +6,7 @@ import { ActivityStatus } from "@/generated/prisma/enums";
 import { UpdateActivityStatusSchema } from "../schemas/activity.schema";
 import { UpdateActivityStatusInput } from "../types/activity.types";
 import { useUpdateActivityStatus } from "../utils/useActivities";
+import { getValidNextStatuses } from "../utils/status-transitions";
 import { useModalStore } from "@/store/useModalStore";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,12 +33,13 @@ export function ActivityStatusUpdateForm({
 }: ActivityStatusUpdateFormProps) {
     const { close } = useModalStore();
     const updateStatusMutation = useUpdateActivityStatus(techfestId, activityId);
+    const validNextStatuses = getValidNextStatuses(initialStatus);
 
     const form = useForm<UpdateActivityStatusInput>({
         resolver: zodResolver(UpdateActivityStatusSchema),
         defaultValues: {
             id: activityId,
-            status: initialStatus,
+            status: validNextStatuses[0] ?? initialStatus,
         },
     });
 
@@ -59,6 +61,17 @@ export function ActivityStatusUpdateForm({
         }
     }
 
+    if (validNextStatuses.length === 0) {
+        return (
+            <div className="mx-4 py-4 text-center text-muted-foreground">
+                <p className="font-medium">No transitions available</p>
+                <p className="text-sm mt-1">
+                    The current status <span className="font-semibold">{initialStatus}</span> is a terminal state.
+                </p>
+            </div>
+        );
+    }
+
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mx-4">
             <Controller
@@ -74,7 +87,7 @@ export function ActivityStatusUpdateForm({
                             <SelectContent>
                                 <SelectGroup>
                                     <SelectLabel>Status</SelectLabel>
-                                    {Object.values(ActivityStatus).map((status) => (
+                                    {validNextStatuses.map((status) => (
                                         <SelectItem key={status} value={status}>
                                             {status.charAt(0) + status.slice(1).toLowerCase().replace("_", " ")}
                                         </SelectItem>

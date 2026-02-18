@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import StatsGrid from "./stats.grid";
 import RegistrationChart from "./registration-trend-chart";
 import ActivityBreakdownChart from "./activity-breakdown-chart";
+import TodaySchedule from "./today-schedule";
 
 
 export function Dashboard() {
@@ -23,6 +24,7 @@ export function Dashboard() {
         return <div>No stats available</div>;
     }
 
+    const isElevated = user?.role === "admin" || user?.role === "organizer";
 
     return (
         <div className="space-y-6">
@@ -30,7 +32,7 @@ export function Dashboard() {
             <StatsGrid role={user?.role ?? undefined} stats={stats} loading={loading} />
 
             {/* Charts */}
-            {(user?.role === "admin" || user?.role === "organizer") && stats && (
+            {isElevated && stats && (
                 <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
                     {stats.registrationTrends?.length > 0 && (
                         <RegistrationChart data={stats.registrationTrends} />
@@ -42,6 +44,10 @@ export function Dashboard() {
                 </div>
             )}
 
+            {/* Today's Schedule */}
+            {isElevated && <TodaySchedule />}
+
         </div>
     );
 }
+

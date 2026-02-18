@@ -2,6 +2,8 @@ import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 import { authorize } from "@/app/api/_lib/authorize";
 import { UpdateActivityStatusSchema } from "@/features/activities/schemas/activity.schema";
+import { VALID_TRANSITIONS } from "@/features/activities/utils/status-transitions";
+import { ActivityStatus } from "@/generated/prisma/enums";
 import { z } from "zod";
 
 type Params = {
@@ -15,7 +17,7 @@ const activityIdSchema = z.coerce.number().int().positive();
 
 export async function PATCH(request: NextRequest, { params }: Params) {
     try {
-        const {session} = await authorize(request, "activity", "update-status");
+        const { session } = await authorize(request, "activity", "update-status");
 
         const { activityId } = await params;
         const parsedActivityId = activityIdSchema.safeParse(activityId);
@@ -59,8 +61,19 @@ export async function PATCH(request: NextRequest, { params }: Params) {
             );
         }
 
-
         const { status } = result.data;
+
+        // Validate status transition
+        const allowedNext = VALID_TRANSITIONS[activity.status as ActivityStatus] ?? [];
+        if (!allowedNext.includes(status as ActivityStatus)) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    error: `Cannot transition from ${activity.status} to ${status}.`,
+                },
+                { status: 400 },
+            );
+        }
 
         const updatedActivity = await prisma.activity.update({
             where: {
