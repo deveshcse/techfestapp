@@ -8,6 +8,9 @@ import { AdminOverview } from "./admin-overview";
 import { OrganizerOverview } from "./organizer-overview";
 import { UserOverview } from "./user-overview";
 
+import { RegistrationTrendChart } from "./registration-trend-chart";
+import { ActivityBreakdownChart } from "./activity-breakdown-chart";
+
 export function DashboardOverview() {
     const { user, isLoading: authLoading } = useAuth();
     const { data: stats, isLoading: statsLoading, isError, refetch } = useDashboardStats();
@@ -86,14 +89,8 @@ export function DashboardOverview() {
 
             {(user.role === "admin" || user.role === "organizer") && (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
-                    <div className="col-span-4 rounded-xl border border-dashed p-12 flex flex-col items-center justify-center text-center opacity-50 bg-muted/20">
-                        <p className="text-sm font-medium text-muted-foreground">Attendance Trends Chart</p>
-                        <p className="text-xs text-muted-foreground mt-1">Coming in Phase 2 Expansion</p>
-                    </div>
-                    <div className="col-span-3 rounded-xl border border-dashed p-12 flex flex-col items-center justify-center text-center opacity-50 bg-muted/20">
-                        <p className="text-sm font-medium text-muted-foreground">Activity Breakdown</p>
-                        <p className="text-xs text-muted-foreground mt-1">Coming in Phase 2 Expansion</p>
-                    </div>
+                    <RegistrationTrendChart data={stats.registrationTrends} />
+                    <ActivityBreakdownChart data={stats.activityBreakdown} />
                 </div>
             )}
         </div>

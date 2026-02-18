@@ -9,6 +9,8 @@ export type DashboardStats = {
     uniqueParticipants: number;
     activeWaitlist: number;
     upcomingActivities: number;
+    registrationTrends: { date: string; count: number }[];
+    activityBreakdown: { type: string; count: number }[];
 };
 
 export const getDashboardStats = async (): Promise<DashboardStats> => {

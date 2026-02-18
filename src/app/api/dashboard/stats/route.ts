@@ -18,7 +18,9 @@ export async function GET(request: NextRequest) {
                 totalStudents,
                 uniqueParticipants,
                 activeWaitlist,
-                upcomingActivities
+                upcomingActivities,
+                trends,
+                breakdown
             ] = await Promise.all([
                 prisma.techFest.count(),
                 prisma.activity.count(),
@@ -48,8 +50,37 @@ export async function GET(request: NextRequest) {
                         startDateTime: { gt: now },
                         status: "PUBLISHED"
                     }
+                }),
+                // Registration Trends (Last 14 days)
+                prisma.registration.groupBy({
+                    by: ['createdAt'],
+                    _count: true,
+                    where: {
+                        createdAt: {
+                            gte: new Date(new Date().setDate(new Date().getDate() - 14))
+                        }
+                    },
+                    orderBy: {
+                        createdAt: 'asc'
+                    }
+                }),
+                // Activity Breakdown by Type
+                prisma.activity.groupBy({
+                    by: ['type'],
+                    _count: true
                 })
             ]);
+
+            // Formatter for trends to ensure every day has a record
+            const formattedTrends = Array.from({ length: 14 }).map((_, i) => {
+                const date = new Date();
+                date.setDate(date.getDate() - (13 - i));
+                const dateStr = date.toISOString().split('T')[0];
+                const count = trends
+                    .filter(t => t.createdAt.toISOString().split('T')[0] === dateStr)
+                    .reduce((acc, curr) => acc + curr._count, 0);
+                return { date: dateStr, count };
+            });
 
             return NextResponse.json({
                 success: true,
@@ -62,6 +93,8 @@ export async function GET(request: NextRequest) {
                     uniqueParticipants,
                     activeWaitlist,
                     upcomingActivities,
+                    registrationTrends: formattedTrends,
+                    activityBreakdown: breakdown.map(b => ({ type: b.type, count: b._count })),
                 }
             });
         }
@@ -72,6 +105,8 @@ export async function GET(request: NextRequest) {
                 myActivityCount,
                 myAttendanceCount,
                 upcomingEvents,
+                trends,
+                breakdown
             ] = await Promise.all([
                 prisma.techFest.count({
                     where: { createdById: userId }
@@ -96,8 +131,48 @@ export async function GET(request: NextRequest) {
                             { organizers: { some: { id: userId } } }
                         ]
                     }
+                }),
+                // Organizer's managed activity registration trends
+                prisma.registration.groupBy({
+                    by: ['createdAt'],
+                    _count: true,
+                    where: {
+                        createdAt: {
+                            gte: new Date(new Date().setDate(new Date().getDate() - 14))
+                        },
+                        activity: {
+                            OR: [
+                                { createdById: userId },
+                                { organizers: { some: { id: userId } } }
+                            ]
+                        }
+                    },
+                    orderBy: {
+                        createdAt: 'asc'
+                    }
+                }),
+                // Organizer's activity breakdown
+                prisma.activity.groupBy({
+                    by: ['type'],
+                    _count: true,
+                    where: {
+                        OR: [
+                            { createdById: userId },
+                            { organizers: { some: { id: userId } } }
+                        ]
+                    }
                 })
             ]);
+
+            const formattedTrends = Array.from({ length: 14 }).map((_, i) => {
+                const date = new Date();
+                date.setDate(date.getDate() - (13 - i));
+                const dateStr = date.toISOString().split('T')[0];
+                const count = trends
+                    .filter(t => t.createdAt.toISOString().split('T')[0] === dateStr)
+                    .reduce((acc, curr) => acc + curr._count, 0);
+                return { date: dateStr, count };
+            });
 
             return NextResponse.json({
                 success: true,
@@ -106,7 +181,8 @@ export async function GET(request: NextRequest) {
                     activities: myActivityCount,
                     attendance: myAttendanceCount,
                     upcomingActivities: upcomingEvents,
-                    // These are not scoped or useful for direct organizer overview, but we keep the structure
+                    registrationTrends: formattedTrends,
+                    activityBreakdown: breakdown.map(b => ({ type: b.type, count: b._count })),
                     registrations: 0,
                     totalStudents: 0,
                     uniqueParticipants: 0,
