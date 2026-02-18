@@ -37,7 +37,8 @@ const statusStyles: Record<ActivityStatus, string> = {
     DRAFT: "bg-yellow-100 text-yellow-800 border-yellow-200",
     PUBLISHED: "bg-green-100 text-green-800 border-green-200",
     CANCELLED: "bg-red-100 text-red-800 border-red-200",
-    COMPLETED: "bg-blue-100 text-blue-800 border-blue-200",
+    COMPLETED: "bg-gray-100 text-gray-800 border-gray-200",
+    REGISTRATION_CLOSED: "bg-orange-100 text-orange-800 border-orange-200",
 };
 
 export function ActivityDetails({ techfestId, activity }: Props) {
@@ -202,10 +203,14 @@ export function ActivityDetails({ techfestId, activity }: Props) {
                                 variant={activity.capacity !== undefined && (activity.registrationCount || 0) >= activity.capacity ? "outline" : "default"}
                                 className="flex-1 sm:flex-none"
                                 onClick={handleRegister}
-                                disabled={register.isPending}
+                                disabled={register.isPending || activity.status !== "PUBLISHED"}
                             >
                                 <CheckCircle2 className="mr-2 h-4 w-4" />
-                                {activity.capacity !== undefined && (activity.registrationCount || 0) >= activity.capacity ? "Join Waitlist" : "Register Now"}
+                                {activity.status === "REGISTRATION_CLOSED"
+                                    ? "Registration Closed"
+                                    : activity.capacity !== undefined && (activity.registrationCount || 0) >= activity.capacity
+                                        ? "Join Waitlist"
+                                        : "Register Now"}
                             </Button>
                         )}
                     </Access>

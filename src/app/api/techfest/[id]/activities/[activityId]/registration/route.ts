@@ -45,6 +45,25 @@ export async function POST(request: NextRequest, { params }: Params) {
             );
         }
 
+        // 1.5 Check Activity Status
+        if (activity.status !== "PUBLISHED") {
+            let errorMessage = "Registration is not available for this activity.";
+            if (activity.status === "REGISTRATION_CLOSED") {
+                errorMessage = "Registration for this activity is now closed.";
+            } else if (activity.status === "DRAFT") {
+                errorMessage = "This activity is not yet open for registration.";
+            } else if (activity.status === "CANCELLED") {
+                errorMessage = "This activity has been cancelled.";
+            } else if (activity.status === "COMPLETED") {
+                errorMessage = "This activity has already been completed.";
+            }
+
+            return NextResponse.json(
+                { success: false, error: errorMessage },
+                { status: 400 },
+            );
+        }
+
         // 2. Determine initial status based on Capacity
         let initialStatus: "CONFIRMED" | "WAITLISTED" = "CONFIRMED";
         if (activity.capacity && activity._count.registrations >= activity.capacity) {
