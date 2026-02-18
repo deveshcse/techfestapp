@@ -1,21 +1,21 @@
-import { Role } from "@/lib/auth";
+import { UserRole } from "@/generated/prisma/enums";
 import { authClient } from "@/lib/auth-client";
 
 export type SessionUser = {
   id: string;
   email: string;
   name: string;
-  role?: Role;
+  role?: UserRole | undefined | null;
 };
 
 export type AuthSession = {
-  user: SessionUser | null;
+  user: SessionUser | undefined;
 };
 
 export async function getSession(): Promise<AuthSession> {
   const { data: session } = await authClient.getSession();
 
   return {
-    user: session?.user ?? null,
+    user: session?.user,
   };
 }
