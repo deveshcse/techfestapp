@@ -12,11 +12,17 @@ export function Dashboard() {
     const { user, isLoading: authLoading } = useAuth();
     const { data: stats, isLoading: statsLoading } = useDashboardStats();
 
-    if (authLoading) {
+    const loading = statsLoading || authLoading;
+
+
+    if (loading) {
         return <Skeleton className="h-40 w-full" />;
     }
 
-    const loading = statsLoading || !stats;
+    if (!stats) {
+        return <div>No stats available</div>;
+    }
+
 
     return (
         <div className="space-y-6">
