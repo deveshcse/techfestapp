@@ -17,7 +17,7 @@ export function proxy(request: NextRequest) {
 
   // 2️⃣ Logged in → trying to access auth routes
   if (isLoggedIn && isOnAuthRoute) {
-    return NextResponse.redirect(new URL("/dashboard/techfest", request.url));
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   // 3️⃣ Allow everything else

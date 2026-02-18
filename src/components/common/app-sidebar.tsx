@@ -174,19 +174,17 @@ const data = {
       title: "Event Management",
       url: "#",
       icon: Command,
+      isActive: true,
       items: [
+        {
+          title: "Dashboard",
+          url: "/dashboard",
+        },
         {
           title: "Techfests",
           url: "/dashboard/techfest",
         },
-        {
-          title: "Activities",
-          url: "/dashboard/activities",
-        },
-        {
-          title: "Registrations",
-          url: "/dashboard/registrations",
-        },
+       
       ],
     },
 
@@ -195,11 +193,11 @@ const data = {
       title: "Participation",
       url: "#",
       icon: SquareTerminal,
-      isActive: true,
+      isActive: false,
       items: [
-        {
-          title: "Browse Activities",
-          url: "/dashboard/activities",
+         {
+          title: "Upcoming Activities",
+          url: "/dashboard/upcoming-activities",
         },
         {
           title: "My Registrations",
