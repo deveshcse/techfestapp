@@ -7,21 +7,21 @@ export const TechFestFormSchema = z
     description: z.string().min(1, "Description is required"),
     venue: z.string().min(1, "Venue is required"),
 
-    // ✅ UI field
+    // add error message for dateRange
     dateRange: z.object({
       from: z.date(),
       to: z.date(),
-    }),
+    }, {error: "Date range is required"}),
   })
   .superRefine((data, ctx) => {
     const diffInMs =
       data.dateRange.to.getTime() - data.dateRange.from.getTime();
     const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
 
-    if (diffInDays < 5) {
+    if (diffInDays < 3 || diffInDays > 7) {
       ctx.addIssue({
         path: ["dateRange", "to"],
-        message: "Techfest must be at least 5 days long",
+        message: "Techfest must be between 3 to 7 days long",
         code: "custom",
       });
     }
@@ -50,10 +50,10 @@ export const baseTechFestApiSchema = z
       (data.end_date.getTime() - data.start_date.getTime()) /
       (1000 * 60 * 60 * 24);
 
-    if (diffInDays < 5) {
+    if (diffInDays < 3 || diffInDays > 7) {
       ctx.addIssue({
         path: ["end_date"],
-        message: "Techfest must be at least 5 days long",
+        message: "Techfest must be at least 3 to 7 days long",
         code: "custom",
       });
     }

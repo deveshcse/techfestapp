@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { useForm, Controller, useWatch } from "react-hook-form";
 import { format } from "date-fns";
 import {
   CalendarIcon,
@@ -9,83 +8,54 @@ import {
   Trash2,
   Pencil,
   Globe,
-  CircleX,
   List,
-  Save,
-  Rocket,
   EyeOff,
+  Rocket,
+  Info,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@/components/ui/popover";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 
-import {
-  Field,
-  FieldGroup,
-  FieldLabel,
-  FieldError,
-  FieldSet,
-  FieldLegend,
-} from "@/components/ui/field";
-
-import { TechFestDetails, UpdateTechFestInput } from "../types/techfest.types";
+import { TechFestDetails } from "../types/techfest.types";
 import { Access } from "@/features/auth/components/permission/access";
 import { useTechFestActions } from "../utils/useTechFest";
 import Link from "next/link";
 import Image from "next/image";
 import { useConfirm } from "@/hooks/use-confirm";
+import { useModalStore } from "@/store/useModalStore";
+import { TechFestCreateUpdateForm } from "./techfest-create-update-form";
 
 type Props = {
   techFest: TechFestDetails;
 };
 
 export function TechFestDetail({ techFest }: Props) {
-  const [isEditing, setIsEditing] = React.useState(false);
-  const { update, toggle, remove } = useTechFestActions(techFest.id);
+  const { toggle, remove } = useTechFestActions(techFest.id);
   const confirm = useConfirm();
+  const { open } = useModalStore();
 
-  const form = useForm<TechFestDetails>({
-    defaultValues: techFest,
-    mode: "onBlur",
-  });
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    control,
-    formState: { errors, isDirty },
-  } = form;
-
-  // ✅ useWatch instead of watch (fix compiler warning)
-  const startDate = useWatch({ control, name: "start_date" });
-  const endDate = useWatch({ control, name: "end_date" });
-
-  const lock = !isEditing;
-
-  function startEdit() {
-    reset(techFest);
-    setIsEditing(true);
-  }
-
-  function cancelEdit() {
-    reset(techFest);
-    setIsEditing(false);
-  }
-
-  function submit(values: UpdateTechFestInput) {
-    update.mutate(values, {
-      onSuccess: () => setIsEditing(false),
-    });
-  }
+  const handleEditClick = () => {
+    open(
+      <TechFestCreateUpdateForm
+        techfestId={techFest.id}
+        initialData={{
+          id: techFest.id,
+          title: techFest.title,
+          description: techFest.description,
+          venue: techFest.venue,
+          dateRange: {
+            from: new Date(techFest.start_date),
+            to: new Date(techFest.end_date),
+          },
+        }}
+      />,
+      "Update TechFest",
+      "Modify the details of this TechFest."
+    );
+  };
 
   async function onTogglePublish() {
     await confirm({
@@ -94,13 +64,12 @@ export function TechFestDetail({ techFest }: Props) {
         ? "Unpublishing will hide the TechFest and all its activities from public view. Are you sure you want to unpublish?"
         : "Publishing will make the TechFest visible to all users. Are you sure you want to publish?",
       confirmText: techFest.published ? "Unpublish" : "Publish",
-      destructive: techFest.published ? false : true, 
+      destructive: techFest.published ? false : true,
       icon: techFest.published ? (
         <EyeOff className="h-4 w-4 " />
       ) : (
         <Rocket className="h-4 w-4 " />
       ),
-
       actionLabel: techFest.published ? "Unpublishing" : "Publishing",
       onConfirm: () => toggle.mutateAsync(),
     });
@@ -120,41 +89,46 @@ export function TechFestDetail({ techFest }: Props) {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(submit)}
-      className="mx-auto max-w-5xl space-y-6 px-4 py-6"
-    >
+    <div className="mx-auto max-w-5xl space-y-6 px-4 py-6">
       {/* ================= ACTION BAR ================= */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
-        {/* LEFT SIDE — always reserve space */}
-        <div className="w-24">
-          <Button
-            size="sm"
-            type="button"
-            variant="outline"
-            onClick={cancelEdit}
-            className={!isEditing ? "opacity-0 pointer-events-none" : ""}
-          >
-            <CircleX className="mr-2 h-4 w-4" />
-            Cancel
-          </Button>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-background/95 backdrop-blur border rounded-xl p-6 shadow-sm">
+        <div className="space-y-1">
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold tracking-tight">{techFest.title}</h1>
+            <Badge
+              variant={techFest.published ? "default" : "secondary"}
+              className={techFest.published ? "bg-green-500 hover:bg-green-600 text-white" : ""}
+            >
+              {techFest.published ? "Published" : "Draft"}
+            </Badge>
+          </div>
         </div>
 
-        {/* RIGHT SIDE */}
-        <div className="flex flex-wrap justify-end gap-2">
-          <Button size="sm" type="button" asChild>
+        <div className="flex flex-wrap gap-2 w-full md:w-auto">
+          <Button size="sm" variant="outline" asChild>
             <Link href={`/dashboard/techfest/${techFest.id}/activities`}>
               <List className="mr-2 h-4 w-4" />
               View Activities
             </Link>
           </Button>
 
+          <Access resource="techfest" action="update">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleEditClick}
+            >
+              <Pencil className="mr-2 h-4 w-4" />
+              Edit TechFest
+            </Button>
+          </Access>
+
           <Access resource="techfest" action="publish">
             <Button
               size="sm"
-              type="button"
+              variant="outline"
               onClick={onTogglePublish}
-              disabled={toggle.isPending || isEditing}
+              disabled={toggle.isPending}
             >
               <Globe className="mr-2 h-4 w-4" />
               {techFest.published ? "Unpublish" : "Publish"}
@@ -164,165 +138,95 @@ export function TechFestDetail({ techFest }: Props) {
           <Access resource="techfest" action="delete">
             <Button
               size="sm"
-              type="button"
               variant="destructive"
               onClick={handleDelete}
-              disabled={remove.isPending || isEditing}
+              disabled={remove.isPending}
             >
               <Trash2 className="mr-2 h-4 w-4" />
               Delete
             </Button>
           </Access>
-
-          {/* FIXED WIDTH SLOT for Edit/Save */}
-          <Access resource="techfest" action="update">
-            <Button
-              size="sm"
-              type={isEditing ? "submit" : "button"}
-              variant={isEditing ? "default" : "outline"}
-              onClick={!isEditing ? startEdit : undefined}
-              disabled={isEditing && (!isDirty || update.isPending)}
-              className="w-24 justify-center"
-            >
-              <span className="inline-flex w-4 h-4 mr-2">
-                {isEditing ? (
-                  <Save className="h-4 w-4" />
-                ) : (
-                  <Pencil className="h-4 w-4" />
-                )}
-              </span>
-
-              {isEditing ? "Save" : "Edit"}
-            </Button>
-          </Access>
         </div>
       </div>
 
-      {/* ================= HERO ================= */}
-      <div className="overflow-hidden rounded-lg border">
-        <Image
-          src="https://picsum.photos/seed/picsum/200"
-          alt="TechFest banner"
-          className="h-48 w-full object-cover"
-          width={400}
-          height={200}
-        />
-
-        <div className="p-4">
-          <Field>
-            <Input
-              {...register("title", { required: "Title is required" })}
-              readOnly={lock}
-              className="font-bold"
-            />
-            <FieldError errors={errors.title && [errors.title]} />
-          </Field>
-        </div>
-      </div>
-
-      {/* ================= EVENT DETAILS ================= */}
-      <FieldSet>
-        <div className="flex items-center justify-between">
-          <FieldLegend>Event Details</FieldLegend>
-
-          <Badge
-            data-status={techFest.published ? "published" : "unpublished"}
-            className="data-[status=published]:bg-green-500 data-[status=published]:text-white data-[status=unpublished]:bg-muted data-[status=unpublished]:text-muted-foreground"
-          >
-            {techFest.published ? "Published" : "Unpublished"}
-          </Badge>
-        </div>
-
-        <FieldGroup>
-          {/* ✅ CONTROLLED DATE RANGE */}
-          <Field>
-            <FieldLabel>Date</FieldLabel>
-
-            <Controller
-              control={control}
-              name="start_date"
-              render={({ field }) => (
-                <Controller
-                  control={control}
-                  name="end_date"
-                  render={({ field: endField }) => (
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          disabled={lock}
-                          className="w-full justify-start text-left font-normal"
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {startDate && endDate
-                            ? `${format(new Date(startDate), "PPP")} – ${format(
-                                new Date(endDate),
-                                "PPP",
-                              )}`
-                            : "Select date range"}
-                        </Button>
-                      </PopoverTrigger>
-
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="range"
-                          numberOfMonths={2}
-                          selected={{
-                            from: field.value
-                              ? new Date(field.value)
-                              : undefined,
-                            to: endField.value
-                              ? new Date(endField.value)
-                              : undefined,
-                          }}
-                          onSelect={(range) => {
-                            if (!range) return;
-                            field.onChange(range.from);
-                            endField.onChange(range.to);
-                          }}
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  )}
-                />
-              )}
-            />
-          </Field>
-
-          {/* Venue */}
-          <Field>
-            <FieldLabel>Venue</FieldLabel>
-
-            <div className="flex items-center gap-2 border-2 rounded-md focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background">
-              <MapPin className="mx-2 h-4 w-4 text-muted-foreground" />
-
-              <Input
-                {...register("venue", { required: "Venue is required" })}
-                readOnly={lock}
-                className="border-0 px-0 text-sm focus:ring-0 focus-visible:ring-0"
-              />
-            </div>
-
-            <FieldError errors={errors.venue && [errors.venue]} />
-          </Field>
-        </FieldGroup>
-      </FieldSet>
-
-      {/* ================= DESCRIPTION ================= */}
-      <FieldSet>
-        <FieldLegend>Description</FieldLegend>
-
-        <Field>
-          <Textarea
-            rows={4}
-            {...register("description", {
-              required: "Description is required",
-            })}
-            readOnly={lock}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main Content */}
+        <div className="lg:col-span-2 space-y-6">
+          <Image
+            src="https://picsum.photos/seed/picsum/800/400"
+            alt="TechFest banner"
+            className="h-64 w-full object-cover rounded-lg border shadow-sm"
+            width={800}
+            height={400}
           />
-          <FieldError errors={errors.description && [errors.description]} />
-        </Field>
-      </FieldSet>
-    </form>
+
+          {/* Description */}
+          <Card className="shadow-sm">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                <Info className="h-5 w-5 text-primary" />
+                Description
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
+                {techFest.description || "No description provided."}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Sidebar Info */}
+        <div className="space-y-6">
+          <Card className="shadow-sm border-primary/10">
+            <CardHeader className="bg-primary/5">
+              <CardTitle className="text-lg font-semibold">Event Details</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-4">
+              <div className="space-y-4">
+                <div className="flex gap-3 items-start">
+                  <div className="bg-primary/10 p-2 rounded-lg">
+                    <CalendarIcon className="h-4 w-4 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Date</p>
+                    <p className="text-sm font-semibold">
+                      {format(new Date(techFest.start_date), "PPP")} – {format(new Date(techFest.end_date), "PPP")}
+                    </p>
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div className="flex gap-3 items-start">
+                  <div className="bg-primary/10 p-2 rounded-lg">
+                    <MapPin className="h-4 w-4 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Venue</p>
+                    <p className="text-sm font-semibold">{techFest.venue || "TBD"}</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 items-start">
+                  <div className="bg-primary/10 p-2 rounded-lg">
+                    <Rocket className="h-4 w-4 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</p>
+                    <Badge
+                      variant={techFest.published ? "default" : "secondary"}
+                      className={techFest.published ? "bg-green-500 hover:bg-green-600 text-white mt-1" : "mt-1"}
+                    >
+                      {techFest.published ? "Published" : "Draft"}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
   );
 }

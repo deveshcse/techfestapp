@@ -23,42 +23,48 @@ import { Calendar } from "@/components/ui/calendar";
 import { Textarea } from "@/components/ui/textarea";
 import { TechFestFormValues } from "../types/techfest.types";
 import { TechFestFormSchema } from "../schemas/techfest.schema";
-import { useCreateTechFest, useTechFest } from "../utils/useTechFest";
+import { useCreateTechFest, useTechFest, useUpdateTechFest } from "../utils/useTechFest";
 import { Spinner } from "@/components/ui/spinner";
-// import { useAuth } from "@/features/auth/context/auth-context";
-// import { authClient } from "@/lib/auth-client";
+import { useModalStore } from "@/store/useModalStore";
 
-
-interface EventFormProps {
+interface TechFestCreateUpdateFormProps {
+  techfestId?: number;
   initialData?: TechFestFormValues;
 }
 
+export function TechFestCreateUpdateForm({ techfestId, initialData }: TechFestCreateUpdateFormProps) {
+  const { close } = useModalStore();
+  const { mutate: createTechFest, isPending: isCreating } = useCreateTechFest();
+  const { mutate: updateTechFest, isPending: isUpdating } = useUpdateTechFest(techfestId!);
 
-export function EventCreateUpdateForm({ initialData }: EventFormProps) {
-  // const { user, isAuthenticated } = useAuth();
-
-  // if (user && isAuthenticated) {
-  //   const canCreateTechfest = authClient.admin.checkRolePermission({
-  //     permission: {
-  //       techfest: ["create"],
-  //     },
-  //     role: user?.role,
-  //   });
-  //   console.log("User can create techfest:", canCreateTechfest);
-  // }
-
-  const { mutate: createTechFest, isPending } = useCreateTechFest();
+  const isPending = isCreating || isUpdating;
 
   async function onSubmit(data: TechFestFormValues) {
     const { from, to } = data.dateRange!;
 
-    createTechFest({
+    const payload = {
       title: data.title,
       description: data.description,
       venue: data.venue,
       start_date: from,
       end_date: to,
-    });
+    };
+
+    if (techfestId) {
+      console.log("Updating TechFest with payload:", payload);
+      updateTechFest(payload, {
+        onSuccess: () => {
+          close();
+        },
+      });
+    } else {
+      console.log("Creating TechFest with payload:", payload);
+      createTechFest(payload, {
+        onSuccess: () => {
+          close();
+        },
+      });
+    }
   }
 
   const form = useForm<TechFestFormValues>({
@@ -71,16 +77,23 @@ export function EventCreateUpdateForm({ initialData }: EventFormProps) {
     },
   });
 
+  // Log validation errors to help debugging
+  if (Object.keys(form.formState.errors).length > 0) {
+    console.log("Form validation errors:", form.formState.errors);
+  }
+
   const tomorrow = startOfDay(addDays(new Date(), 1));
 
   const { data } = useTechFest();
 
   const techfestList = data?.data ?? [];
 
-  const blockedRanges = techfestList.map((tf) => ({
-    start: startOfDay(new Date(tf.start_date)),
-    end: endOfDay(new Date(tf.end_date)),
-  }));
+  const blockedRanges = techfestList
+    .filter((tf) => !techfestId || tf.id !== techfestId) // Don't block self range when editing
+    .map((tf) => ({
+      start: startOfDay(new Date(tf.start_date)),
+      end: endOfDay(new Date(tf.end_date)),
+    }));
 
   const isDateBlocked = (date: Date): boolean => {
     return blockedRanges.some(
@@ -96,9 +109,9 @@ export function EventCreateUpdateForm({ initialData }: EventFormProps) {
   return (
     <form
       onSubmit={form.handleSubmit(onSubmit)}
-      className="flex flex-col justify-between h-screen mx-4"
+      className="flex flex-col gap-6 mx-4 h-full"
     >
-      <div className="space-y-4">
+      <div className="space-y-4 flex-1">
         <Field>
           <FieldLabel htmlFor="title">Title</FieldLabel>
           <FieldContent>
@@ -143,7 +156,7 @@ export function EventCreateUpdateForm({ initialData }: EventFormProps) {
               name="dateRange"
               render={({ field }) => (
                 <>
-                  <Popover>
+                  <Popover >
                     <PopoverTrigger asChild>
                       <Button
                         variant="outline"
@@ -159,7 +172,7 @@ export function EventCreateUpdateForm({ initialData }: EventFormProps) {
                       </Button>
                     </PopoverTrigger>
 
-                    <PopoverContent className="w-auto p-0" align="start">
+                    <PopoverContent className="z-[100] w-auto p-0" align="start">
                       <Calendar
                         mode="range"
                         selected={field.value}
@@ -171,11 +184,7 @@ export function EventCreateUpdateForm({ initialData }: EventFormProps) {
                   </Popover>
 
                   <FieldError
-                    errors={
-                      form.formState.errors.dateRange
-                        ? [form.formState.errors.dateRange]
-                        : []
-                    }
+                    errors={form.formState.errors.dateRange ? [form.formState.errors.dateRange] : []}
                   />
                 </>
               )}
@@ -202,13 +211,11 @@ export function EventCreateUpdateForm({ initialData }: EventFormProps) {
 
       <Button
         type="submit"
-        className="mb-4 flex items-center disabled:opacity-80"
+        className="w-full flex items-center mb-4 disabled:opacity-80 mt-auto"
         disabled={isPending}
       >
-        <span className=" h-4 w-4">
-          {isPending && <Spinner className="h-4 w-4" />}
-        </span>
-        Submit
+        {isPending && <Spinner className="mr-2 h-4 w-4" />}
+        {techfestId ? "Update TechFest" : "Create TechFest"}
       </Button>
     </form>
   );

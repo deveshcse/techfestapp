@@ -1,8 +1,8 @@
 import PageHeader from "@/components/common/page-header";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { TechFestList } from "@/features/techfest/components/techfest-list";
-import CreateEventButton from "@/components/common/create-event-button";
 import { Access } from "@/features/auth/components/permission/access";
+import { CreateTechFestButton } from "@/features/techfest/components/create-techfest-button";
 
 export default function Page() {
   return (
@@ -12,7 +12,7 @@ export default function Page() {
         description="View and manage upcoming, ongoing, and past techfests."
         actions={[
           <Access key="create" resource="techfest" action="create">
-            <CreateEventButton />
+            <CreateTechFestButton />
           </Access>,
         ]}
       />
