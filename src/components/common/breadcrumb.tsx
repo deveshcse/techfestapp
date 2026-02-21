@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 
 import {
@@ -12,8 +12,8 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
-import { Separator } from "@/components/ui/separator";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Button } from "../ui/button";
+import { ArrowLeftIcon } from "lucide-react";
 
 function formatLabel(segment: string) {
   return decodeURIComponent(segment)
@@ -23,6 +23,8 @@ function formatLabel(segment: string) {
 
 export default function BreadcrumbComponent() {
   const pathname = usePathname();
+    const router = useRouter();
+  
 
   // split + remove empty
   let segments = pathname.split("/").filter(Boolean);
@@ -33,15 +35,17 @@ export default function BreadcrumbComponent() {
   }
 
   return (
-    <header className="flex h-16 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+    <header className="flex py-2 shrink-0 items-center gap-2  transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
       <div className="flex items-center gap-2 px-4">
-        <SidebarTrigger className="-ml-1" />
-
-        <Separator
-          orientation="vertical"
-          className="mr-2 data-[orientation=vertical]:h-4"
-        />
-
+        <Button
+              size="icon"
+              variant="ghost"
+              onClick={()=>router.back()}
+              aria-label="Go back"
+              className="size-7"
+            >
+              <ArrowLeftIcon />
+            </Button>
         <Breadcrumb>
           <BreadcrumbList>
             {/* Always show Dashboard once */}

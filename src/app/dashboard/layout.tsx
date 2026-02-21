@@ -1,7 +1,9 @@
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/common/app-sidebar";
-import BreadcrumbComponent from "@/components/common/breadcrumb-component";
 import { AuthGuard } from "@/features/auth/context/auth-gaurd";
+import BreadcrumbComponent from "@/components/common/breadcrumb";
+import HeaderComponent from "@/components/common/header-component";
+import ToolbarComponent from "@/components/common/toolbar-component";
 
 export default function DashboardLayout({
   children,
@@ -11,11 +13,13 @@ export default function DashboardLayout({
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset className="max-h-screen overflow-hidden">
+      <SidebarInset className="h-screen overflow-hidden">
+        <HeaderComponent />
         <BreadcrumbComponent />
-        <main className="flex-1 overflow-y-auto p-2">
+        <main className="flex-1 h-full ">
           <AuthGuard>{children}</AuthGuard>
         </main>
+        {/* <ToolbarComponent /> */}
       </SidebarInset>
     </SidebarProvider>
   );
