@@ -1,5 +1,5 @@
 import api from "@/lib/axios";
-import { ActivityResponse, ActivityServer, CreateUpdateActivityInput, ActivityStatus } from "../types/activity.types";
+import { ActivityResponse, ActivityServer, CreateUpdateActivityInput, ActivityStatus, UpcomingActivity } from "../types/activity.types";
 
 export const listActivities = async (techfestId: number): Promise<{ success: boolean; data: ActivityResponse[] }> => {
     const response = await api.get(`/api/techfest/${techfestId}/activities`);
@@ -70,5 +70,9 @@ export const unregisterActivity = async (
     activityId: number,
 ) => {
     const response = await api.delete(`/api/techfest/${techfestId}/activities/${activityId}/registration`);
+    return response.data;
+};
+export const listUpcomingActivities = async (): Promise<{ success: boolean; data: UpcomingActivity[] }> => {
+    const response = await api.get("/api/activities/upcoming");
     return response.data;
 };

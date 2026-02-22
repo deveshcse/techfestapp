@@ -10,6 +10,7 @@ import {
     listPotentialOrganizers,
     registerActivity,
     unregisterActivity,
+    listUpcomingActivities,
 } from "./activity-apis";
 import { CreateUpdateActivityInput, ActivityStatus } from "../types/activity.types";
 import { queryClient } from "@/lib/query-client";
@@ -20,6 +21,7 @@ export const activityKeys = {
     all: ["activity"] as const,
     list: (techfestId: number) => [...activityKeys.all, "list", techfestId] as const,
     detail: (techfestId: number, activityId: number) => [...activityKeys.all, "detail", techfestId, activityId] as const,
+    upcoming: ["activity", "upcoming"] as const,
 };
 
 export function useActivities(techfestId: number) {
@@ -141,6 +143,12 @@ export function useUnregisterActivity(techfestId: number, activityId: number) {
     });
 }
 
+export function useUpcomingActivities() {
+    return useQuery({
+        queryKey: activityKeys.upcoming,
+        queryFn: listUpcomingActivities,
+    });
+}
 
 export function useActivityActions(techfestId: number, activityId: number) {
     return {
@@ -150,5 +158,6 @@ export function useActivityActions(techfestId: number, activityId: number) {
         assign_organizers: useAssignActivityOrganizers(techfestId, activityId),
         register: useRegisterActivity(techfestId, activityId),
         unregister: useUnregisterActivity(techfestId, activityId),
+        upcoming_activities: useUpcomingActivities(),
     };
 }

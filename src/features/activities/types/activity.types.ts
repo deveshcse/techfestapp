@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ActivityStatus, ActivityType } from "@/generated/prisma/enums";
+import { ActivityStatus, ActivityType, RegistrationStatus } from "@/generated/prisma/enums";
 import { ActivityResponseSchema, CreateUpdateActivityFormDataSchema, UpdateActivityStatusSchema, CreateUpdateActivityInputSchema, ActivityServerSchema } from "../schemas/activity.schema";
 
 export type ActivityResponse = z.infer<typeof ActivityResponseSchema>
@@ -29,3 +29,23 @@ export type RegistrationWithUser = {
 };
 
 export { ActivityStatus, ActivityType };
+
+export type UpcomingActivity = {
+  id: number
+  title: string
+  description: string | null
+  venue: string | null
+  type: ActivityType
+
+  startDateTime: Date
+  endDateTime: Date
+
+  capacity: number | null
+  registrationCount: number
+
+  techfestId: number
+  techfestTitle: string
+
+  isRegistered: boolean
+  registrationStatus: RegistrationStatus | null
+}
