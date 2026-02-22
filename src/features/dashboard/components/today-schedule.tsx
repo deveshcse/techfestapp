@@ -34,7 +34,7 @@ export default function TodaySchedule() {
     }
 
     return (
-        <Card>
+        <Card className="mx-4 mb-96">
             <CardHeader>
                 <CardTitle className="text-lg font-semibold flex items-center gap-2">
                     <Clock className="h-5 w-5 text-primary" />

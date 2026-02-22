@@ -7,6 +7,8 @@ import StatsGrid from "./stats.grid";
 import RegistrationChart from "./registration-trend-chart";
 import ActivityBreakdownChart from "./activity-breakdown-chart";
 import TodaySchedule from "./today-schedule";
+import PageHeader from "@/components/common/page-header";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 
 export function Dashboard() {
@@ -27,25 +29,34 @@ export function Dashboard() {
     const isElevated = user?.role === "admin" || user?.role === "organizer";
 
     return (
-        <div className="space-y-6">
+        <div className="h-full w-full space-y-4">
+            <PageHeader title="Dashboard" description="Overview of your techfest" />
             {/* Stats */}
-            <StatsGrid role={user?.role ?? undefined} stats={stats} loading={loading} />
 
-            {/* Charts */}
-            {isElevated && stats && (
-                <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
-                    {stats.registrationTrends?.length > 0 && (
-                        <RegistrationChart data={stats.registrationTrends} />
-                    )}
 
-                    {stats.activityBreakdown?.length > 0 && (
-                        <ActivityBreakdownChart data={stats.activityBreakdown} />
-                    )}
+            <ScrollArea className="w-full h-full">
+                <div className="flex flex-col gap-4">
+                    <StatsGrid role={user?.role ?? undefined} stats={stats} loading={loading} />
+
+                    {/* Charts */}
+                    {isElevated && stats && (
+                        <div className="grid gap-4 grid-cols-1 lg:grid-cols-2 mx-4">
+                        {stats.registrationTrends?.length > 0 && (
+                            <RegistrationChart data={stats.registrationTrends} />
+                        )}
+
+                        {stats.activityBreakdown?.length > 0 && (
+                            <ActivityBreakdownChart data={stats.activityBreakdown} />
+                        )}
+                    </div>
+                )}
+
+                {/* Today's Schedule */}
+                {isElevated && <TodaySchedule />}
                 </div>
-            )}
 
-            {/* Today's Schedule */}
-            {isElevated && <TodaySchedule />}
+            </ScrollArea>
+
 
         </div>
     );

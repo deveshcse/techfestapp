@@ -110,7 +110,7 @@ export default function StatsGrid({ role, stats, loading }: Props) {
                 : userStats;
 
     return (
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 w-full px-4">
             {selected.map((item) => (
                 <StatCard
                     key={item.title}
