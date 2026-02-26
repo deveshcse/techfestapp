@@ -16,14 +16,24 @@ export default function UserProfile() {
 
     if (isLoading) {
         return (
-            <div className="space-y-6 animate-in fade-in duration-500">
-                <div className="flex flex-col gap-2">
+            <div className="h-full w-full px-6 animate-in fade-in duration-500 overflow-y-auto pb-24">
+                <div className="mb-2 flex flex-col gap-2 border-b pb-2">
                     <Skeleton className="h-10 w-48" />
                     <Skeleton className="h-4 w-64" />
                 </div>
-                <div className="grid gap-6">
-                    <Skeleton className="h-[200px] w-full" />
-                    <Skeleton className="h-[300px] w-full" />
+
+                <div className="space-y-8 mt-4">
+                    {/* TabsList Skeleton */}
+                    <div className="flex gap-2 p-1 bg-muted rounded-lg w-full lg:w-[400px]">
+                        {[1, 2, 3, 4].map((i) => (
+                            <Skeleton key={i} className="h-9 flex-1 lg:w-24" />
+                        ))}
+                    </div>
+
+                    <div className="grid gap-6">
+                        <Skeleton className="h-[200px] w-full rounded-xl" />
+                        <Skeleton className="h-[300px] w-full rounded-xl" />
+                    </div>
                 </div>
             </div>
         );

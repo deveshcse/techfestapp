@@ -25,7 +25,7 @@ export function TechFestDetailSkeleton() {
         </div>
       </nav>
 
-      <div className="mx-auto w-full h-full overflow-hidden space-y-6 px-4 pb-40 pt-4">
+      <div className="mx-auto w-full h-full overflow-scroll space-y-6 px-4 pb-40 pt-4">
         {/* Banner Skeleton */}
         <Skeleton className="h-56 sm:h-64 w-full rounded-lg" />
 

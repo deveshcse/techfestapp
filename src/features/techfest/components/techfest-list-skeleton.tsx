@@ -16,7 +16,7 @@ type TechFestListSkeletonProps = {
 
 export function TechFestListSkeleton({ count = 5 }: TechFestListSkeletonProps) {
   return (
-    <ItemGroup className="border rounded-lg overflow-hidden bg-background">
+    <ItemGroup className="border rounded-lg overflow-hidden bg-background mb-28">
       {Array.from({ length: count }).map((_, i) => (
         <React.Fragment key={i}>
           <Item className="py-5 px-6">

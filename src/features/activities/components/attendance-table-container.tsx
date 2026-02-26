@@ -38,9 +38,26 @@ export function AttendanceTableContainer({ techfestId, activityId }: AttendanceT
     };
 
     if (isLoading) {
-        return <div className="space-y-4 h-full flex flex-col">
-            <Skeleton className="flex-1 w-full" />
-        </div>;
+        return (
+            <div className="h-full flex flex-col space-y-4">
+                <div className="flex items-center justify-between">
+                    <Skeleton className="h-7 w-40" />
+                    <div className="flex gap-2">
+                        <Skeleton className="h-9 w-24 rounded-md" />
+                        <Skeleton className="h-9 w-28 rounded-md" />
+                    </div>
+                </div>
+
+                <div className="flex-1 min-h-0 bg-background rounded-xl border p-4 border-border/50">
+                    <div className="space-y-4">
+                        <Skeleton className="h-10 w-full" />
+                        {Array.from({ length: 8 }).map((_, i) => (
+                            <Skeleton key={i} className="h-14 w-full" />
+                        ))}
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     if (isError) {

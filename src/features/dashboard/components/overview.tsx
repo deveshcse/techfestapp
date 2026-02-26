@@ -19,7 +19,22 @@ export function Dashboard() {
 
 
     if (loading) {
-        return <Skeleton className="h-40 w-full mx-6" />;
+        return (
+            <div className="h-full w-full space-y-4">
+                <PageHeader title="Dashboard" description="Overview of your techfest" />
+                <div className="px-6 space-y-4">
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                        {[1, 2, 3, 4].map((i) => (
+                            <Skeleton key={i} className="h-24 w-full rounded-xl" />
+                        ))}
+                    </div>
+                    <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+                        <Skeleton className="h-[300px] w-full rounded-xl" />
+                        <Skeleton className="h-[300px] w-full rounded-xl" />
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     if (!stats) {
@@ -41,18 +56,18 @@ export function Dashboard() {
                     {/* Charts */}
                     {isElevated && stats && (
                         <div className="grid gap-4 grid-cols-1 lg:grid-cols-2 mx-4">
-                        {stats.registrationTrends?.length > 0 && (
-                            <RegistrationChart data={stats.registrationTrends} />
-                        )}
+                            {stats.registrationTrends?.length > 0 && (
+                                <RegistrationChart data={stats.registrationTrends} />
+                            )}
 
-                        {stats.activityBreakdown?.length > 0 && (
-                            <ActivityBreakdownChart data={stats.activityBreakdown} />
-                        )}
-                    </div>
-                )}
+                            {stats.activityBreakdown?.length > 0 && (
+                                <ActivityBreakdownChart data={stats.activityBreakdown} />
+                            )}
+                        </div>
+                    )}
 
-                {/* Today's Schedule */}
-                {isElevated && <TodaySchedule />}
+                    {/* Today's Schedule */}
+                    {isElevated && <TodaySchedule />}
                 </div>
 
             </ScrollArea>

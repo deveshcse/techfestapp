@@ -29,7 +29,11 @@ export function UpcomingActivities() {
     const { data: response, isPending, isError, refetch } = useUpcomingActivities();
 
     if (isPending) {
-        return <ActivityListSkeleton count={5} />;
+        return (
+            <div className="mb-10 mx-6 mt-4">
+                <ActivityListSkeleton count={5} />
+            </div>
+        );
     }
 
     if (isError) {

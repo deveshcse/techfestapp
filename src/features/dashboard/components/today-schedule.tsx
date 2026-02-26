@@ -20,13 +20,16 @@ export default function TodaySchedule() {
 
     if (isLoading) {
         return (
-            <Card>
+            <Card className="mx-4 mb-96">
                 <CardHeader>
-                    <Skeleton className="h-6 w-40" />
+                    <div className="flex items-center gap-2">
+                        <Skeleton className="h-5 w-5 rounded-full" />
+                        <Skeleton className="h-6 w-40" />
+                    </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     {Array.from({ length: 3 }).map((_, i) => (
-                        <Skeleton key={i} className="h-20 w-full rounded-lg" />
+                        <Skeleton key={i} className="h-24 w-full rounded-lg" />
                     ))}
                 </CardContent>
             </Card>
