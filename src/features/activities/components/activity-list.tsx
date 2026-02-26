@@ -1,9 +1,8 @@
 "use client";
-
+import * as React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Calendar, MapPin, Clock } from "lucide-react";
+import { Calendar, MapPin, Clock, Image as ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useActivities } from "../utils/useActivities";
 import { useRouter } from "next/navigation";
@@ -11,6 +10,18 @@ import { format } from "date-fns";
 import { ActivityStatus } from "../types/activity.types";
 import { ErrorState } from "@/components/common/error-state";
 import { EmptyState } from "@/components/common/empty-state";
+import {
+    Item,
+    ItemActions,
+    ItemContent,
+    ItemGroup,
+    ItemMedia,
+    ItemTitle,
+    ItemSeparator,
+} from "@/components/ui/item";
+import { Label } from "@/components/ui/label";
+
+import { ActivityListSkeleton } from "./activity-list-skeleton";
 
 type Props = {
     techfestId: number;
@@ -29,13 +40,7 @@ export function ActivityList({ techfestId }: Props) {
     const { data, isPending, isError, refetch } = useActivities(techfestId);
 
     if (isPending) {
-        return (
-            <div className="space-y-4">
-                {[...Array(3)].map((_, i) => (
-                    <div key={i} className="h-32 w-full animate-pulse rounded-lg bg-muted" />
-                ))}
-            </div>
-        );
+        return <ActivityListSkeleton count={4} />;
     }
 
     if (isError) {
@@ -64,68 +69,82 @@ export function ActivityList({ techfestId }: Props) {
     }
 
     return (
-        <div className="space-y-4">
-            {activities.map((activity) => (
-                <Card key={activity.id} className="overflow-hidden transition-all hover:shadow-md cursor-pointer" onClick={() => router.push(`/dashboard/techfest/${techfestId}/activities/${activity.id}`)}>
-                    <CardContent className="p-0">
-                        <div className="flex flex-col md:flex-row">
-                            {/* Type Indicator */}
-                            <div className="w-2 bg-primary" />
+        <ItemGroup className="border rounded-lg overflow-hidden bg-background">
+            {activities.map((activity, index) => (
+                <React.Fragment key={activity.id}>
+                    <Item className="py-5 px-6">
+                        <ItemMedia variant="image" className="bg-muted">
+                            <ImageIcon className="text-muted-foreground size-5" />
+                        </ItemMedia>
 
-                            <div className="flex-1 p-5 space-y-3">
-                                <div className="flex items-start justify-between">
-                                    <div className="space-y-1">
-                                        <h3 className="text-lg font-bold leading-none">{activity.title}</h3>
-                                        <p className="text-sm text-muted-foreground line-clamp-1">{activity.description}</p>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        {activity.isRegistered && (
-                                            <Badge
-                                                variant="default"
-                                                className={cn(
-                                                    "bg-blue-100 text-blue-800 border-blue-200",
-                                                    activity.registrationStatus === "WAITLISTED" && "bg-yellow-100 text-yellow-800 border-yellow-200"
-                                                )}
-                                            >
-                                                {activity.registrationStatus === "WAITLISTED" ? "Waitlisted" : "Registered"}
-                                            </Badge>
-                                        )}
-                                        <Badge variant="outline" className={cn("capitalize", statusStyles[activity.status])}>
-                                            {activity.status.toLowerCase()}
-                                        </Badge>
-                                    </div>
+                        <ItemContent>
+                            <ItemTitle className="flex items-center gap-2">
+                                <Label className="text-base font-semibold cursor-pointer">
+                                    {activity.title}
+                                </Label>
+                                <Badge variant="secondary" className="font-medium text-[10px] px-1.5 py-0 h-4">
+                                    {activity.type.replace("_", " ")}
+                                </Badge>
+                            </ItemTitle>
+
+                            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 font-medium">
+                                <div className="flex items-center gap-1.5 ">
+                                    <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
+                                    <Label className="text-muted-foreground text-xs cursor-pointer">
+                                        {format(new Date(activity.startDateTime), "PPP")}
+                                    </Label>
                                 </div>
 
-                                <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground pt-1">
+                                <div className="flex items-center gap-1.5 ">
+                                    <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+                                    <Label className="text-muted-foreground text-xs cursor-pointer">
+                                        {format(new Date(activity.startDateTime), "p")} - {format(new Date(activity.endDateTime), "p")}
+                                    </Label>
+                                </div>
+
+                                {activity.venue && (
                                     <div className="flex items-center gap-1.5">
-                                        <Calendar className="h-4 w-4 text-primary" />
-                                        <span>{format(new Date(activity.startDateTime), "PPP")}</span>
+                                        <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
+                                        <Label className="text-muted-foreground text-xs cursor-pointer">
+                                            {activity.venue}
+                                        </Label>
                                     </div>
-                                    <div className="flex items-center gap-1.5">
-                                        <Clock className="h-4 w-4 text-primary" />
-                                        <span>{format(new Date(activity.startDateTime), "p")} - {format(new Date(activity.endDateTime), "p")}</span>
-                                    </div>
-                                    {activity.venue && (
-                                        <div className="flex items-center gap-1.5">
-                                            <MapPin className="h-4 w-4 text-primary" />
-                                            <span>{activity.venue}</span>
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div className="flex items-center justify-between pt-2">
-                                    <Badge variant="secondary" className="font-medium">
-                                        {activity.type.replace("_", " ")}
-                                    </Badge>
-                                    <Button variant="ghost" size="sm" className="text-primary hover:text-primary hover:bg-primary/5">
-                                        View Details
-                                    </Button>
-                                </div>
+                                )}
                             </div>
-                        </div>
-                    </CardContent>
-                </Card>
+                        </ItemContent>
+
+                        <ItemActions>
+                            {activity.isRegistered && (
+                                <Badge
+                                    variant="default"
+                                    className={cn(
+                                        "bg-blue-100 text-blue-800 border-blue-200 px-2.5 py-0.5",
+                                        activity.registrationStatus === "WAITLISTED" && "bg-yellow-100 text-yellow-800 border-yellow-200"
+                                    )}
+                                >
+                                    {activity.registrationStatus === "WAITLISTED" ? "Waitlisted" : "Registered"}
+                                </Badge>
+                            )}
+                            <Badge
+                                variant="outline"
+                                className={cn("capitalize px-2.5 py-0.5", statusStyles[activity.status])}
+                            >
+                                {activity.status.toLowerCase()}
+                            </Badge>
+
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => router.push(`/dashboard/techfest/${techfestId}/activities/${activity.id}`)}
+                                aria-label={`View details for ${activity.title}`}
+                            >
+                                View
+                            </Button>
+                        </ItemActions>
+                    </Item>
+                    {index < activities.length - 1 && <ItemSeparator />}
+                </React.Fragment>
             ))}
-        </div>
+        </ItemGroup>
     );
 }

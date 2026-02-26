@@ -1,9 +1,9 @@
 "use client";
+import * as React from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Calendar, MapPin } from "lucide-react";
+import { Calendar, MapPin, Image as ImageIcon } from "lucide-react";
 import {
   getTechFestStatus,
   TechFestStatus,
@@ -14,6 +14,16 @@ import { useRouter } from "next/navigation";
 import { TechFestListSkeleton } from "./techfest-list-skeleton";
 import { ErrorState } from "@/components/common/error-state";
 import { EmptyState } from "@/components/common/empty-state";
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemGroup,
+  ItemMedia,
+  ItemTitle,
+  ItemSeparator,
+} from "@/components/ui/item";
+import { Label } from "@/components/ui/label";
 
 export type TechFest = {
   id: number;
@@ -72,64 +82,74 @@ export function TechFestList() {
   } as const;
 
   return (
-    <div className="space-y-2">
-      {techfests.map((fest) => {
+    <ItemGroup className="border rounded-lg overflow-hidden bg-background mb-28">
+      {techfests.map((fest, index) => {
         const status = getTechFestStatus(
           new Date(fest.start_date),
-          new Date(fest.end_date),
+          new Date(fest.end_date)
         );
 
         return (
-          <Card key={fest.id} className="py-4 rounded-sm">
-            <CardContent className="flex flex-col  sm:flex-row sm:items-center sm:justify-between">
-              {/* Left content */}
-              <div className="space-y-2">
-                <h3 className="text-base font-semibold leading-none">
-                  {fest.title}
-                </h3>
+          <React.Fragment key={fest.id}>
+            <Item className="py-5 px-6">
+              <ItemMedia variant="image" className="bg-muted">
+                <ImageIcon className="text-muted-foreground size-5" />
+              </ItemMedia>
 
-                <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
-                    {new Date(fest.start_date).toLocaleDateString(
-                      "en-US",
-                      options,
-                    )}{" "}
-                    -{" "}
-                    {new Date(fest.end_date).toLocaleDateString(
-                      "en-US",
-                      options,
-                    )}
-                  </span>
+              <ItemContent>
+                <ItemTitle>
+                  <Label className="text-base font-semibold cursor-pointer">
+                    {fest.title}
+                  </Label>
+                </ItemTitle>
 
-                  <span className="flex items-center gap-1">
-                    <MapPin className="h-4 w-4" />
-                    {fest.venue}
-                  </span>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 font-medium">
+                  <div className="flex items-center gap-1.5 ">
+                    <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
+                    <Label className="text-muted-foreground text-xs cursor-pointer">
+                      {new Date(fest.start_date).toLocaleDateString(
+                        "en-US",
+                        options
+                      )}{" "}
+                      -{" "}
+                      {new Date(fest.end_date).toLocaleDateString(
+                        "en-US",
+                        options
+                      )}
+                    </Label>
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
+                    <Label className="text-muted-foreground text-xs cursor-pointer">
+                      {fest.venue}
+                    </Label>
+                  </div>
                 </div>
-              </div>
+              </ItemContent>
 
-              {/* Right actions */}
-              <div className="flex items-center gap-3">
+              <ItemActions>
                 <Badge
                   variant="outline"
-                  className={cn("capitalize", statusStyles[status])}
+                  className={cn("capitalize px-2.5 py-0.5", statusStyles[status])}
                 >
                   {status}
                 </Badge>
 
                 <Button
                   size="sm"
+                  variant="outline"
                   onClick={() => router.push(`/dashboard/techfest/${fest.id}`)}
-                  aria-label={`Open details for ${fest.title}`}
+                  aria-label={`View details for ${fest.title}`}
                 >
-                  Open details
+                  View
                 </Button>
-              </div>
-            </CardContent>
-          </Card>
+              </ItemActions>
+            </Item>
+            {index < techfests.length - 1 && <ItemSeparator />}
+          </React.Fragment>
         );
       })}
-    </div>
+    </ItemGroup>
   );
 }

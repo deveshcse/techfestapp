@@ -1,89 +1,87 @@
 import { Skeleton } from "@/components/ui/skeleton";
-
-
-// keep your same custom primitives
-import {
-  FieldSet,
-  FieldLegend,
-  FieldGroup,
-  Field,
-  FieldLabel,
-} from "@/components/ui/field"; // adjust path if needed
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 
 export function TechFestDetailSkeleton() {
   return (
-    <div className="mx-auto max-w-5xl space-y-6 px-4 py-6">
-      {/* ================= ACTION BAR ================= */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
-        {/* Cancel slot */}
-        <div className="w-24">
-          <Skeleton className="h-9 w-24 rounded-md" />
+    <section className="h-full">
+      {/* Navbar Skeleton */}
+      <nav className="flex items-center justify-between gap-4 px-4 border-b py-2">
+        <div className="flex flex-col item-center justify-center">
+          <Skeleton className="h-7 w-48 md:w-66" />
         </div>
 
-        {/* Right actions */}
-        <div className="flex flex-wrap justify-end gap-2">
-          <Skeleton className="h-9 w-35 rounded-md" />
-          <Skeleton className="h-9 w-35 rounded-md" />
-          <Skeleton className="h-9 w-24 rounded-md" />
-          <Skeleton className="h-9 w-24 rounded-md" />
+        <div className="flex items-center gap-2">
+          {/* Mobile Actions / Desktop Buttons */}
+          <div className="md:hidden">
+            <Skeleton className="h-9 w-24 rounded-md" />
+          </div>
+          <div className="hidden md:flex gap-2">
+            <Skeleton className="h-9 w-32 rounded-md" />
+            <Skeleton className="h-9 w-32 rounded-md" />
+            <Skeleton className="h-9 w-24 rounded-md" />
+            <Skeleton className="h-9 w-20 rounded-md" />
+          </div>
         </div>
-      </div>
+      </nav>
 
-      {/* ================= HERO ================= */}
-      <div className="overflow-hidden rounded-lg border">
-        {/* banner */}
-        <Skeleton className="h-48 w-full" />
+      <div className="mx-auto w-full h-full overflow-hidden space-y-6 px-4 pb-40 pt-4">
+        {/* Banner Skeleton */}
+        <Skeleton className="h-56 sm:h-64 w-full rounded-lg" />
 
-        <div className="p-4 space-y-2">
-          {/* title input */}
-          <Skeleton className="h-10 w-[60%]" />
-        </div>
-      </div>
+        {/* Description Card Skeleton */}
+        <Card className="shadow-sm">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold flex items-center gap-2">
+              <Skeleton className="size-5 rounded-full" />
+              <Skeleton className="h-6 w-32" />
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-[90%]" />
+            <Skeleton className="h-4 w-[95%]" />
+          </CardContent>
+        </Card>
 
-      {/* ================= EVENT DETAILS ================= */}
-      <FieldSet>
-        <div className="flex items-center justify-between">
-          <FieldLegend>Event Details</FieldLegend>
-          <Skeleton className="h-6 w-25 rounded-md" />
-        </div>
+        {/* Event Details Card Skeleton */}
+        <Card className="shadow-sm border-primary/10">
+          <CardHeader className="bg-primary/5">
+            <Skeleton className="h-6 w-40" />
+          </CardHeader>
 
-        <FieldGroup>
-          {/* Date Range */}
-          <Field>
-            <FieldLabel>Date</FieldLabel>
-            <Skeleton className="h-10 w-full" />
-          </Field>
-
-          {/* Venue */}
-          <Field>
-            <FieldLabel>Venue</FieldLabel>
-            <div className="flex items-center gap-2 border-2 rounded-md p-2">
-              <Skeleton className="h-4 w-4" />
-              <Skeleton className="h-5 w-50" />
+          <CardContent className="p-6 space-y-4">
+            {/* Date Section */}
+            <div className="flex gap-3 items-start">
+              <Skeleton className="size-8 rounded-lg" />
+              <div className="space-y-1">
+                <Skeleton className="h-3 w-12" />
+                <Skeleton className="h-5 w-56" />
+              </div>
             </div>
-          </Field>
-        </FieldGroup>
-      </FieldSet>
 
-      {/* ================= DESCRIPTION ================= */}
-      <FieldSet>
-        <FieldLegend>Description</FieldLegend>
+            <Separator />
 
-        <Field>
-          <Skeleton className="h-28 w-full" />
-        </Field>
-      </FieldSet>
+            {/* Venue Section */}
+            <div className="flex gap-3 items-start">
+              <Skeleton className="size-8 rounded-lg" />
+              <div className="space-y-1">
+                <Skeleton className="h-3 w-16" />
+                <Skeleton className="h-5 w-40" />
+              </div>
+            </div>
 
-      {/* ================= RULES ================= */}
-      <FieldSet>
-        <FieldLegend>Event Rules & Guidelines</FieldLegend>
-
-        <div className="space-y-2 pl-6">
-          <Skeleton className="h-4 w-65" />
-          <Skeleton className="h-4 w-60" />
-          <Skeleton className="h-4 w-70" />
-        </div>
-      </FieldSet>
-    </div>
+            {/* Status Section */}
+            <div className="flex gap-3 items-start pt-2">
+              <Skeleton className="size-8 rounded-lg" />
+              <div className="space-y-1">
+                <Skeleton className="h-3 w-14" />
+                <Skeleton className="h-6 w-20 rounded-full" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </section>
   );
 }

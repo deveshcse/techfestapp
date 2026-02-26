@@ -19,7 +19,7 @@ export function Dashboard() {
 
 
     if (loading) {
-        return <Skeleton className="h-40 w-full" />;
+        return <Skeleton className="h-40 w-full mx-6" />;
     }
 
     if (!stats) {

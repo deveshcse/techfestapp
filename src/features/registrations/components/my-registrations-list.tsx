@@ -1,18 +1,28 @@
 "use client";
-
+import * as React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Calendar, MapPin, Clock, ExternalLink } from "lucide-react";
+import { Calendar, MapPin, Clock, Image as ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import Link from "next/link";
 import { useRegistrations } from "../utils/hooks/use-registrations";
 import { MyRegistrationsSkeleton } from "./my-registrations-skeleton";
 import { ErrorState } from "@/components/common/error-state";
 import { EmptyState } from "@/components/common/empty-state";
+import {
+    Item,
+    ItemActions,
+    ItemContent,
+    ItemGroup,
+    ItemMedia,
+    ItemTitle,
+    ItemSeparator,
+} from "@/components/ui/item";
+import { Label } from "@/components/ui/label";
+import { useRouter } from "next/navigation";
 
 export function MyRegistrationsList() {
+    const router = useRouter();
     const { data: response, isLoading, isError, error } = useRegistrations();
 
     if (isLoading) {
@@ -42,93 +52,93 @@ export function MyRegistrationsList() {
                 title="No registrations yet"
                 description="You haven't registered for any activities. Browse the events to join!"
                 action={
-                    <Link href="/dashboard/techfest">
-                        <Button>Explore Techfests</Button>
-                    </Link>
+                    <Button onClick={() => router.push("/dashboard/techfest")}>
+                        Explore Techfests
+                    </Button>
                 }
             />
         );
     }
 
     return (
-        <div className="space-y-4">
-            {registrations.map((reg) => {
+        <ItemGroup className="border rounded-lg overflow-hidden bg-background">
+            {registrations.map((reg, index) => {
                 const activity = reg.activity;
                 const registrationStatus = reg.status;
 
                 return (
-                    <Card
-                        key={reg.id}
-                        className="overflow-hidden transition-all hover:shadow-md group"
-                    >
-                        <CardContent className="p-0">
-                            <div className="flex flex-col md:flex-row">
-                                {/* Type Indicator */}
-                                <div className={cn(
-                                    "w-2",
-                                    registrationStatus === "WAITLISTED" ? "bg-yellow-500" : "bg-primary"
-                                )} />
+                    <React.Fragment key={reg.id}>
+                        <Item className="py-5 px-6">
+                            <ItemMedia variant="image" className="bg-muted">
+                                <ImageIcon className="text-muted-foreground size-5" />
+                            </ItemMedia>
 
-                                <div className="flex-1 p-5 space-y-3">
-                                    <div className="flex items-start justify-between">
-                                        <div className="space-y-1">
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-xs font-bold text-primary uppercase tracking-wider">
-                                                    {activity.techfest.title}
-                                                </span>
-                                            </div>
-                                            <h3 className="text-lg font-bold leading-none group-hover:text-primary transition-colors">
-                                                {activity.title}
-                                            </h3>
-                                            <p className="text-sm text-muted-foreground line-clamp-1">{activity.description}</p>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <Badge
-                                                variant="default"
-                                                className={cn(
-                                                    "bg-blue-100 text-blue-800 border-blue-200",
-                                                    registrationStatus === "WAITLISTED" && "bg-yellow-100 text-yellow-800 border-yellow-200"
-                                                )}
-                                            >
-                                                {registrationStatus === "WAITLISTED" ? "Waitlisted" : "Registered"}
-                                            </Badge>
-                                        </div>
+                            <ItemContent>
+                                <ItemTitle className="flex items-center gap-2">
+                                    <Label className="text-base font-semibold cursor-pointer">
+                                        {activity.title}
+                                    </Label>
+                                    <Badge variant="secondary" className="font-medium text-[10px] px-1.5 py-0 h-4">
+                                        {activity.type.replace("_", " ")}
+                                    </Badge>
+                                </ItemTitle>
+
+                                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 font-medium">
+                                    <div className="flex items-center gap-1.5 ">
+                                        <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
+                                        <Label className="text-muted-foreground text-xs cursor-pointer">
+                                            {format(new Date(activity.startDateTime), "PPP")}
+                                        </Label>
                                     </div>
 
-                                    <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground pt-1">
+                                    <div className="flex items-center gap-1.5 ">
+                                        <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+                                        <Label className="text-muted-foreground text-xs cursor-pointer">
+                                            {format(new Date(activity.startDateTime), "p")} - {format(new Date(activity.endDateTime), "p")}
+                                        </Label>
+                                    </div>
+
+                                    {activity.venue && (
                                         <div className="flex items-center gap-1.5">
-                                            <Calendar className="h-4 w-4 text-primary" />
-                                            <span>{format(new Date(activity.startDateTime), "PPP")}</span>
+                                            <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
+                                            <Label className="text-muted-foreground text-xs cursor-pointer">
+                                                {activity.venue}
+                                            </Label>
                                         </div>
-                                        <div className="flex items-center gap-1.5">
-                                            <Clock className="h-4 w-4 text-primary" />
-                                            <span>{format(new Date(activity.startDateTime), "p")} - {format(new Date(activity.endDateTime), "p")}</span>
-                                        </div>
-                                        {activity.venue && (
-                                            <div className="flex items-center gap-1.5">
-                                                <MapPin className="h-4 w-4 text-primary" />
-                                                <span>{activity.venue}</span>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    <div className="flex items-center justify-between pt-2">
-                                        <Badge variant="secondary" className="font-medium">
-                                            {activity.type.replace("_", " ")}
-                                        </Badge>
-                                        <Link href={`/dashboard/techfest/${activity.techfest.id}/activities/${activity.id}`}>
-                                            <Button variant="ghost" size="sm" className="text-primary hover:text-primary hover:bg-primary/5">
-                                                View Detail
-                                                <ExternalLink className="ml-2 h-3 w-3" />
-                                            </Button>
-                                        </Link>
-                                    </div>
+                                    )}
                                 </div>
-                            </div>
-                        </CardContent>
-                    </Card>
+
+                                <Label className="text-muted-foreground/80 text-[10px] mt-1 font-normal line-clamp-1 italic">
+                                    {activity.techfest.title}
+                                </Label>
+                            </ItemContent>
+
+                            <ItemActions>
+                                <Badge
+                                    variant="default"
+                                    className={cn(
+                                        "px-2.5 py-0.5",
+                                        "bg-blue-100 text-blue-800 border-blue-200",
+                                        registrationStatus === "WAITLISTED" && "bg-yellow-100 text-yellow-800 border-yellow-200"
+                                    )}
+                                >
+                                    {registrationStatus === "WAITLISTED" ? "Waitlisted" : "Registered"}
+                                </Badge>
+
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => router.push(`/dashboard/techfest/${activity.techfest.id}/activities/${activity.id}`)}
+                                    aria-label={`View details for ${activity.title}`}
+                                >
+                                    View
+                                </Button>
+                            </ItemActions>
+                        </Item>
+                        {index < registrations.length - 1 && <ItemSeparator />}
+                    </React.Fragment>
                 );
             })}
-        </div>
+        </ItemGroup>
     );
 }

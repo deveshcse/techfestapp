@@ -10,10 +10,14 @@ import {
     ItemSeparator,
 } from "@/components/ui/item";
 
-export function MyRegistrationsSkeleton() {
+type ActivityListSkeletonProps = {
+    count?: number;
+};
+
+export function ActivityListSkeleton({ count = 3 }: ActivityListSkeletonProps) {
     return (
         <ItemGroup className="border rounded-lg overflow-hidden bg-background">
-            {[1, 2, 3].map((_, i) => (
+            {Array.from({ length: count }).map((_, i) => (
                 <React.Fragment key={i}>
                     <Item className="py-5 px-6">
                         {/* Media Icon Placeholder */}
@@ -22,7 +26,7 @@ export function MyRegistrationsSkeleton() {
                         </ItemMedia>
 
                         <ItemContent>
-                            {/* Activity Title and Badge */}
+                            {/* Title and Badge */}
                             <ItemTitle className="flex items-center gap-2">
                                 <Skeleton className="h-5 w-48" />
                                 <Skeleton className="h-4 w-12 rounded-full" />
@@ -37,7 +41,7 @@ export function MyRegistrationsSkeleton() {
 
                                 <div className="flex items-center gap-1.5 ">
                                     <Skeleton className="h-3.5 w-3.5 rounded-full" />
-                                    <Skeleton className="h-4 w-28" />
+                                    <Skeleton className="h-3.5 w-40" />
                                 </div>
 
                                 <div className="flex items-center gap-1.5">
@@ -45,18 +49,16 @@ export function MyRegistrationsSkeleton() {
                                     <Skeleton className="h-3.5 w-24" />
                                 </div>
                             </div>
-
-                            {/* Techfest Title Placeholder */}
-                            <Skeleton className="h-3 w-32 mt-2 italic" />
                         </ItemContent>
 
                         {/* Actions */}
                         <ItemActions>
                             <Skeleton className="h-6 w-16 rounded-full" />
+                            <Skeleton className="h-6 w-16 rounded-full" />
                             <Skeleton className="h-9 w-20 rounded-md" />
                         </ItemActions>
                     </Item>
-                    {i < 3 - 1 && <ItemSeparator />}
+                    {i < count - 1 && <ItemSeparator />}
                 </React.Fragment>
             ))}
         </ItemGroup>

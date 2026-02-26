@@ -1,5 +1,14 @@
-import { Card, CardContent } from "@/components/ui/card";
+import * as React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemGroup,
+  ItemMedia,
+  ItemTitle,
+  ItemSeparator,
+} from "@/components/ui/item";
 
 type TechFestListSkeletonProps = {
   count?: number;
@@ -7,40 +16,46 @@ type TechFestListSkeletonProps = {
 
 export function TechFestListSkeleton({ count = 5 }: TechFestListSkeletonProps) {
   return (
-    <div className="space-y-2">
+    <ItemGroup className="border rounded-lg overflow-hidden bg-background">
       {Array.from({ length: count }).map((_, i) => (
-        <Card key={i} className="py-4 rounded-sm">
-          <CardContent className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            {/* Left content */}
-            <div className="space-y-2">
+        <React.Fragment key={i}>
+          <Item className="py-5 px-6">
+            {/* Media Icon Placeholder */}
+            <ItemMedia variant="image" className="bg-muted">
+              <Skeleton className="size-5 rounded-sm" />
+            </ItemMedia>
+
+            <ItemContent>
               {/* Title */}
-              <Skeleton className="h-4 w-55" />
+              <ItemTitle>
+                <Skeleton className="h-5 w-48" />
+              </ItemTitle>
 
               {/* Date + Venue */}
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="flex items-center gap-1">
-                  <Skeleton className="h-4 w-4 rounded-sm" />
-                  <Skeleton className="h-4 w-45" />
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
+                <div className="flex items-center gap-1.5 ">
+                  <Skeleton className="h-3.5 w-3.5 rounded-full" />
+                  <Skeleton className="h-3.5 w-40" />
                 </div>
 
-                <div className="flex items-center gap-1">
-                  <Skeleton className="h-4 w-4 rounded-sm" />
-                  <Skeleton className="h-4 w-30" />
+                <div className="flex items-center gap-1.5">
+                  <Skeleton className="h-3.5 w-3.5 rounded-full" />
+                  <Skeleton className="h-3.5 w-24" />
                 </div>
               </div>
-            </div>
+            </ItemContent>
 
-            {/* Right actions */}
-            <div className="flex items-center gap-3 mt-3 sm:mt-0">
-              {/* Badge */}
-              <Skeleton className="h-6 w-20 rounded-md" />
-
-              {/* Button */}
-              <Skeleton className="h-9 w-30 rounded-md" />
-            </div>
-          </CardContent>
-        </Card>
+            {/* Actions */}
+            <ItemActions>
+              {/* Status Badge */}
+              <Skeleton className="h-6 w-16 rounded-full" />
+              {/* View Button */}
+              <Skeleton className="h-9 w-20 rounded-md" />
+            </ItemActions>
+          </Item>
+          {i < count - 1 && <ItemSeparator />}
+        </React.Fragment>
       ))}
-    </div>
+    </ItemGroup>
   );
 }

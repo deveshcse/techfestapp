@@ -1,43 +1,51 @@
-import { Item, ItemHeader, ItemTitle, ItemContent, ItemDescription, ItemActions } from "@/components/ui/item"
-import { Skeleton } from "@/components/ui/skeleton"
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemMedia,
+  ItemTitle,
+} from "@/components/ui/item";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function ActivityItemSkeleton() {
   return (
-    <Item
-      variant="outline"
-      size="default"
-      className="bg-card shadow-sm m-6"
-    >
-      {/* Header */}
-      <ItemHeader>
+    <Item className="py-5 px-6">
+      {/* Media Icon Placeholder */}
+      <ItemMedia variant="image" className="bg-muted">
+        <Skeleton className="size-5 rounded-sm" />
+      </ItemMedia>
+
+      <ItemContent>
+        {/* Title and Badge */}
         <ItemTitle className="flex items-center gap-2">
-          <Skeleton className="h-5 w-40" />
-          <Skeleton className="h-5 w-16 rounded-md" />
+          <Skeleton className="h-5 w-48" />
+          <Skeleton className="h-4 w-12 rounded-full" />
         </ItemTitle>
 
-        <Skeleton className="h-5 w-28 rounded-md" />
-      </ItemHeader>
+        {/* Meta Info: Date, Time, Venue */}
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
+          <div className="flex items-center gap-1.5 ">
+            <Skeleton className="h-3.5 w-3.5 rounded-full" />
+            <Skeleton className="h-3.5 w-32" />
+          </div>
 
-      {/* Content */}
-      <ItemContent className="pt-2">
-        <ItemDescription className="mb-3">
-          <Skeleton className="h-4 w-full mb-2" />
-          <Skeleton className="h-4 w-3/4" />
-        </ItemDescription>
+          <div className="flex items-center gap-1.5 ">
+            <Skeleton className="h-3.5 w-3.5 rounded-full" />
+            <Skeleton className="h-3.5 w-40" />
+          </div>
 
-        {/* Meta Info Row */}
-        <div className="flex flex-wrap gap-x-6 gap-y-2">
-          <Skeleton className="h-4 w-32" />
-          <Skeleton className="h-4 w-36" />
-          <Skeleton className="h-4 w-28" />
-          <Skeleton className="h-4 w-40" />
+          <div className="flex items-center gap-1.5">
+            <Skeleton className="h-3.5 w-3.5 rounded-full" />
+            <Skeleton className="h-3.5 w-24" />
+          </div>
         </div>
       </ItemContent>
 
       {/* Actions */}
-      <ItemActions className="basis-full md:basis-auto mt-4 md:mt-0 justify-end">
-        <Skeleton className="h-9 w-32 rounded-md" />
+      <ItemActions>
+        <Skeleton className="h-6 w-16 rounded-full" />
+        <Skeleton className="h-9 w-20 rounded-md" />
       </ItemActions>
     </Item>
-  )
+  );
 }
