@@ -13,10 +13,10 @@ export function TechFestDetailContainer({ techFestId }: Props) {
     return <TechFestDetailSkeleton />;
   }
   if (error) {
-    return <div className="text-red-500">Failed to load techfest details.</div>;
+    return <div className="text-destructive">Failed to load techfest details.</div>;
   }
   if (!isSuccess || !data) {
-    return <div className="text-red-500">Failed to load techfest details.</div>;
+    return <div className="text-destructive">Failed to load techfest details.</div>;
   }
   return <TechFestDetail techFest={data} />;
 }

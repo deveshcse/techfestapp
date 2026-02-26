@@ -138,9 +138,9 @@ export function AttendanceTable({
                         {isCurrentlyMarking ? (
                             <Spinner className="text-primary" />
                         ) : attended ? (
-                            <CheckCircle className="h-4 w-4 text-green-500" />
+                            <CheckCircle className="h-4 w-4 text-primary" />
                         ) : (
-                            <XCircle className="h-4 w-4 text-gray-300" />
+                            <XCircle className="h-4 w-4 text-muted-foreground/30" />
                         )}
                     </div>
                 )

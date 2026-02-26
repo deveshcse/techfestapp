@@ -10,9 +10,9 @@ import { EmptyState } from "@/components/common/empty-state";
 import { useTodaySchedule } from "../utils/hooks/useTodaySchedule";
 
 const statusStyles: Record<string, string> = {
-    PUBLISHED: "bg-green-100 text-green-800 border-green-200",
-    REGISTRATION_CLOSED: "bg-orange-100 text-orange-800 border-orange-200",
-    COMPLETED: "bg-gray-100 text-gray-800 border-gray-200",
+    PUBLISHED: "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800",
+    REGISTRATION_CLOSED: "bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:border-orange-800",
+    COMPLETED: "bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700",
 };
 
 export default function TodaySchedule() {

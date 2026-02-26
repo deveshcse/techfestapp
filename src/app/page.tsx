@@ -42,7 +42,7 @@ const FEATURED_EVENTS = [
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-black text-white selection:bg-cyan-500/30">
+    <main className="min-h-screen bg-background text-foreground selection:bg-cyan-500/30">
       <Navbar />
       <div className="flex flex-col">
         <HeroSection />

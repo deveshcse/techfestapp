@@ -18,14 +18,14 @@ interface EventShowcaseProps {
 
 export function EventShowcase({ events }: EventShowcaseProps) {
     return (
-        <section className="relative bg-black py-24">
+        <section className="relative bg-background py-24">
             <div className="container mx-auto px-4">
                 <div className="mb-12 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
                     <div className="max-w-2xl">
-                        <h2 className="text-3xl font-bold text-white md:text-5xl">
+                        <h2 className="text-3xl font-bold text-foreground md:text-5xl">
                             Featured <span className="text-cyan-400">Events</span>
                         </h2>
-                        <p className="mt-4 text-lg text-zinc-400">
+                        <p className="mt-4 text-lg text-muted-foreground">
                             Discover the highlights of Techfest 2026. From coding marathons to robotic battles, we have it all.
                         </p>
                     </div>

@@ -20,7 +20,7 @@ export default function NotFound() {
                         <span className="relative flex h-8 w-8">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive opacity-40"></span>
                             <span className="relative inline-flex rounded-full h-8 w-8 bg-destructive border-4 border-background flex items-center justify-center shadow-lg">
-                                <Map className="h-4 w-4 text-white" />
+                                <Map className="h-4 w-4 text-foreground" />
                             </span>
                         </span>
                     </div>

@@ -61,11 +61,10 @@ export function GlobalConfirmDialog() {
           <AlertDialogAction
             onClick={handleConfirm}
             disabled={loading}
-            className={`min-w-35 ${
-              options.destructive
-                ? "bg-destructive hover:bg-red-600"
-                : "bg-green-500 hover:bg-green-600"
-            }`}
+            className={`min-w-35 ${options.destructive
+                ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                : "bg-primary text-primary-foreground hover:bg-primary/90"
+              }`}
           >
             <span className="flex items-center justify-center gap-2">
               {loading ? (

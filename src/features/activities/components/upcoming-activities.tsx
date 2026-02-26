@@ -118,8 +118,8 @@ export function UpcomingActivities() {
                                 variant={activity.isRegistered ? "default" : "outline"}
                                 className={cn(
                                     "px-2.5 py-0.5",
-                                    activity.isRegistered ? "bg-green-100 text-green-800 border-green-200" : "text-muted-foreground",
-                                    activity.registrationStatus === "WAITLISTED" && "bg-yellow-100 text-yellow-800 border-yellow-200"
+                                    activity.isRegistered ? "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800" : "text-muted-foreground",
+                                    activity.registrationStatus === "WAITLISTED" && "bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800"
                                 )}
                             >
                                 {activity.isRegistered

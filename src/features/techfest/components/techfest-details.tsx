@@ -206,95 +206,91 @@ export function TechFestDetail({ techFest }: Props) {
 
 
 
-        <div className="mx-auto w-full h-full overflow-scroll space-y-6 px-4 pb-40 pt-4">
-          {/* Banner */}
-          <Image
-            src="https://picsum.photos/seed/picsum/800/400"
-            alt="TechFest banner"
-            className="h-56 sm:h-64 w-full object-cover rounded-lg border shadow-sm"
-            width={800}
-            height={400}
-          />
+      <div className="mx-auto w-full h-full overflow-scroll space-y-6 px-4 pb-40 pt-4">
+        {/* Banner */}
+        <Image
+          src="https://picsum.photos/seed/picsum/800/400"
+          alt="TechFest banner"
+          className="h-56 sm:h-64 w-full object-cover rounded-lg border shadow-sm"
+          width={800}
+          height={400}
+        />
 
-          {/* Description */}
-          <Card className="shadow-sm">
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                <Info className="h-5 w-5 text-primary" />
-                Description
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
-                {techFest.description || "No description provided."}
-              </p>
-            </CardContent>
-          </Card>
+        {/* Description */}
+        <Card className="shadow-sm">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold flex items-center gap-2">
+              <Info className="h-5 w-5 text-primary" />
+              Description
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
+              {techFest.description || "No description provided."}
+            </p>
+          </CardContent>
+        </Card>
 
-          {/* Event Details */}
-          <Card className="shadow-sm border-primary/10">
-            <CardHeader className="bg-primary/5">
-              <CardTitle className="text-lg font-semibold">Event Details</CardTitle>
-            </CardHeader>
+        {/* Event Details */}
+        <Card className="shadow-sm border-primary/10">
+          <CardHeader className="bg-primary/5">
+            <CardTitle className="text-lg font-semibold">Event Details</CardTitle>
+          </CardHeader>
 
-            <CardContent className="p-6 space-y-4">
-              {/* Date */}
-              <div className="flex gap-3 items-start">
-                <div className="bg-primary/10 p-2 rounded-lg">
-                  <CalendarIcon className="h-4 w-4 text-primary" />
-                </div>
-                <div>
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    Date
-                  </p>
-                  <p className="text-sm font-semibold">
-                    {format(new Date(techFest.start_date), "PPP")} –{" "}
-                    {format(new Date(techFest.end_date), "PPP")}
-                  </p>
-                </div>
+          <CardContent className="p-6 space-y-4">
+            {/* Date */}
+            <div className="flex gap-3 items-start">
+              <div className="bg-primary/10 p-2 rounded-lg">
+                <CalendarIcon className="h-4 w-4 text-primary" />
               </div>
-
-              <Separator />
-
-              {/* Venue */}
-              <div className="flex gap-3 items-start">
-                <div className="bg-primary/10 p-2 rounded-lg">
-                  <MapPin className="h-4 w-4 text-primary" />
-                </div>
-                <div>
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    Venue
-                  </p>
-                  <p className="text-sm font-semibold">
-                    {techFest.venue || "TBD"}
-                  </p>
-                </div>
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Date
+                </p>
+                <p className="text-sm font-semibold">
+                  {format(new Date(techFest.start_date), "PPP")} –{" "}
+                  {format(new Date(techFest.end_date), "PPP")}
+                </p>
               </div>
+            </div>
 
-              {/* Status */}
-              <div className="flex gap-3 items-start">
-                <div className="bg-primary/10 p-2 rounded-lg">
-                  <Rocket className="h-4 w-4 text-primary" />
-                </div>
-                <div>
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    Status
-                  </p>
-                  <Badge
-                    variant={techFest.published ? "default" : "secondary"}
-                    className={
-                      techFest.published
-                        ? "bg-green-500 hover:bg-green-600 text-white mt-1"
-                        : "mt-1"
-                    }
-                  >
-                    {techFest.published ? "Published" : "Draft"}
-                  </Badge>
-                </div>
+            <Separator />
+
+            {/* Venue */}
+            <div className="flex gap-3 items-start">
+              <div className="bg-primary/10 p-2 rounded-lg">
+                <MapPin className="h-4 w-4 text-primary" />
               </div>
-            </CardContent>
-          </Card>
-        </div>
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Venue
+                </p>
+                <p className="text-sm font-semibold">
+                  {techFest.venue || "TBD"}
+                </p>
+              </div>
+            </div>
+
+            {/* Status */}
+            <div className="flex gap-3 items-start">
+              <div className="bg-primary/10 p-2 rounded-lg">
+                <Rocket className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Status
+                </p>
+                <Badge
+                  variant={techFest.published ? "default" : "secondary"}
+                  className="mt-1"
+                >
+                  {techFest.published ? "Published" : "Draft"}
+                </Badge>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
 
 

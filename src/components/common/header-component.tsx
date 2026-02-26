@@ -3,8 +3,6 @@
 import { SidebarTrigger } from "../ui/sidebar";
 import { ModeToggle } from "./mode-toggle";
 
-
-
 export default function HeaderComponent() {
   
 
