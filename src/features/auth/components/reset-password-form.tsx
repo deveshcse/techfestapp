@@ -36,7 +36,7 @@ export default function ResetPasswordForm() {
     useEffect(() => {
         if (!token) {
             toast.error("Invalid or missing reset token.");
-            // In a real app, you might redirect to forgot-password
+            router.push("/auth/forgot-password");
         }
     }, [token]);
 
