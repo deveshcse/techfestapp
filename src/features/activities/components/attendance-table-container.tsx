@@ -38,32 +38,28 @@ export function AttendanceTableContainer({ techfestId, activityId }: AttendanceT
     };
 
     if (isLoading) {
-        return <div className="space-y-4">
-            <Skeleton className="h-[400px] w-full" />
+        return <div className="space-y-4 h-full flex flex-col">
+            <Skeleton className="flex-1 w-full" />
         </div>;
     }
 
     if (isError) {
         return (
-            <Card className="border-destructive/20">
-                <CardHeader>
-                    <CardTitle className="text-destructive">Error Loading Participants</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-muted-foreground">There was an error loading the participant list. Please try again.</p>
-                    <Button variant="outline" onClick={() => refetch()} className="mt-4">
-                        <RefreshCw className="mr-2 h-4 w-4" />
-                        Retry
-                    </Button>
-                </CardContent>
-            </Card>
+            <div className="p-8 border border-destructive/20 rounded-lg bg-destructive/5 h-full flex flex-col items-center justify-center text-center">
+                <h3 className="text-destructive font-semibold text-lg">Error Loading Participants</h3>
+                <p className="text-muted-foreground max-w-sm mt-2">There was an error loading the participant list. Please try again.</p>
+                <Button variant="outline" onClick={() => refetch()} className="mt-4">
+                    <RefreshCw className="mr-2 h-4 w-4" />
+                    Retry
+                </Button>
+            </div>
         );
     }
 
     return (
-        <Card className="shadow-sm">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6">
-                <CardTitle className="text-xl font-semibold">Participants List</CardTitle>
+        <div className="h-full flex flex-col space-y-4">
+            <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold">Participants List</h3>
                 <div className="flex gap-2">
                     <Button
                         variant="outline"
@@ -84,8 +80,9 @@ export function AttendanceTableContainer({ techfestId, activityId }: AttendanceT
                         Export CSV
                     </Button>
                 </div>
-            </CardHeader>
-            <CardContent>
+            </div>
+
+            <div className="flex-1 min-h-0 bg-background rounded-xl border p-1 border-border/50">
                 <AttendanceTable
                     registrations={registrations}
                     onMarkAttendance={(id, attended) => markAttendance.mutate({ registrationId: id, attended })}
@@ -94,7 +91,7 @@ export function AttendanceTableContainer({ techfestId, activityId }: AttendanceT
                     markingVariables={markAttendance.variables}
                     isBulkMarking={bulkMarkAttendance.isPending}
                 />
-            </CardContent>
-        </Card>
+            </div>
+        </div>
     );
 }

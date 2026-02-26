@@ -31,9 +31,9 @@ export default async function AttendancePage({ params }: Params) {
     }
 
     return (
-        <div className="mx-6 space-y-6 pb-10">
+        <div className="mx-6 flex flex-col h-full space-y-6 pb-10">
             <div className="flex items-center gap-4">
-               
+
                 <div>
                     <div className="flex items-center gap-2">
                         <h1 className="text-2xl font-bold tracking-tight">Attendance</h1>
@@ -46,7 +46,9 @@ export default async function AttendancePage({ params }: Params) {
                 </div>
             </div>
 
-            <AttendanceTableContainer techfestId={techfestId} activityId={parsedActivityId} />
+            <div className="flex-1 min-h-0">
+                <AttendanceTableContainer techfestId={techfestId} activityId={parsedActivityId} />
+            </div>
         </div>
     );
 }

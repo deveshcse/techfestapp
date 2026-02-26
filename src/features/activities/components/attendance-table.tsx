@@ -13,7 +13,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, CheckCircle, XCircle } from "lucide-react";
+import { ArrowUpDown, ChevronDown, CheckCircle, XCircle, Users } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -37,6 +37,8 @@ import { RegistrationWithUser } from "../types/activity.types";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 
 interface AttendanceTableProps {
     registrations: RegistrationWithUser[];
@@ -180,24 +182,26 @@ export function AttendanceTable({
     const allSelectedAbsent = selectedRows.length > 0 && selectedRows.every(row => !row.original.attended);
 
     return (
-        <div className="w-full">
-            <div className="flex items-center py-4 gap-2">
+        <div className="w-full h-full flex flex-col">
+            <div className="flex items-center py-4 px-4 gap-2 bg-muted/30 rounded-lg">
                 <Input
                     placeholder="Filter names..."
                     value={(table.getColumn("user_name")?.getFilterValue() as string) ?? ""}
                     onChange={(event) =>
                         table.getColumn("user_name")?.setFilterValue(event.target.value)
                     }
-                    className="max-w-sm"
+                    className="max-w-sm h-9 bg-background focus:ring-1"
                 />
 
                 {selectedIds.length > 0 && (
-                    <div className="flex items-center gap-2 ml-auto">
-                        <span className="text-sm text-muted-foreground hidden sm:inline">{selectedIds.length} selected</span>
+                    <div className="flex items-center gap-2 ml-auto animate-in fade-in slide-in-from-right-2 duration-200">
+                        <span className="text-xs text-muted-foreground hidden sm:inline font-medium">{selectedIds.length} SELECTED</span>
+                        <Separator orientation="vertical" className="h-6 hidden sm:block" />
                         <Button
                             size="sm"
                             onClick={() => onBulkMarkAttendance(selectedIds, true)}
                             disabled={isBulkMarking || allSelectedAttended}
+                            className="h-8"
                         >
                             {isBulkMarking ? <Spinner className="mr-2" /> : null}
                             Mark Present
@@ -207,6 +211,7 @@ export function AttendanceTable({
                             variant="outline"
                             onClick={() => onBulkMarkAttendance(selectedIds, false)}
                             disabled={isBulkMarking || allSelectedAbsent}
+                            className="h-8 shadow-none"
                         >
                             {isBulkMarking ? <Spinner className="mr-2" /> : null}
                             Mark Absent
@@ -216,11 +221,11 @@ export function AttendanceTable({
 
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className={selectedIds.length === 0 ? "ml-auto" : "hidden sm:flex"}>
+                        <Button variant="outline" size="sm" className={cn("h-8 shadow-none transition-all", selectedIds.length === 0 ? "ml-auto" : "hidden sm:flex")}>
                             Columns <ChevronDown className="ml-2 h-4 w-4" />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent align="end" className="w-48">
                         {table
                             .getAllColumns()
                             .filter((column) => column.getCanHide())
@@ -241,14 +246,15 @@ export function AttendanceTable({
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-            <div className="rounded-md border bg-card">
-                <Table>
-                    <TableHeader>
+
+            <div className="flex-1 overflow-auto bg-background/50">
+                <Table className="relative">
+                    <TableHeader className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b">
                         {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
+                            <TableRow key={headerGroup.id} className="hover:bg-transparent border-none">
                                 {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead key={header.id}>
+                                        <TableHead key={header.id} className="h-11 py-0 text-xs font-bold uppercase tracking-wider text-muted-foreground/80">
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
@@ -267,9 +273,10 @@ export function AttendanceTable({
                                 <TableRow
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
+                                    className="group h-14 border-b border-border/40 hover:bg-muted/30 transition-colors"
                                 >
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
+                                        <TableCell key={cell.id} className="py-0">
                                             {flexRender(
                                                 cell.column.columnDef.cell,
                                                 cell.getContext()
@@ -282,26 +289,44 @@ export function AttendanceTable({
                             <TableRow>
                                 <TableCell
                                     colSpan={columns.length}
-                                    className="h-24 text-center"
+                                    className="h-64 text-center"
                                 >
-                                    No participants found.
+                                    <div className="flex flex-col items-center justify-center space-y-2 py-10">
+                                        <div className="size-16 rounded-full bg-muted/30 flex items-center justify-center">
+                                            <Users className="size-8 text-muted-foreground/40" />
+                                        </div>
+                                        <div>
+                                            <p className="font-semibold text-foreground/80">No participants found</p>
+                                            <p className="text-sm text-muted-foreground">Adjust your filters or register more participants.</p>
+                                        </div>
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        )}
+
+                        {/* Filler rows to ensure pagination stays at bottom if table is small */}
+                        {table.getRowModel().rows?.length > 0 && table.getRowModel().rows.length < 5 && (
+                            <TableRow className="hover:bg-transparent border-none">
+                                <TableCell colSpan={columns.length} className="p-0">
+                                    <div style={{ height: `${(5 - table.getRowModel().rows.length) * 56}px` }} />
                                 </TableCell>
                             </TableRow>
                         )}
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex items-center justify-end space-x-2 py-4">
-                <div className="flex-1 text-sm text-muted-foreground">
-                    {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                    {table.getFilteredRowModel().rows.length} row(s) selected.
+
+            <div className="flex items-center justify-between px-6 py-4 border-t bg-muted/10 shrink-0">
+                <div className="text-xs font-medium text-muted-foreground uppercase tracking-widest">
+                    {table.getFilteredSelectedRowModel().rows.length} / {table.getFilteredRowModel().rows.length} PARTICIPANTS SELECTED
                 </div>
-                <div className="space-x-2">
+                <div className="flex items-center gap-2">
                     <Button
                         variant="outline"
                         size="sm"
                         onClick={() => table.previousPage()}
                         disabled={!table.getCanPreviousPage()}
+                        className="h-8 px-4 text-xs font-bold uppercase tracking-wider shadow-none"
                     >
                         Previous
                     </Button>
@@ -310,6 +335,7 @@ export function AttendanceTable({
                         size="sm"
                         onClick={() => table.nextPage()}
                         disabled={!table.getCanNextPage()}
+                        className="h-8 px-4 text-xs font-bold uppercase tracking-wider shadow-none"
                     >
                         Next
                     </Button>
