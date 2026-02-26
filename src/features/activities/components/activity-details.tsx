@@ -1,4 +1,4 @@
-"use client";
+import * as React from "react";
 import { format } from "date-fns";
 import {
     CalendarIcon,
@@ -11,6 +11,7 @@ import {
     CheckCircle2,
     AlertCircle,
     UserCheck,
+    List,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +28,8 @@ import { ActivityCreateUpdateForm } from "./activity-create-update-form";
 import { ActivityStatusUpdateForm } from "./activity-status-update-form";
 import { ActivityOrganizerAssignForm } from "./activity-organizer-assign-form";
 import { Access } from "@/features/auth/components/permission/access";
+import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 type Props = {
     techfestId: number;
@@ -112,262 +115,272 @@ export function ActivityDetails({ techfestId, activity }: Props) {
         });
     };
 
-    return (
-        <div className="mx-auto max-w-5xl space-y-6 pb-10">
-            {/* HEADER / ACTION BAR */}
-            <div className="sticky top-0 z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-background/95 backdrop-blur border rounded-xl p-6 shadow-sm">
-                <div className="space-y-1">
-                    <div className="flex items-center gap-3">
-                        <h1 className="text-2xl font-bold tracking-tight">{activity.title}</h1>
-                        <Badge className={cn("px-2.5 py-0.5 font-semibold transition-colors", statusStyles[activity.status])}>
-                            {activity.status}
-                        </Badge>
-                    </div>
-                    {/* <p className="text-muted-foreground flex items-center gap-2">
-                        <Info className="h-4 w-4" />
-                        ID: {activity.id} • Last updated {format(new Date(activity.updatedAt), "PPp")}
-                    </p> */}
-                </div>
+    const ActionButtons = ({ isMobile = false }: { isMobile?: boolean }) => (
+        <React.Fragment>
+            <Access resource="activity" action="update">
+                <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleUpdateClick}
+                    className={cn(isMobile ? "w-full justify-start" : "")}
+                >
+                    <Pencil className="mr-2 h-4 w-4" />
+                    Edit Activity
+                </Button>
+            </Access>
 
-                <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+            <Access resource="activity" action="update-status">
+                <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleStatusUpdateClick}
+                    className={cn(isMobile ? "w-full justify-start" : "")}
+                >
+                    <AlertCircle className="mr-2 h-4 w-4" />
+                    Update Status
+                </Button>
+            </Access>
 
-                    <Access resource="activity" action="update">
-                        <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={handleUpdateClick}
-                            className="flex-1 sm:flex-none"
-                        >
-                            <Pencil className="mr-2 h-4 w-4" />
-                            Edit Activity
-                        </Button>
-                    </Access>
+            <Access resource="activity" action="assign-organizer">
+                <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleAssignClick}
+                    className={cn(isMobile ? "w-full justify-start" : "")}
+                >
+                    <Users className="mr-2 h-4 w-4" />
+                    Assign Organizer
+                </Button>
+            </Access>
 
+            <Access resource="attendance" action="view-list">
+                <Button
+                    size="sm"
+                    variant="outline"
+                    asChild
+                    className={cn(isMobile ? "w-full justify-start" : "")}
+                >
+                    <Link href={`/dashboard/techfest/${techfestId}/activity/${activity.id}/attendance`}>
+                        <UserCheck className="mr-2 h-4 w-4" />
+                        Attendance
+                    </Link>
+                </Button>
+            </Access>
 
-                    <Access resource="activity" action="update-status">
-                        <Button
-                            size="sm"
-                            variant="outline"
-                            className="flex-1 sm:flex-none"
-                            onClick={handleStatusUpdateClick}
-                        >
-                            <AlertCircle className="mr-2 h-4 w-4" />
-                            Update Status
-                        </Button></Access>
-
-
-                    <Access resource="activity" action="assign-organizer">
-                        <Button
-                            size="sm"
-                            variant="outline"
-                            className="flex-1 sm:flex-none"
-                            onClick={handleAssignClick}
-                        >
-                            <Users className="mr-2 h-4 w-4" />
-                            Assign Organizer
-                        </Button>
-                    </Access>
-
-                    <Access resource="attendance" action="view-list">
-                        <Button
-                            size="sm"
-                            variant="outline"
-                            className="flex-1 sm:flex-none"
-                            asChild
-                        >
-                            <Link href={`/dashboard/techfest/${techfestId}/activity/${activity.id}/attendance`}>
-                                <UserCheck className="mr-2 h-4 w-4" />
-                                Attendance
-                            </Link>
-                        </Button>
-                    </Access>
-
-                    <Access resource="activity" action="register">
-                        {activity.isRegistered ? (
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                className={cn(
-                                    "flex-1 sm:flex-none border-red-200 text-red-600 hover:bg-red-50",
-                                    activity.registrationStatus === "WAITLISTED" && "border-yellow-200 text-yellow-600 hover:bg-yellow-50"
-                                )}
-                                onClick={handleUnregister}
-                                disabled={unregister.isPending}
-                            >
-                                <Users className="mr-2 h-4 w-4" />
-                                {activity.registrationStatus === "WAITLISTED" ? "Leave Waitlist" : "Unregister"}
-                            </Button>
-                        ) : (
-                            <Button
-                                size="sm"
-                                variant={activity.capacity !== undefined && (activity.registrationCount || 0) >= activity.capacity ? "outline" : "default"}
-                                className="flex-1 sm:flex-none"
-                                onClick={handleRegister}
-                                disabled={register.isPending || activity.status !== "PUBLISHED"}
-                            >
-                                <CheckCircle2 className="mr-2 h-4 w-4" />
-                                {activity.status === "REGISTRATION_CLOSED"
-                                    ? "Registration Closed"
-                                    : activity.capacity !== undefined && (activity.registrationCount || 0) >= activity.capacity
-                                        ? "Join Waitlist"
-                                        : "Register Now"}
-                            </Button>
+            <Access resource="activity" action="register">
+                {activity.isRegistered ? (
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        className={cn(
+                            isMobile ? "w-full justify-start" : "",
+                            "border-red-200 text-red-600 hover:bg-red-50",
+                            activity.registrationStatus === "WAITLISTED" && "border-yellow-200 text-yellow-600 hover:bg-yellow-50"
                         )}
-                    </Access>
+                        onClick={handleUnregister}
+                        disabled={unregister.isPending}
+                    >
+                        <Users className="mr-2 h-4 w-4" />
+                        {activity.registrationStatus === "WAITLISTED" ? "Leave Waitlist" : "Unregister"}
+                    </Button>
+                ) : (
+                    <Button
+                        size="sm"
+                        variant={activity.capacity !== undefined && (activity.registrationCount || 0) >= activity.capacity ? "outline" : "default"}
+                        className={cn(isMobile ? "w-full justify-start" : "")}
+                        onClick={handleRegister}
+                        disabled={register.isPending || activity.status !== "PUBLISHED"}
+                    >
+                        <CheckCircle2 className="mr-2 h-4 w-4" />
+                        {activity.status === "REGISTRATION_CLOSED"
+                            ? "Registration Closed"
+                            : activity.capacity !== undefined && (activity.registrationCount || 0) >= activity.capacity
+                                ? "Join Waitlist"
+                                : "Register Now"}
+                    </Button>
+                )}
+            </Access>
 
+            <Access resource="activity" action="delete">
+                <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={handleDelete}
+                    disabled={delete_activity.isPending}
+                    className={cn(isMobile ? "w-full justify-start" : "")}
+                >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete
+                </Button>
+            </Access>
+        </React.Fragment>
+    );
 
-                    <Access resource="activity" action="delete">
-                        <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={handleDelete}
-                            disabled={delete_activity.isPending}
-                            className="flex-1 sm:flex-none"
-                        >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
-                        </Button>
-                    </Access>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Main Content */}
-                <div className="lg:col-span-2 space-y-6">
-                    {/* Description */}
-                    <Card className="shadow-sm">
-                        <CardHeader>
-                            <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                                <Info className="h-5 w-5 text-primary" />
-                                Description
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
-                                {activity.description || "No description provided."}
-                            </p>
-                        </CardContent>
-                    </Card>
-
-                    {/* Rules */}
-                    <Card className="shadow-sm">
-                        <CardHeader>
-                            <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                                <AlertCircle className="h-5 w-5 text-primary" />
-                                Guidelines & Rules
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            {activity.rules && activity.rules.length > 0 ? (
-                                <ul className="space-y-4">
-                                    {activity.rules.map((rule, index) => (
-                                        <li key={index} className="flex gap-3">
-                                            <span className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">
-                                                {index + 1}
-                                            </span>
-                                            <p className="text-muted-foreground">{rule.value}</p>
-                                        </li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <p className="text-muted-foreground italic">No rules specified for this activity.</p>
-                            )}
-                        </CardContent>
-                    </Card>
+    return (
+        <section className="h-full flex flex-col w-full">
+            <nav className="px-6 flex items-center justify-between gap-4 border-b py-2 bg-background sticky top-0 z-10">
+                <div className="flex flex-col item-center justify-center overflow-hidden">
+                    <Label className="text-xl font-semibold truncate md:w-96 w-full">{activity.title}</Label>
+                    <Label className="text-xs text-muted-foreground">manage this activity</Label>
                 </div>
 
-                {/* Sidebar Info */}
-                <div className="space-y-6">
-                    <Card className="shadow-sm border-primary/10">
-                        <CardHeader className="bg-primary/5">
-                            <CardTitle className="text-lg font-semibold">Event Details</CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-6 space-y-4">
-                            <div className="space-y-4">
-                                <div className="flex gap-3 items-start">
-                                    <div className="bg-primary/10 p-2 rounded-lg">
-                                        <CalendarIcon className="h-4 w-4 text-primary" />
-                                    </div>
-                                    <div>
-                                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Date</p>
-                                        <p className="text-sm font-semibold">{format(new Date(activity.startDateTime), "PPP")}</p>
-                                    </div>
-                                </div>
+                {/* Mobile Actions */}
+                <div className="md:hidden flex items-center justify-end">
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button variant="outline" size="sm">
+                                <List className="mr-2 h-4 w-4" />
+                                Actions
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-56 p-2 space-y-2">
+                            <ActionButtons isMobile />
+                        </PopoverContent>
+                    </Popover>
+                </div>
 
-                                <div className="flex gap-3 items-start">
-                                    <div className="bg-primary/10 p-2 rounded-lg">
-                                        <Clock className="h-4 w-4 text-primary" />
-                                    </div>
-                                    <div>
-                                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Time</p>
-                                        <p className="text-sm font-semibold">
-                                            {format(new Date(activity.startDateTime), "p")} - {format(new Date(activity.endDateTime), "p")}
-                                        </p>
-                                    </div>
-                                </div>
+                {/* Desktop Actions */}
+                <div className="hidden md:flex items-center justify-end gap-2">
+                    <ActionButtons />
+                </div>
+            </nav>
 
-                                <Separator />
-
-                                <div className="flex gap-3 items-start">
-                                    <div className="bg-primary/10 p-2 rounded-lg">
-                                        <MapPin className="h-4 w-4 text-primary" />
-                                    </div>
-                                    <div>
-                                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Venue</p>
-                                        <p className="text-sm font-semibold">{activity.venue || "TBD"}</p>
-                                    </div>
-                                </div>
-
-                                <div className="flex gap-3 items-start">
-                                    <div className="bg-primary/10 p-2 rounded-lg">
-                                        <Users className="h-4 w-4 text-primary" />
-                                    </div>
-                                    <div>
-                                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Registration</p>
-                                        <p className="text-sm font-semibold">{activity.registrationCount || 0} / {activity.capacity || "∞"} Enrolled</p>
-                                    </div>
-                                </div>
-
-                                <div className="flex gap-3 items-start">
-                                    <div className="bg-primary/10 p-2 rounded-lg">
-                                        <Badge variant="outline" className="h-4 w-4 p-0 flex items-center justify-center border-primary/20">
-                                            <span className="text-[10px] font-bold text-primary">T</span>
-                                        </Badge>
-                                    </div>
-                                    <div>
-                                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Activity Type</p>
-                                        <Badge variant="secondary" className="mt-1 capitalize">
-                                            {activity.type.toLowerCase().replace("_", " ")}
-                                        </Badge>
-                                    </div>
-                                </div>
+            <div className="px-6 w-full h-full overflow-y-auto space-y-6 pb-40 pt-4">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Main Content */}
+                    <div className="lg:col-span-2 space-y-6">
+                        {/* Status Strip for Mobile-like visibility */}
+                        <div className={cn("p-3 rounded-lg border flex items-center justify-between", statusStyles[activity.status])}>
+                            <div className="flex items-center gap-2">
+                                <Info className="h-4 w-4" />
+                                <span className="text-sm font-bold uppercase tracking-wider">{activity.status}</span>
                             </div>
-                        </CardContent>
-                    </Card>
+                            <Badge variant="outline" className="bg-background/50 border-none capitalize">
+                                {activity.type.toLowerCase().replace("_", " ")}
+                            </Badge>
+                        </div>
 
-                    <Card className="shadow-sm">
-                        <CardHeader>
-                            <CardTitle className="text-base font-semibold">Organized By</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-4">
-                                {activity.organizers && activity.organizers.length > 0 ? (
-                                    activity.organizers.map((organizer) => (
-                                        <div key={organizer.id} className="flex items-center gap-3">
-                                            <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center font-bold text-muted-foreground uppercase">
-                                                {organizer.name?.charAt(0) || "U"}
-                                            </div>
-                                            <p className="font-medium">{organizer.name}</p>
-                                        </div>
-                                    ))
+                        {/* Description */}
+                        <Card className="shadow-sm">
+                            <CardHeader>
+                                <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                                    <Info className="h-5 w-5 text-primary" />
+                                    Description
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
+                                    {activity.description || "No description provided."}
+                                </p>
+                            </CardContent>
+                        </Card>
+
+                        {/* Rules */}
+                        <Card className="shadow-sm">
+                            <CardHeader>
+                                <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                                    <AlertCircle className="h-5 w-5 text-primary" />
+                                    Guidelines & Rules
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                {activity.rules && activity.rules.length > 0 ? (
+                                    <ul className="space-y-4">
+                                        {activity.rules.map((rule, index) => (
+                                            <li key={index} className="flex gap-3">
+                                                <span className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">
+                                                    {index + 1}
+                                                </span>
+                                                <p className="text-muted-foreground">{rule.value}</p>
+                                            </li>
+                                        ))}
+                                    </ul>
                                 ) : (
-                                    <p className="text-sm text-muted-foreground italic">No organizers assigned.</p>
+                                    <p className="text-muted-foreground italic">No rules specified for this activity.</p>
                                 )}
-                            </div>
-                        </CardContent>
-                    </Card>
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    {/* Sidebar Info */}
+                    <div className="space-y-6">
+                        <Card className="shadow-sm border-primary/10">
+                            <CardHeader className="bg-primary/5">
+                                <CardTitle className="text-lg font-semibold">Event Details</CardTitle>
+                            </CardHeader>
+                            <CardContent className="p-6 space-y-4">
+                                <div className="space-y-4">
+                                    <div className="flex gap-3 items-start">
+                                        <div className="bg-primary/10 p-2 rounded-lg">
+                                            <CalendarIcon className="h-4 w-4 text-primary" />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Date</p>
+                                            <p className="text-sm font-semibold">{format(new Date(activity.startDateTime), "PPP")}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-3 items-start">
+                                        <div className="bg-primary/10 p-2 rounded-lg">
+                                            <Clock className="h-4 w-4 text-primary" />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Time</p>
+                                            <p className="text-sm font-semibold">
+                                                {format(new Date(activity.startDateTime), "p")} - {format(new Date(activity.endDateTime), "p")}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <Separator />
+
+                                    <div className="flex gap-3 items-start">
+                                        <div className="bg-primary/10 p-2 rounded-lg">
+                                            <MapPin className="h-4 w-4 text-primary" />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Venue</p>
+                                            <p className="text-sm font-semibold">{activity.venue || "TBD"}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-3 items-start">
+                                        <div className="bg-primary/10 p-2 rounded-lg">
+                                            <Users className="h-4 w-4 text-primary" />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Registration</p>
+                                            <p className="text-sm font-semibold">{activity.registrationCount || 0} / {activity.capacity || "∞"} Enrolled</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="shadow-sm">
+                            <CardHeader>
+                                <CardTitle className="text-base font-semibold">Organized By</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-4">
+                                    {activity.organizers && activity.organizers.length > 0 ? (
+                                        activity.organizers.map((organizer) => (
+                                            <div key={organizer.id} className="flex items-center gap-3">
+                                                <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center font-bold text-muted-foreground uppercase text-xs">
+                                                    {organizer.name?.charAt(0) || "U"}
+                                                </div>
+                                                <p className="text-sm font-medium">{organizer.name}</p>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p className="text-sm text-muted-foreground italic">No organizers assigned.</p>
+                                    )}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
     );
 }

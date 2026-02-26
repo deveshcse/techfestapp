@@ -31,20 +31,16 @@ export default async function AttendancePage({ params }: Params) {
     }
 
     return (
-        <div className="mx-auto max-w-7xl space-y-6 pb-10">
+        <div className="mx-6 space-y-6 pb-10">
             <div className="flex items-center gap-4">
-                <Button variant="ghost" size="icon" asChild className="rounded-full">
-                    <Link href={`/dashboard/techfest/${techfestId}/activity/${parsedActivityId}`}>
-                        <ArrowLeft className="h-5 w-5" />
-                    </Link>
-                </Button>
+               
                 <div>
                     <div className="flex items-center gap-2">
-                        <h1 className="text-3xl font-bold tracking-tight">Attendance</h1>
+                        <h1 className="text-2xl font-bold tracking-tight">Attendance</h1>
                         <span className="text-muted-foreground font-light">/</span>
-                        <span className="text-muted-foreground font-medium">{activity.title}</span>
+                        <span className="text-muted-foreground font-medium text-lg">{activity.title}</span>
                     </div>
-                    <p className="text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                         Track and manage participant presence for this activity.
                     </p>
                 </div>
