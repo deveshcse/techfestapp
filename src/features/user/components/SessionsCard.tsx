@@ -13,6 +13,8 @@ import {
 import { toast } from "sonner";
 import { Loader2, Monitor, Smartphone, LogOut, ShieldAlert } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 
 export function SessionsCard() {
     const { data: sessionData } = authClient.useSession();
@@ -88,36 +90,51 @@ export function SessionsCard() {
                         No active sessions found.
                     </p>
                 ) : (
-                    <div className="divide-y rounded-md border">
+                    <div className="rounded-md border divide-y">
                         {sessions.map((session) => {
-                            const isCurrent = session.id === currentSessionId;
+                            const isCurrent = session.id === currentSessionId
+
                             return (
-                                <div key={session.id} className="flex items-center justify-between p-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="rounded-full bg-muted p-2">
+                                <div
+                                    key={session.id}
+                                    className="
+          flex flex-col gap-4 p-4
+          sm:flex-row sm:items-center sm:justify-between
+        "
+                                >
+                                    {/* LEFT: Device Info */}
+                                    <div className="flex items-start gap-3 min-w-0">
+                                        {/* icon */}
+                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted">
                                             {getDeviceIcon(session.userAgent || "")}
                                         </div>
-                                        <div>
-                                            <p className="text-sm font-medium">
-                                                {session.ipAddress || "Unknown IP"}
+
+                                        {/* details */}
+                                        <div className="min-w-0 space-y-1">
+                                            <div className="flex items-center gap-2 flex-wrap">
+                                                <p className="text-sm font-medium">
+                                                    {session.ipAddress || "Unknown IP"}
+                                                </p>
+
                                                 {isCurrent && (
-                                                    <span className="ml-2 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
-                                                        Current
-                                                    </span>
+                                                    <Badge variant="outline">Current</Badge>
                                                 )}
-                                            </p>
-                                            <p className="text-xs text-muted-foreground truncate max-w-[200px] md:max-w-md">
+                                            </div>
+
+                                            <p className="text-xs text-muted-foreground truncate max-w-[240px] sm:max-w-[320px]">
                                                 {session.userAgent || "Unknown device"}
                                             </p>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-2">
+
+                                    {/* RIGHT: Actions */}
+                                    <div className="w-full sm:w-auto">
                                         {isCurrent ? (
                                             <Button
                                                 variant="outline"
                                                 size="sm"
                                                 onClick={handleSignOut}
-                                                className="flex items-center gap-2"
+                                                className="w-full sm:w-auto gap-2"
                                             >
                                                 <LogOut className="h-4 w-4" />
                                                 Logout
@@ -128,7 +145,7 @@ export function SessionsCard() {
                                                 size="sm"
                                                 onClick={() => handleRevoke(session.token)}
                                                 disabled={revokingId === session.token}
-                                                className="flex items-center gap-2"
+                                                className="w-full sm:w-auto gap-2"
                                             >
                                                 {revokingId === session.token ? (
                                                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -140,7 +157,7 @@ export function SessionsCard() {
                                         )}
                                     </div>
                                 </div>
-                            );
+                            )
                         })}
                     </div>
                 )}

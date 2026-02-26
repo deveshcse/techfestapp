@@ -20,5 +20,5 @@ export default function SignOutButton() {
       }
     })
   }
-  return <Button size="sm" variant="destructive" onClick={handleClick}>Sign out</Button>
+  return <Button className="w-full " size="sm" variant="destructive" onClick={handleClick} >Sign out</Button>
 }

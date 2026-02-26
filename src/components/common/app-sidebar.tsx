@@ -1,277 +1,189 @@
-"use client";
+"use client"
 
-import * as React from "react";
+import * as React from "react"
 import {
-  Bot,
-  Command,
-  Frame,
+  Camera,
+  BarChart3,
+  LayoutDashboard,
+  Database,
+  FileText,
+  File,
+  Folder,
+  HelpCircle,
+  List,
+  FileBarChart,
+  Search,
+  Settings,
+  Users,
   GalleryVerticalEnd,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-} from "lucide-react";
-
-import { NavMain } from "@/components/common/nav-main";
-import { NavProjects } from "@/components/common/nav-projects";
-import { NavUser } from "@/components/common/nav-user";
-import { TeamSwitcher } from "@/components/common/team-switcher";
+  Award,
+  ClipboardList,
+  Calendar,
+  User,
+} from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarRail,
-} from "@/components/ui/sidebar";
-
-// This is sample data.
-// const data = {
-//   user: {
-//     name: "shadcn",
-//     email: "m@example.com",
-//     avatar: "/avatars/shadcn.jpg",
-//   },
-//   teams: [
-//     {
-//       name: "Acme Inc",
-//       logo: GalleryVerticalEnd,
-//       plan: "Enterprise",
-//     },
-//     {
-//       name: "Acme Corp.",
-//       logo: AudioWaveform,
-//       plan: "Startup",
-//     },
-//     {
-//       name: "Evil Corp.",
-//       logo: Command,
-//       plan: "Free",
-//     },
-//   ],
-//   navMain: [
-//     {
-//       title: "Playground",
-//       url: "#",
-//       icon: SquareTerminal,
-//       isActive: true,
-//       items: [
-//         {
-//           title: "History",
-//           url: "/admin/history",
-//         },
-//         {
-//           title: "Starred",
-//           url: "/admin/starred",
-//         },
-//         {
-//           title: "Settings",
-//           url: "/admin/playground-settings",
-//         },
-//       ],
-//     },
-//     {
-//       title: "Models",
-//       url: "#",
-//       icon: Bot,
-//       items: [
-//         {
-//           title: "Genesis",
-//           url: "#",
-//         },
-//         {
-//           title: "Explorer",
-//           url: "#",
-//         },
-//         {
-//           title: "Quantum",
-//           url: "#",
-//         },
-//       ],
-//     },
-//     {
-//       title: "Documentation",
-//       url: "#",
-//       icon: BookOpen,
-//       items: [
-//         {
-//           title: "Introduction",
-//           url: "#",
-//         },
-//         {
-//           title: "Get Started",
-//           url: "#",
-//         },
-//         {
-//           title: "Tutorials",
-//           url: "#",
-//         },
-//         {
-//           title: "Changelog",
-//           url: "#",
-//         },
-//       ],
-//     },
-//     {
-//       title: "Settings",
-//       url: "#",
-//       icon: Settings2,
-//       items: [
-//         {
-//           title: "General",
-//           url: "#",
-//         },
-//         {
-//           title: "Team",
-//           url: "#",
-//         },
-//         {
-//           title: "Billing",
-//           url: "#",
-//         },
-//         {
-//           title: "Limits",
-//           url: "#",
-//         },
-//       ],
-//     },
-//   ],
-//   projects: [
-//     {
-//       name: "Design Engineering",
-//       url: "#",
-//       icon: Frame,
-//     },
-//     {
-//       name: "Sales & Marketing",
-//       url: "#",
-//       icon: PieChart,
-//     },
-//     {
-//       name: "Travel",
-//       url: "#",
-//       icon: Map,
-//     },
-//   ],
-// }
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar"
+import { NavMain } from "./nav-main"
+import { NavUser } from "./nav-user"
+import { useAuth } from "@/features/auth/context/auth-context"
 
 const data = {
   user: {
-    name: "Devesh",
-    email: "devesh@example.com",
-    avatar: "/avatars/user.jpg",
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
   },
 
-  teams: [
+  navMain: [
     {
-      name: "Tech Fest 2026",
-      logo: GalleryVerticalEnd,
-      plan: "College Event",
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: LayoutDashboard,
+    },
+    {
+      title: "TechFests",
+      url: "/dashboard/techfest",
+      icon: Award,
+    },
+    {
+      title: "My Registrations",
+      url: "/dashboard/my-registrations",
+      icon: ClipboardList,
+    },
+    {
+      title: "Upcoming Activities",
+      url: "/dashboard/upcoming-activities",
+      icon: Calendar,
+    },
+   
+  ],
+
+  navClouds: [
+    {
+      title: "Capture",
+      icon: Camera,
+      isActive: true,
+      url: "#",
+      items: [
+        {
+          title: "Active Proposals",
+          url: "#",
+        },
+        {
+          title: "Archived",
+          url: "#",
+        },
+      ],
+    },
+    {
+      title: "Proposal",
+      icon: FileText,
+      url: "#",
+      items: [
+        {
+          title: "Active Proposals",
+          url: "#",
+        },
+        {
+          title: "Archived",
+          url: "#",
+        },
+      ],
+    },
+    {
+      title: "Prompts",
+      icon: FileText, // no direct AI file icon in lucide
+      url: "#",
+      items: [
+        {
+          title: "Active Proposals",
+          url: "#",
+        },
+        {
+          title: "Archived",
+          url: "#",
+        },
+      ],
     },
   ],
 
-  navMain: [
-    // ===== Event Management (Admin / Organizer) =====
-    {
-      title: "Event Management",
-      url: "#",
-      icon: Command,
-      isActive: true,
-      items: [
-        {
-          title: "Dashboard",
-          url: "/dashboard",
-        },
-        {
-          title: "Techfests",
-          url: "/dashboard/techfest",
-        },
-       
-      ],
-    },
-
-    // ===== Participant Area =====
-    {
-      title: "Participation",
-      url: "#",
-      icon: SquareTerminal,
-      isActive: false,
-      items: [
-         {
-          title: "Upcoming Activities",
-          url: "/dashboard/upcoming-activities",
-        },
-        {
-          title: "My Registrations",
-          url: "/dashboard/my-registrations",
-        },
-        {
-          title: "Results",
-          url: "/dashboard/results",
-        },
-      ],
-    },
-
-    // ===== Future-ready =====
-    {
-      title: "Communication",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Notifications",
-          url: "/dashboard/notifications",
-        },
-        {
-          title: "Chat",
-          url: "/dashboard/chat",
-        },
-      ],
-    },
-
+  navSecondary: [
     {
       title: "Settings",
       url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "/dashboard/settings",
-        },
-        {
-          title: "Access Control",
-          url: "/dashboard/settings/access",
-        },
-      ],
+      icon: Settings,
+    },
+    {
+      title: "Get Help",
+      url: "#",
+      icon: HelpCircle,
+    },
+    {
+      title: "Search",
+      url: "#",
+      icon: Search,
     },
   ],
 
-  projects: [
+  documents: [
     {
-      name: "Certificates",
-      url: "/dashboard/certificates",
-      icon: Frame,
+      name: "Data Library",
+      url: "#",
+      icon: Database,
     },
     {
-      name: "Teams",
-      url: "/dashboard/teams",
-      icon: PieChart,
+      name: "Reports",
+      url: "#",
+      icon: FileBarChart,
+    },
+    {
+      name: "Word Assistant",
+      url: "#",
+      icon: File,
     },
   ],
-};
+}
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user } = useAuth()
+
+  const userData = {
+    name: user?.name || "User",
+    email: user?.email || "",
+    avatar: user?.image || "",
+  }
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              className="data-[slot=sidebar-menu-button]:!p-1.5"
+            >
+              <a href="#">
+                <GalleryVerticalEnd className="!size-5" />
+                <span className="text-base font-semibold">Acme Inc.</span>
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        {/* <NavDocuments items={data.documents} /> */}
+        {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={userData} />
       </SidebarFooter>
-      <SidebarRail />
     </Sidebar>
-  );
+  )
 }
