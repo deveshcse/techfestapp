@@ -7,7 +7,7 @@ import ModalProvider from "@/components/providers/modal-provider";
 import ReactQueryClientProvider from "@/components/providers/react-query-client-provider";
 import { AuthProvider } from "@/features/auth/context/auth-context";
 import { GlobalConfirmDialog } from "@/components/common/confirm-dialog";
-
+import { SpeedInsights } from "@vercel/speed-insights/next"
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -44,7 +44,8 @@ export default async function RootLayout({
               {children}
               <ModalProvider />
               <GlobalConfirmDialog />
-              <Toaster position="top-right" />
+              <Toaster position="top-right" richColors />
+              <SpeedInsights />
             </ThemeProvider>
           </AuthProvider>
         </ReactQueryClientProvider>
