@@ -6,6 +6,7 @@ export type SessionUser = {
   email: string;
   name: string;
   role?: UserRole | undefined | null;
+  image?: string | undefined | null;
 };
 
 export type AuthSession = {
