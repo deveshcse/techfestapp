@@ -3,10 +3,8 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "./prisma";
 import { admin as adminPlugin } from "better-auth/plugins";
 import { admin, organizer, user, ac } from "./permissions";
-import { Resend } from "resend";
 import { getPasswordResetEmailHtml } from "./email-templates";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import { getResend } from "./email";
 
 export const auth = betterAuth({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -16,6 +14,7 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     async sendResetPassword({ user, url, token }: { user: any; url: string; token: string }, request: any) {
+      const resend = getResend();
       resend.emails.send({
         from: "TechFest <onboarding@resend.dev>",
         to: user.email,
