@@ -30,7 +30,7 @@ export function AttendanceTableContainer({ techfestId, activityId }: AttendanceT
         const link = document.createElement("a");
         const url = URL.createObjectURL(blob);
         link.setAttribute("href", url);
-        link.setAttribute("download", `attendance_activity_${activityId}.csv`);
+        link.setAttribute("download", `attendance_techfest_${techfestId}_activity_${activityId}.csv`);
         link.style.visibility = "hidden";
         document.body.appendChild(link);
         link.click();
