@@ -30,6 +30,11 @@ import { TechFestCreateUpdateForm } from "./techfest-create-update-form";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger, } from "@/components/ui/popover";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { useMedia } from "../utils/useMedia";
+import { MediaGalleryGrid } from "./media-gallery-grid";
+import { MediaUploader } from "@/components/common/media-uploader";
+import { toast } from "sonner";
+import { MediaType } from "../types/media.types";
 
 type Props = {
   techFest: TechFestDetails;
@@ -39,6 +44,11 @@ export function TechFestDetail({ techFest }: Props) {
   const { toggle, remove } = useTechFestActions(techFest.id);
   const confirm = useConfirm();
   const { open } = useModalStore();
+  const { media, uploadMedia, deleteMedia } = useMedia(techFest.id);
+
+  const banner = media.find((m) => m.caption === "BANNER");
+  const logo = media.find((m) => m.caption === "LOGO");
+  const gallery = media.filter((m) => m.caption !== "BANNER" && m.caption !== "LOGO");
 
   const handleEditClick = () => {
     open(
@@ -88,6 +98,34 @@ export function TechFestDetail({ techFest }: Props) {
       actionLabel: "Deleting",
       icon: <Trash2 className="h-4 w-4" />,
       onConfirm: () => remove.mutateAsync(),
+    });
+  };
+
+  const onBannerUpload = (data: { url: string; publicId: string; type: MediaType }) => {
+    // If there's an existing banner, we might want to delete it, but for simplicity we'll just update its caption or create a new one
+    // In a real app, you'd handle replacement logic
+    uploadMedia.mutate({
+      ...data,
+      caption: "BANNER",
+    }, {
+      onSuccess: () => toast.success("Banner updated successfully"),
+    });
+  };
+
+  const onLogoUpload = (data: { url: string; publicId: string; type: MediaType }) => {
+    uploadMedia.mutate({
+      ...data,
+      caption: "LOGO",
+    }, {
+      onSuccess: () => toast.success("Logo updated successfully"),
+    });
+  };
+
+  const onGalleryUpload = (data: { url: string; publicId: string; type: MediaType }) => {
+    uploadMedia.mutate({
+      ...data,
+    }, {
+      onSuccess: () => toast.success("Asset added to gallery"),
     });
   };
 
@@ -208,13 +246,78 @@ export function TechFestDetail({ techFest }: Props) {
 
       <div className="mx-auto w-full h-full overflow-scroll space-y-6 px-4 pb-40 pt-4">
         {/* Banner */}
-        <Image
-          src="https://picsum.photos/seed/picsum/800/400"
-          alt="TechFest banner"
-          className="h-56 sm:h-64 w-full object-cover rounded-lg border shadow-sm"
-          width={800}
-          height={400}
-        />
+        <div className="relative group">
+          <Image
+            src={banner?.url || "https://picsum.photos/seed/picsum/800/400"}
+            alt="TechFest banner"
+            className="h-56 sm:h-64 w-full object-cover rounded-lg border shadow-sm"
+            width={800}
+            height={400}
+          />
+          <Access resource="techfest" action="update">
+            <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="secondary" size="icon" className="h-10 w-10 rounded-full shadow-lg">
+                    <Pencil className="h-5 w-5" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80 p-0" align="end">
+                  <div className="p-4 border-b">
+                    <h4 className="font-medium text-sm">Update Banner</h4>
+                  </div>
+                  <div className="p-4">
+                    <MediaUploader
+                      onUploadSuccess={onBannerUpload}
+                      maxFiles={1}
+                      allowedTypes={[MediaType.IMAGE]}
+                    />
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+          </Access>
+        </div>
+
+        {/* Title & Logo Section */}
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
+          <div className="relative group shrink-0">
+            <div className="h-24 w-24 rounded-2xl border-2 border-primary/20 bg-background overflow-hidden relative flex items-center justify-center shadow-sm">
+              {logo ? (
+                <Image src={logo.url} alt="Logo" fill className="object-contain p-2" />
+              ) : (
+                <div className="text-muted-foreground text-xs font-medium text-center px-2">No Logo</div>
+              )}
+            </div>
+            <Access resource="techfest" action="update">
+              <div className="absolute -bottom-2 -right-2">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="secondary" size="icon" className="h-8 w-8 rounded-full border shadow-sm">
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-80 p-0" align="start">
+                    <div className="p-4 border-b">
+                      <h4 className="font-medium text-sm">Update Logo</h4>
+                    </div>
+                    <div className="p-4">
+                      <MediaUploader
+                        onUploadSuccess={onLogoUpload}
+                        maxFiles={1}
+                        allowedTypes={[MediaType.IMAGE]}
+                      />
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </Access>
+          </div>
+          <div className="flex-1 space-y-1">
+            <h1 className="text-3xl font-bold tracking-tight">{techFest.title}</h1>
+            <p className="text-muted-foreground line-clamp-2">{techFest.venue}</p>
+          </div>
+        </div>
 
         {/* Description */}
         <Card className="shadow-sm">
@@ -231,65 +334,44 @@ export function TechFestDetail({ techFest }: Props) {
           </CardContent>
         </Card>
 
-        {/* Event Details */}
-        <Card className="shadow-sm border-primary/10">
-          <CardHeader className="bg-primary/5">
-            <CardTitle className="text-lg font-semibold">Event Details</CardTitle>
-          </CardHeader>
-
-          <CardContent className="p-6 space-y-4">
-            {/* Date */}
-            <div className="flex gap-3 items-start">
-              <div className="bg-primary/10 p-2 rounded-lg">
-                <CalendarIcon className="h-4 w-4 text-primary" />
-              </div>
-              <div>
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                  Date
-                </p>
-                <p className="text-sm font-semibold">
-                  {format(new Date(techFest.start_date), "PPP")} –{" "}
-                  {format(new Date(techFest.end_date), "PPP")}
-                </p>
-              </div>
+        {/* Media & Gallery */}
+        <div className="space-y-4 pb-12">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <CardTitle className="text-lg font-semibold">Media & Gallery</CardTitle>
+              <Badge variant="outline" className="h-5 px-1.5 text-[10px]">{gallery.length}</Badge>
             </div>
 
-            <Separator />
+            <Access resource="techfest" action="update">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <Rocket className="mr-2 h-4 w-4" />
+                    Upload Media
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-96 p-0" align="end">
+                  <div className="p-4 border-b">
+                    <h4 className="font-medium text-sm">Upload to Gallery</h4>
+                    <p className="text-xs text-muted-foreground">Add images, videos, or PDFs to the event gallery.</p>
+                  </div>
+                  <div className="p-4">
+                    <MediaUploader
+                      onUploadSuccess={onGalleryUpload}
+                      maxFiles={10}
+                    />
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </Access>
+          </div>
 
-            {/* Venue */}
-            <div className="flex gap-3 items-start">
-              <div className="bg-primary/10 p-2 rounded-lg">
-                <MapPin className="h-4 w-4 text-primary" />
-              </div>
-              <div>
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                  Venue
-                </p>
-                <p className="text-sm font-semibold">
-                  {techFest.venue || "TBD"}
-                </p>
-              </div>
-            </div>
-
-            {/* Status */}
-            <div className="flex gap-3 items-start">
-              <div className="bg-primary/10 p-2 rounded-lg">
-                <Rocket className="h-4 w-4 text-primary" />
-              </div>
-              <div>
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                  Status
-                </p>
-                <Badge
-                  variant={techFest.published ? "default" : "secondary"}
-                  className="mt-1"
-                >
-                  {techFest.published ? "Published" : "Draft"}
-                </Badge>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+          <MediaGalleryGrid
+            media={gallery}
+            editable
+            onDelete={(id) => deleteMedia.mutate(id)}
+          />
+        </div>
       </div>
 
 
