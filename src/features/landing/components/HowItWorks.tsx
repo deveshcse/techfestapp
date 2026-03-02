@@ -44,11 +44,9 @@ export const HowItWorks = () => {
                                 {index < steps.length - 1 && (
                                     <div className="absolute top-10 left-[calc(50%)] right-[calc(-50%)] hidden lg:block h-0.5" aria-hidden="true">
                                         <svg className="w-full h-full" preserveAspectRatio="none">
-                                            {/* make it dots rather than dashes */}
                                             <line
                                                 x1="0" y1="50%" x2="100%" y2="50%"
                                                 strokeDasharray="1,12"
-                                                strokeLinecap="round"
                                                 className="stroke-landing-primary/50 stroke-[3] animate-dash transition-all duration-300"
                                             />
                                         </svg>
@@ -70,7 +68,7 @@ export const HowItWorks = () => {
                                 )}
 
                                 <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white border-2 border-landing-primary text-landing-primary shadow-xl transition-all duration-300 group-hover:scale-110 group-hover:bg-landing-primary group-hover:text-white relative z-20">
-                                    <step.icon className="h-10 w-10" />
+                                    <step.icon className="h-10 w-10" aria-hidden="true" />
                                 </div>
                                 <div className="mt-6">
                                     <h3 className="text-xl font-bold text-gray-900">{step.title}</h3>

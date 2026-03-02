@@ -56,7 +56,7 @@ export const Hero = () => {
                         <div className="rounded-md bg-white shadow-2xl ring-1 ring-gray-900/10 min-h-[400px] flex items-center justify-center border border-landing-muted">
                             <div className="text-center">
                                 <div className="mx-auto h-24 w-24 bg-landing-primary/10 rounded-full flex items-center justify-center mb-4">
-                                    <Sparkles className="h-12 w-12 text-landing-primary" />
+                                    <Sparkles className="h-12 w-12 text-landing-primary" aria-hidden="true" />
                                 </div>
                                 <h3 className="text-xl font-semibold text-gray-900">Dashboard Preview</h3>
                                 <p className="text-gray-500 mt-2">Manage activities, attendees, and registrations in real-time.</p>
