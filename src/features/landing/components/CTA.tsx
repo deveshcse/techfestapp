@@ -30,7 +30,7 @@ export const CTA = () => {
                             asChild
                             size="lg"
                             variant="secondary"
-                            className="w-full sm:w-auto bg-white text-landing-primary hover:bg-gray-100 h-14 px-10 text-xl font-bold rounded-2xl shadow-2xl transition-all hover:scale-105"
+                            className="w-full sm:w-auto bg-white text-landing-primary hover:bg-gray-100 h-14 px-10 text-xl font-bold rounded-full shadow-2xl transition-all hover:scale-105"
                         >
                             <Link href="/dashboard/techfest/new">Get Started Now</Link>
                         </Button>
@@ -38,7 +38,7 @@ export const CTA = () => {
                             asChild
                             variant="outline"
                             size="lg"
-                            className="w-full sm:w-auto border-white text-white hover:bg-white/10 h-14 px-10 text-xl font-medium rounded-2xl backdrop-blur-sm transition-all"
+                            className="w-full sm:w-auto bg-landing border-white text-white hover:bg-white/10 h-14 px-10 text-xl font-medium rounded-full backdrop-blur-sm transition-all"
                         >
                             <Link href="/contact">Request a Demo</Link>
                         </Button>

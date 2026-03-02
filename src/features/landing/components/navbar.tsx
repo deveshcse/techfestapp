@@ -36,7 +36,7 @@ export const Navbar = () => {
             asChild
             className="bg-landing-primary text-landing-primary-foreground hover:bg-landing-primary/90 h-9 rounded-full px-6"
           >
-            <Link href="/login">Login</Link>
+            <Link href="/auth/login">Login</Link>
           </Button>
         </nav>
 
@@ -47,7 +47,7 @@ export const Navbar = () => {
             size="sm"
             className="bg-landing-primary text-landing-primary-foreground hover:bg-landing-primary/90 rounded-full px-5"
           >
-            <Link href="/login">Login</Link>
+            <Link href="/auth/login">Login</Link>
           </Button>
         </div>
       </div>
