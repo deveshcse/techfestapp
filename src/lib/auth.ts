@@ -22,10 +22,10 @@ export const auth = betterAuth({
         html: getPasswordResetEmailHtml(user.name, url),
       });
     },
-    onPasswordReset: async ({ user }, request) => {
-      // your logic here
-      console.log(`Password for user ${user.email} has been reset.`);
-    },
+    // onPasswordReset: async ({ user }, request) => {
+    //   // your logic here
+    //   console.log(`Password for user ${user.email} has been reset.`);
+    // },
   },
 
   socialProviders: {
