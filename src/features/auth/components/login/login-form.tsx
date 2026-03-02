@@ -67,13 +67,37 @@ export function LoginForm({
     );
   }
 
+  async function handleGoogleSignIn() {
+    await signIn.social(
+      {
+        provider: "google",
+        callbackURL: "/dashboard",
+      },
+      {
+        onRequest: () => {
+          setIsLoading(true);
+          toast.info("Connecting to Google...");
+        },
+        onResponse: () => {
+          setIsLoading(false);
+        },
+        onError: (ctx) => {
+          toast.error(ctx.error.message);
+        },
+        onSuccess: () => {
+          toast.success("Google Login successful");
+        },
+      }
+    );
+  }
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Welcome back</CardTitle>
           <CardDescription>
-            Login with your Apple or Google account
+            Login with your Google account
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -81,7 +105,13 @@ export function LoginForm({
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <FieldGroup>
                 <div className="flex w-full gap-3">
-                  <Button variant="outline" type="button" className="w-full">
+                  <Button
+                    variant="outline"
+                    type="button"
+                    className="w-full"
+                    onClick={handleGoogleSignIn}
+                    disabled={isLoading}
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
