@@ -1,9 +1,10 @@
-import { Hero } from "./components/Hero";
-import { Features } from "./components/Features";
-import { HowItWorks } from "./components/HowItWorks";
-import { CTA } from "./components/CTA";
-import { Footer } from "./components/Footer";
-import { Navbar } from "./components/Navbar";
+import { CTA } from "./CTA";
+import { Features } from "./Features";
+import { Footer } from "./Footer";
+import { Hero } from "./Hero";
+import { HowItWorks } from "./HowItWorks";
+import { Navbar } from "./Navbar";
+
 
 const LandingPage = () => {
     return (
