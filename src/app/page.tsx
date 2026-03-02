@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import LandingPage from "@/features/landing/components/LandingPage";
+import LandingPage from "@/features/landing/components/landing-page";
 
 export const metadata: Metadata = {
   title: "TechFestApp | The Ultimate Technical Festival Management Platform",

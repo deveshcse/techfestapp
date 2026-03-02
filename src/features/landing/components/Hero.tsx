@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { MoveRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { AnimatedSquares } from "./AnimatedSquares";
+import { AnimatedSquares } from "./animated-squares";
 
 export const Hero = () => {
     return (

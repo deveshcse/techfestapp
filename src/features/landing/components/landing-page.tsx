@@ -1,9 +1,11 @@
-import { CTA } from "./CTA";
-import { Features } from "./Features";
-import { Footer } from "./Footer";
+
+import { Footer } from "./landing-page-footer";
 import { Hero } from "./Hero";
-import { HowItWorks } from "./HowItWorks";
-import { Navbar } from "./Navbar";
+import { HowItWorks } from "./how-it-works";
+import { Navbar } from "./landing-page-navbar";
+import { Features } from "./Features";
+import { CTA } from "./call-to-action";
+
 
 
 const LandingPage = () => {
