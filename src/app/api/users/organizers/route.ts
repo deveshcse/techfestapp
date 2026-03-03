@@ -1,39 +1,30 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 import { authorize } from "@/app/api/_lib/authorize";
+import { withErrorHandler } from "@/app/api/_lib/error-handler";
+import { ApiResponse } from "@/app/api/_lib/api-response";
 
-export async function GET(request: NextRequest) {
-    try {
-        await authorize(request, "activity", "assign-organizer");
+export const GET = withErrorHandler(async (request: NextRequest) => {
+    await authorize(request, "activity", "assign-organizer");
 
-        const organizers = await prisma.user.findMany({
-            where: {
-                OR: [
-                    { role: "admin" },
-                    { role: "organizer" },
-                ],
-            },
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                image: true,
-                role: true,
-            },
-            orderBy: {
-                name: "asc",
-            },
-        });
+    const organizers = await prisma.user.findMany({
+        where: {
+            OR: [
+                { role: "admin" },
+                { role: "organizer" },
+            ],
+        },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+            role: true,
+        },
+        orderBy: {
+            name: "asc",
+        },
+    });
 
-        return NextResponse.json({
-            success: true,
-            data: organizers,
-        });
-    } catch (error) {
-        if (error instanceof NextResponse) throw error;
-        return NextResponse.json(
-            { success: false, error: "Internal Server Error", details: error },
-            { status: 500 },
-        );
-    }
-}
+    return ApiResponse.success(organizers);
+});

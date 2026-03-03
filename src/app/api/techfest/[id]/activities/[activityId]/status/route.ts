@@ -1,10 +1,13 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 import { authorize } from "@/app/api/_lib/authorize";
 import { UpdateActivityStatusSchema } from "@/features/activities/schemas/activity.schema";
 import { VALID_TRANSITIONS } from "@/features/activities/utils/status-transitions";
 import { ActivityStatus } from "@/generated/prisma/enums";
-import { z } from "zod";
+import { withErrorHandler } from "@/app/api/_lib/error-handler";
+import { ApiResponse } from "@/app/api/_lib/api-response";
+import { ApiError } from "@/app/api/_lib/api-error";
+import { idParamSchema } from "@/app/api/_lib/params";
 
 type Params = {
     params: Promise<{
@@ -13,90 +16,58 @@ type Params = {
     }>;
 };
 
-const activityIdSchema = z.coerce.number().int().positive();
+export const PATCH = withErrorHandler(async (request: NextRequest, { params }: Params) => {
+    const { session } = await authorize(request, "activity", "update-status");
 
-export async function PATCH(request: NextRequest, { params }: Params) {
-    try {
-        const { session } = await authorize(request, "activity", "update-status");
+    const { activityId } = await params;
+    const parsedActivityId = idParamSchema.safeParse(activityId);
 
-        const { activityId } = await params;
-        const parsedActivityId = activityIdSchema.safeParse(activityId);
-
-        if (!parsedActivityId.success) {
-            return NextResponse.json(
-                { success: false, error: "Invalid Activity ID" },
-                { status: 400 },
-            );
-        }
-
-        const body = await request.json();
-
-        const result = UpdateActivityStatusSchema.safeParse({
-            id: parsedActivityId.data,
-            ...body,
-        });
-
-        if (!result.success) {
-            return NextResponse.json(
-                {
-                    success: false,
-                    error: "Invalid input",
-                    details: result.error,
-                },
-                { status: 400 },
-            );
-        }
-
-        // check if activity exists
-        const activity = await prisma.activity.findUnique({
-            where: {
-                id: parsedActivityId.data,
-            },
-        });
-
-        if (!activity) {
-            return NextResponse.json(
-                { success: false, error: "Activity not found" },
-                { status: 404 },
-            );
-        }
-
-        const { status } = result.data;
-
-        // Validate status transition
-        const allowedNext = VALID_TRANSITIONS[activity.status as ActivityStatus] ?? [];
-        if (!allowedNext.includes(status as ActivityStatus)) {
-            return NextResponse.json(
-                {
-                    success: false,
-                    error: `Cannot transition from ${activity.status} to ${status}.`,
-                },
-                { status: 400 },
-            );
-        }
-
-        const updatedActivity = await prisma.activity.update({
-            where: {
-                id: parsedActivityId.data,
-            },
-            data: {
-                status,
-                updatedById: session.user.id,
-            },
-        });
-
-        return NextResponse.json(
-            {
-                success: true,
-                message: "Activity status updated successfully",
-                data: updatedActivity,
-            },
-            { status: 200 },
-        );
-    } catch (error) {
-        return NextResponse.json(
-            { success: false, error: "Failed to update activity status", details: error },
-            { status: 500 },
-        );
+    if (!parsedActivityId.success) {
+        throw ApiError.badRequest("Invalid Activity ID");
     }
-}
+
+    const body = await request.json();
+
+    const result = UpdateActivityStatusSchema.safeParse({
+        id: parsedActivityId.data,
+        ...body,
+    });
+
+    if (!result.success) {
+        throw ApiError.badRequest("Invalid input");
+    }
+
+    // check if activity exists
+    const activity = await prisma.activity.findUnique({
+        where: {
+            id: parsedActivityId.data,
+        },
+    });
+
+    if (!activity) {
+        throw ApiError.notFound("Activity not found");
+    }
+
+    const { status } = result.data;
+
+    // Validate status transition
+    const allowedNext = VALID_TRANSITIONS[activity.status as ActivityStatus] ?? [];
+    if (!allowedNext.includes(status as ActivityStatus)) {
+        throw ApiError.badRequest(`Cannot transition from ${activity.status} to ${status}.`);
+    }
+
+    const updatedActivity = await prisma.activity.update({
+        where: {
+            id: parsedActivityId.data,
+        },
+        data: {
+            status,
+            updatedById: session.user.id,
+        },
+    });
+
+    return ApiResponse.success({
+        message: "Activity status updated successfully",
+        data: updatedActivity,
+    });
+});

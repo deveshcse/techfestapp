@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ApiError } from "./api-error";
 
 export const idParamSchema = z.coerce.number().int().positive();
 
@@ -8,10 +9,7 @@ export async function getIdParam(params: Promise<{ id: string }>) {
   const parsed = idParamSchema.safeParse(id);
 
   if (!parsed.success) {
-    throw new Response(
-      JSON.stringify({ message: "Invalid ID" }),
-      { status: 400 }
-    );
+    throw ApiError.badRequest("Invalid ID");
   }
 
   return parsed.data;

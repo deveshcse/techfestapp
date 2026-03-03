@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { NextResponse } from "next/server";
+import { ApiError } from "./api-error";
 
 export async function getAuthenticatedUser() {
     const session = await auth.api.getSession({
@@ -15,29 +15,17 @@ export async function getAuthenticatedUser() {
 }
 
 export function unauthorizedResponse(message = "Unauthorized") {
-    return NextResponse.json(
-        { error: message },
-        { status: 401 }
-    );
+    throw ApiError.unauthorized(message);
 }
 
 export function badRequestResponse(message: string) {
-    return NextResponse.json(
-        { error: message },
-        { status: 400 }
-    );
+    throw ApiError.badRequest(message);
 }
 
 export function notFoundResponse(message = "Resource not found") {
-    return NextResponse.json(
-        { error: message },
-        { status: 404 }
-    );
+    throw ApiError.notFound(message);
 }
 
 export function serverErrorResponse(message = "Internal server error") {
-    return NextResponse.json(
-        { error: message },
-        { status: 500 }
-    );
+    throw ApiError.internal(message);
 }

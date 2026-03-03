@@ -1,8 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 import { authorize } from "@/app/api/_lib/authorize";
 import { z } from "zod";
 import { RegistrationStatus } from "@/generated/prisma/enums";
+import { withErrorHandler } from "@/app/api/_lib/error-handler";
+import { ApiResponse } from "@/app/api/_lib/api-response";
+import { ApiError } from "@/app/api/_lib/api-error";
 
 type Params = {
     params: Promise<{
@@ -16,46 +19,34 @@ const bulkAttendanceSchema = z.object({
     attended: z.boolean(),
 });
 
-export async function POST(request: NextRequest, { params }: Params) {
-    try {
-        const { session } = await authorize(request, "attendance", "mark");
+export const POST = withErrorHandler(async (request: NextRequest, { params }: Params) => {
+    await authorize(request, "attendance", "mark");
 
-        const body = await request.json();
-        const result = bulkAttendanceSchema.safeParse(body);
+    const body = await request.json();
+    const result = bulkAttendanceSchema.safeParse(body);
 
-        if (!result.success) {
-            return NextResponse.json(
-                { success: false, error: "Invalid request body", details: result.error },
-                { status: 400 },
-            );
-        }
-
-        const { registrationIds, attended } = result.data;
-
-        await prisma.registration.updateMany({
-            where: {
-                id: {
-                    in: registrationIds,
-                },
-            },
-            data: {
-                attended,
-                attendedAt: attended ? new Date() : null,
-                attendanceMarkedBy: attended ? session.user.id : null,
-                status: attended ? RegistrationStatus.ATTENDED : RegistrationStatus.CONFIRMED,
-            },
-        });
-
-        return NextResponse.json({
-            success: true,
-            message: `Successfully updated attendance for ${registrationIds.length} registrations`,
-        });
-    } catch (error) {
-        if (error instanceof Response) return error;
-        console.error("Bulk Attendance Error:", error);
-        return NextResponse.json(
-            { success: false, error: "Internal Server Error", details: error },
-            { status: 500 },
-        );
+    if (!result.success) {
+        throw ApiError.badRequest("Invalid request body");
     }
-}
+
+    const { registrationIds, attended } = result.data;
+    const { session } = await authorize(request, "attendance", "mark");
+
+    await prisma.registration.updateMany({
+        where: {
+            id: {
+                in: registrationIds,
+            },
+        },
+        data: {
+            attended,
+            attendedAt: attended ? new Date() : null,
+            attendanceMarkedBy: attended ? session.user.id : null,
+            status: attended ? RegistrationStatus.ATTENDED : RegistrationStatus.CONFIRMED,
+        },
+    });
+
+    return ApiResponse.success({
+        message: `Successfully updated attendance for ${registrationIds.length} registrations`,
+    });
+});
