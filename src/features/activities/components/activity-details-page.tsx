@@ -21,7 +21,7 @@ export function ActivityDetailsPage({ params }: Props) {
         return <ActivityDetailsSkeleton />;
     }
 
-    if (error || !data?.data) {
+    if (error || !data) {
         return (
             <div className="p-8 flex flex-col items-center justify-center min-h-[50vh] space-y-4">
                 <div className="bg-destructive/10 p-3 rounded-full">
@@ -42,7 +42,7 @@ export function ActivityDetailsPage({ params }: Props) {
         );
     }
 
-    const activity = data?.data;
+    const activity = data;
 
     return (
         <ActivityDetails techfestId={techfestId} activity={activity} />

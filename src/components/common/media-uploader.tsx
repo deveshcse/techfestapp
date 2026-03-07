@@ -3,7 +3,7 @@
 import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Upload, X, FileText, Image as ImageIcon, Video, CheckCircle2, AlertCircle } from "lucide-react";
-import axios from "axios";
+import api from "@/lib/axios";
 
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
@@ -53,10 +53,14 @@ export function MediaUploader({ onUploadSuccess, maxFiles = 5, allowedTypes = [M
 
                 // 3. Upload to Cloudinary
                 const resourceType = type === MediaType.VIDEO ? "video" : "image"; // Cloudinary uses 'image' for PDFs too by default, or 'raw'
-                const response = await axios.post(
+                const response = await api.post(
                     `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`,
                     formData,
                     {
+                        headers: {
+                            "Content-Type": "multipart/form-data",
+                        },
+                        withCredentials: false,
                         onUploadProgress: (progressEvent) => {
                             const percentCompleted = Math.round(
                                 (progressEvent.loaded * 100) / (progressEvent.total || 1)
@@ -90,7 +94,6 @@ export function MediaUploader({ onUploadSuccess, maxFiles = 5, allowedTypes = [M
                 });
 
             } catch (error) {
-                console.error("Upload failed:", error);
                 setUploads((prev) => ({
                     ...prev,
                     [fileName]: { ...prev[fileName], status: "error" },
@@ -144,7 +147,7 @@ export function MediaUploader({ onUploadSuccess, maxFiles = 5, allowedTypes = [M
             {Object.values(uploads).length > 0 && (
                 <div className="grid gap-2">
                     {Object.values(uploads).map((upload) => (
-                        <div key={upload.fileName} className="bg-card border rounded-lg p-2.5 flex items-center gap-3 shadow-sm">
+                        <div key={upload.fileName} className="bg-card border rounded-lg p-2.5 flex items-center gap-3 shadow-sm max-w-full overflow-hidden">
                             <div className="bg-muted p-2 rounded-md">
                                 {getFileIcon(upload.fileName)}
                             </div>

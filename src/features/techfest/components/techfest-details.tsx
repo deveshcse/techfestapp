@@ -12,6 +12,7 @@ import {
   EyeOff,
   Rocket,
   Info,
+  X,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,7 @@ import { useModalStore } from "@/store/useModalStore";
 import { TechFestCreateUpdateForm } from "./techfest-create-update-form";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger, } from "@/components/ui/popover";
+import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useMedia } from "../utils/useMedia";
 import { MediaGalleryGrid } from "./media-gallery-grid";
@@ -45,10 +47,18 @@ export function TechFestDetail({ techFest }: Props) {
   const confirm = useConfirm();
   const { open } = useModalStore();
   const { media, uploadMedia, deleteMedia } = useMedia(techFest.id);
+  const [deletingMediaId, setDeletingMediaId] = React.useState<number | null>(null);
 
+  const handleDeleteMedia = (id: number) => {
+    setDeletingMediaId(id);
+    deleteMedia.mutate(id, {
+      onSettled: () => setDeletingMediaId(null),
+    });
+  };
+
+  const gallery = media.filter((m) => m.caption !== "BANNER" && m.caption !== "LOGO");
   const banner = media.find((m) => m.caption === "BANNER");
   const logo = media.find((m) => m.caption === "LOGO");
-  const gallery = media.filter((m) => m.caption !== "BANNER" && m.caption !== "LOGO");
 
   const handleEditClick = () => {
     open(
@@ -263,8 +273,13 @@ export function TechFestDetail({ techFest }: Props) {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-80 p-0" align="end">
-                  <div className="p-4 border-b">
+                  <div className="p-4 border-b flex items-center justify-between">
                     <h4 className="font-medium text-sm">Update Banner</h4>
+                    <PopoverPrimitive.Close asChild>
+                      <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground">
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </PopoverPrimitive.Close>
                   </div>
                   <div className="p-4">
                     <MediaUploader
@@ -282,15 +297,15 @@ export function TechFestDetail({ techFest }: Props) {
         {/* Title & Logo Section */}
         <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
           <div className="relative group shrink-0">
-            <div className="h-24 w-24 rounded-2xl border-2 border-primary/20 bg-background overflow-hidden relative flex items-center justify-center shadow-sm">
+            <div className="size-16 rounded-2xl border-2 border-primary/20 bg-background overflow-hidden relative flex items-center justify-center shadow-sm">
               {logo ? (
-                <Image src={logo.url} alt="Logo" fill className="object-contain p-2" />
+                <Image src={logo.url} alt="Logo" fill sizes="64px" className="object-contain p-2" />
               ) : (
                 <div className="text-muted-foreground text-xs font-medium text-center px-2">No Logo</div>
               )}
             </div>
             <Access resource="techfest" action="update">
-              <div className="absolute -bottom-2 -right-2">
+              <div className="absolute -bottom-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button variant="secondary" size="icon" className="h-8 w-8 rounded-full border shadow-sm">
@@ -298,8 +313,13 @@ export function TechFestDetail({ techFest }: Props) {
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-80 p-0" align="start">
-                    <div className="p-4 border-b">
+                    <div className="p-4 border-b flex items-center justify-between">
                       <h4 className="font-medium text-sm">Update Logo</h4>
+                      <PopoverPrimitive.Close asChild>
+                        <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground">
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </PopoverPrimitive.Close>
                     </div>
                     <div className="p-4">
                       <MediaUploader
@@ -351,9 +371,16 @@ export function TechFestDetail({ techFest }: Props) {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-96 p-0" align="end">
-                  <div className="p-4 border-b">
-                    <h4 className="font-medium text-sm">Upload to Gallery</h4>
-                    <p className="text-xs text-muted-foreground">Add images, videos, or PDFs to the event gallery.</p>
+                  <div className="p-4 border-b flex items-center justify-between">
+                    <div>
+                      <h4 className="font-medium text-sm">Upload to Gallery</h4>
+                      <p className="text-xs text-muted-foreground">Add images, videos, or PDFs to the event gallery.</p>
+                    </div>
+                    <PopoverPrimitive.Close asChild>
+                      <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground">
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </PopoverPrimitive.Close>
                   </div>
                   <div className="p-4">
                     <MediaUploader
@@ -369,7 +396,8 @@ export function TechFestDetail({ techFest }: Props) {
           <MediaGalleryGrid
             media={gallery}
             editable
-            onDelete={(id) => deleteMedia.mutate(id)}
+            onDelete={handleDeleteMedia}
+            deletingId={deletingMediaId}
           />
         </div>
       </div>

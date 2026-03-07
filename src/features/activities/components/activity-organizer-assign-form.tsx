@@ -46,8 +46,8 @@ export function ActivityOrganizerAssignForm({
     const selectedUserIds = watch("userIds");
 
     const filteredOrganizers = useMemo(() => {
-        if (!potentialOrganizers?.data) return [];
-        return potentialOrganizers.data.filter((user: any) =>
+        if (!potentialOrganizers) return [];
+        return potentialOrganizers.filter((user: any) =>
             user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             user.email.toLowerCase().includes(searchTerm.toLowerCase())
         );

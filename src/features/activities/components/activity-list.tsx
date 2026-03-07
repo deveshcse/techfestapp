@@ -56,7 +56,7 @@ export function ActivityList({ techfestId }: Props) {
         );
     }
 
-    const activities = data?.data || [];
+    const activities = data || [];
 
     if (activities.length === 0) {
         return (

@@ -49,7 +49,7 @@ export function UpcomingActivities() {
         );
     }
 
-    const activities: UpcomingActivity[] = response?.data || [];
+    const activities: UpcomingActivity[] = response || [];
 
     if (activities.length === 0) {
         return (
