@@ -53,13 +53,13 @@ export function TechFestCreateUpdateForm({ techfestId, initialData }: TechFestCr
       };
 
       if (techfestId) {
-        updateTechFest(payload, {
+        updateTechFest(payload as any, {
           onSuccess: () => {
             close();
           },
         });
       } else {
-        createTechFest(payload, {
+        createTechFest(payload as any, {
           onSuccess: () => {
             close();
           },
@@ -169,20 +169,49 @@ export function TechFestCreateUpdateForm({ techfestId, initialData }: TechFestCr
                         )}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {field.value?.from && field.value?.to
-                          ? `${format(field.value.from, "PPP")} – ${format(field.value.to, "PPP")}`
-                          : "Pick a date range"}
+                        {field.value?.from ? (
+                          field.value.to ? (
+                            `${format(field.value.from, "PPP")} – ${format(field.value.to, "PPP")}`
+                          ) : (
+                            `${format(field.value.from, "PPP")} – ...`
+                          )
+                        ) : (
+                          "Pick a date range"
+                        )}
                       </Button>
                     </PopoverTrigger>
 
                     <PopoverContent className="z-[100] w-auto p-0" align="start">
-                      <Calendar
-                        mode="range"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={isDisabled}
-                        numberOfMonths={2}
-                      />
+                      <div className="flex flex-col">
+                        <Calendar
+                          mode="range"
+                          selected={field.value}
+                          onSelect={(range) => {
+                            // If we already have a full range, and the user clicks a new date,
+                            // start a new selection instead of potentially toggling off.
+                            if (field.value?.from && field.value?.to && range?.from && range?.to) {
+                              // If the clicked date is different from the current range, start fresh
+                              field.onChange({ from: range.to, to: undefined });
+                            } else {
+                              field.onChange(range);
+                            }
+                          }}
+                          disabled={isDisabled}
+                          numberOfMonths={2}
+                        />
+                        <div className="p-3 border-t border-border flex justify-end">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            type="button"
+                            onClick={() => {
+                              field.onChange(undefined);
+                            }}
+                          >
+                            Clear Selection
+                          </Button>
+                        </div>
+                      </div>
                     </PopoverContent>
                   </Popover>
 

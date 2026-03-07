@@ -10,15 +10,24 @@ export const TechFestFormSchema = z
     // add error message for dateRange
     dateRange: z.object({
       from: z.date(),
-      to: z.date(),
-    }, {error: "Date range is required"}),
+      to: z.date().optional(),
+    }, { error: "Date range is required" } as any),
   })
   .superRefine((data, ctx) => {
-    if (!data.dateRange?.from || !data.dateRange?.to) return;
+    if (!data.dateRange?.from) return;
+
+    if (!data.dateRange.to) {
+      ctx.addIssue({
+        path: ["dateRange"],
+        message: "End date is required",
+        code: "custom",
+      });
+      return;
+    }
 
     const diffInMs =
       data.dateRange.to.getTime() - data.dateRange.from.getTime();
-    const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+    const diffInDays = Math.round(diffInMs / (1000 * 60 * 60 * 24)) + 1;
 
     if (diffInDays < 3 || diffInDays > 7) {
       ctx.addIssue({
@@ -49,8 +58,8 @@ export const baseTechFestApiSchema = z
 
     // minimum duration
     const diffInDays =
-      (data.end_date.getTime() - data.start_date.getTime()) /
-      (1000 * 60 * 60 * 24);
+      Math.round((data.end_date.getTime() - data.start_date.getTime()) /
+        (1000 * 60 * 60 * 24)) + 1;
 
     if (diffInDays < 3 || diffInDays > 7) {
       ctx.addIssue({
