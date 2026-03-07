@@ -37,13 +37,10 @@ export function useActivityDetails(techfestId: number, activityId: number) {
         queryKey: activityKeys.detail(techfestId, activityId),
         queryFn: () => getActivityDetails(techfestId, activityId),
         enabled: !!techfestId && !!activityId,
-        select: (response) => {
+        select: (data) => {
             return {
-                ...response,
-                data: {
-                    ...response.data,
-                    rules: response.data.rules.map((rule) => ({ value: rule }))
-                }
+                ...data,
+                rules: data.rules.map((rule) => ({ value: rule }))
             }
         },
 

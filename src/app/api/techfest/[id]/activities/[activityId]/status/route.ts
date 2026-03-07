@@ -66,8 +66,5 @@ export const PATCH = withErrorHandler(async (request: NextRequest, { params }: P
         },
     });
 
-    return ApiResponse.success({
-        message: "Activity status updated successfully",
-        data: updatedActivity,
-    });
+    return ApiResponse.success(updatedActivity);
 });

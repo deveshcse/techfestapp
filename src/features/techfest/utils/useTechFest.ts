@@ -56,6 +56,7 @@ export function useUpdateTechFest(id: number) {
       queryClient.invalidateQueries({ queryKey: ["techfest"] });
       toast.success("TechFest updated successfully");
     },
+
   });
 }
 

@@ -14,13 +14,15 @@ export const TechFestFormSchema = z
     }, {error: "Date range is required"}),
   })
   .superRefine((data, ctx) => {
+    if (!data.dateRange?.from || !data.dateRange?.to) return;
+
     const diffInMs =
       data.dateRange.to.getTime() - data.dateRange.from.getTime();
     const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
 
     if (diffInDays < 3 || diffInDays > 7) {
       ctx.addIssue({
-        path: ["dateRange", "to"],
+        path: ["dateRange"],
         message: "Techfest must be between 3 to 7 days long",
         code: "custom",
       });

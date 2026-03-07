@@ -26,6 +26,7 @@ import { TechFestFormSchema } from "../schemas/techfest.schema";
 import { useCreateTechFest, useTechFest, useUpdateTechFest } from "../utils/useTechFest";
 import { Spinner } from "@/components/ui/spinner";
 import { useModalStore } from "@/store/useModalStore";
+import { toast } from "sonner";
 
 interface TechFestCreateUpdateFormProps {
   techfestId?: number;
@@ -40,30 +41,32 @@ export function TechFestCreateUpdateForm({ techfestId, initialData }: TechFestCr
   const isPending = isCreating || isUpdating;
 
   async function onSubmit(data: TechFestFormValues) {
-    const { from, to } = data.dateRange!;
+    try {
+      const { from, to } = data.dateRange!;
 
-    const payload = {
-      title: data.title,
-      description: data.description,
-      venue: data.venue,
-      start_date: from,
-      end_date: to,
-    };
+      const payload = {
+        title: data.title,
+        description: data.description,
+        venue: data.venue,
+        start_date: from,
+        end_date: to,
+      };
 
-    if (techfestId) {
-      console.log("Updating TechFest with payload:", payload);
-      updateTechFest(payload, {
-        onSuccess: () => {
-          close();
-        },
-      });
-    } else {
-      console.log("Creating TechFest with payload:", payload);
-      createTechFest(payload, {
-        onSuccess: () => {
-          close();
-        },
-      });
+      if (techfestId) {
+        updateTechFest(payload, {
+          onSuccess: () => {
+            close();
+          },
+        });
+      } else {
+        createTechFest(payload, {
+          onSuccess: () => {
+            close();
+          },
+        });
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
     }
   }
 
@@ -184,7 +187,15 @@ export function TechFestCreateUpdateForm({ techfestId, initialData }: TechFestCr
                   </Popover>
 
                   <FieldError
-                    errors={form.formState.errors.dateRange ? [form.formState.errors.dateRange] : []}
+                    errors={
+                      form.formState.errors.dateRange
+                        ? [
+                          form.formState.errors.dateRange,
+                          ...(form.formState.errors.dateRange.from ? [form.formState.errors.dateRange.from] : []),
+                          ...(form.formState.errors.dateRange.to ? [form.formState.errors.dateRange.to] : []),
+                        ].filter(err => err && (err as any).message)
+                        : []
+                    }
                   />
                 </>
               )}

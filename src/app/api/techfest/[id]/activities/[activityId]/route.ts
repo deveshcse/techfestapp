@@ -139,10 +139,7 @@ export const PUT = withErrorHandler(async (request: NextRequest, { params }: Par
         data: { ...finalUpdateData, updatedById: session.user.id },
     });
 
-    return ApiResponse.success({
-        message: "Activity updated successfully",
-        data: updatedActivity,
-    });
+    return ApiResponse.success(updatedActivity);
 });
 
 export const DELETE = withErrorHandler(async (request: NextRequest, { params }: Params) => {
@@ -161,7 +158,5 @@ export const DELETE = withErrorHandler(async (request: NextRequest, { params }: 
         },
     });
 
-    return ApiResponse.success({
-        message: "Activity deleted successfully",
-    });
+    return ApiResponse.success({ message: "Activity deleted successfully" });
 });

@@ -3,7 +3,7 @@ import { toast } from "sonner";
 
 const api = axios.create({
   baseURL: "/",
-  withCredentials: true, 
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
@@ -16,7 +16,12 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    toast.error(error.message || "An unexpected error occurred.");
+    const message =
+      error.response?.data?.error?.message ||
+      error.message ||
+      "An unexpected error occurred.";
+
+    toast.error(message);
     return Promise.reject(error);
   }
 );

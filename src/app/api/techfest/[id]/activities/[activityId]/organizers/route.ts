@@ -53,8 +53,5 @@ export const PATCH = withErrorHandler(async (request: NextRequest, { params }: P
         },
     });
 
-    return ApiResponse.success({
-        message: "Organizers updated successfully",
-        data: updatedActivity,
-    });
+    return ApiResponse.success(updatedActivity);
 });
