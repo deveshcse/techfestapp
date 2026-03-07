@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AssignOrganizersSchema } from "../schemas/activity.schema";
 import { useAssignActivityOrganizers, usePotentialOrganizers } from "../utils/useActivities";
@@ -12,6 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loader2, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState, useMemo } from "react";
+import { PotentialOrganizer } from "../types/activity.types";
 
 interface ActivityOrganizerAssignFormProps {
     techfestId: number;
@@ -31,10 +32,9 @@ export function ActivityOrganizerAssignForm({
     const [searchTerm, setSearchTerm] = useState("");
 
     const {
-        register,
         handleSubmit,
         setValue,
-        watch,
+        control,
         formState: { isSubmitting },
     } = useForm<{ userIds: string[] }>({
         resolver: zodResolver(AssignOrganizersSchema),
@@ -43,11 +43,14 @@ export function ActivityOrganizerAssignForm({
         },
     });
 
-    const selectedUserIds = watch("userIds");
+    const selectedUserIds = useWatch({
+        control,
+        name: "userIds",
+    }) || [];
 
     const filteredOrganizers = useMemo(() => {
         if (!potentialOrganizers) return [];
-        return potentialOrganizers.filter((user: any) =>
+        return potentialOrganizers.filter((user: PotentialOrganizer) =>
             user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             user.email.toLowerCase().includes(searchTerm.toLowerCase())
         );
@@ -94,12 +97,12 @@ export function ActivityOrganizerAssignForm({
                 />
             </div>
 
-            <ScrollArea className="h-[300px] border rounded-md p-4">
+            <ScrollArea className="h-75 border rounded-md p-4">
                 <div className="space-y-4">
                     {filteredOrganizers.length === 0 ? (
                         <p className="text-center text-muted-foreground py-4">No potential organizers found.</p>
                     ) : (
-                        filteredOrganizers.map((user: any) => (
+                        filteredOrganizers.map((user: PotentialOrganizer) => (
                             <div key={user.id} className="flex items-center space-x-3 space-y-0">
                                 <Checkbox
                                     id={user.id}

@@ -1,5 +1,5 @@
 import api from "@/lib/axios";
-import { ActivityResponse, ActivityServer, CreateUpdateActivityInput, ActivityStatus, UpcomingActivity } from "../types/activity.types";
+import { ActivityResponse, ActivityServer, CreateUpdateActivityInput, ActivityStatus, UpcomingActivity, PotentialOrganizer } from "../types/activity.types";
 
 export const listActivities = async (techfestId: number): Promise<ActivityResponse[]> => {
     const response = await api.get(`/api/techfest/${techfestId}/activities`);
@@ -52,7 +52,7 @@ export const assignActivityOrganizers = async (
     return response.data.data;
 };
 
-export const listPotentialOrganizers = async () => {
+export const listPotentialOrganizers = async (): Promise<PotentialOrganizer[]> => {
     const response = await api.get("/api/users/organizers");
     return response.data.data;
 };
