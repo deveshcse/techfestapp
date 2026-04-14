@@ -13,6 +13,7 @@ import {
   Rocket,
   Info,
   X,
+  Sparkles,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -37,6 +38,7 @@ import { MediaGalleryGrid } from "./media-gallery-grid";
 import { MediaUploader } from "@/components/common/media-uploader";
 import { toast } from "sonner";
 import { MediaType } from "../types/media.types";
+import { AIBannerGenerator, AIBannerGeneratorModal } from "./ai-banner-generator";
 
 type Props = {
   techFest: TechFestDetails;
@@ -45,7 +47,7 @@ type Props = {
 export function TechFestDetail({ techFest }: Props) {
   const { toggle, remove } = useTechFestActions(techFest.id);
   const confirm = useConfirm();
-  const { open } = useModalStore();
+  const { open, close } = useModalStore();
   const { media, uploadMedia, deleteMedia } = useMedia(techFest.id);
   const [deletingMediaId, setDeletingMediaId] = React.useState<number | null>(null);
 
@@ -263,6 +265,8 @@ export function TechFestDetail({ techFest }: Props) {
             className="h-56 sm:h-64 w-full object-cover rounded-lg border shadow-sm"
             width={800}
             height={400}
+            priority
+            loading="eager"
           />
           <Access resource="techfest" action="update">
             <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -281,12 +285,27 @@ export function TechFestDetail({ techFest }: Props) {
                       </Button>
                     </PopoverPrimitive.Close>
                   </div>
-                  <div className="p-4">
+                  <div className="p-4 space-y-4">
                     <MediaUploader
                       onUploadSuccess={onBannerUpload}
                       maxFiles={1}
                       allowedTypes={[MediaType.IMAGE]}
                     />
+
+                    <div className="pt-4 border-t">
+                      <AIBannerGeneratorModal
+                        techFestId={techFest.id}
+                        trigger={
+                          <Button
+                            variant="outline"
+                            className="w-full"
+                          >
+                            <Sparkles className="mr-2 h-4 w-4" />
+                            Generate with AI
+                          </Button>
+                        }
+                      />
+                    </div>
                   </div>
                 </PopoverContent>
               </Popover>
@@ -315,10 +334,8 @@ export function TechFestDetail({ techFest }: Props) {
                   <PopoverContent className="w-80 p-0" align="start">
                     <div className="p-4 border-b flex items-center justify-between">
                       <h4 className="font-medium text-sm">Update Logo</h4>
-                      <PopoverPrimitive.Close asChild>
-                        <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground">
-                          <X className="h-4 w-4" />
-                        </Button>
+                      <PopoverPrimitive.Close className="h-6 w-6 flex items-center justify-center rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors outline-none cursor-pointer">
+                        <X className="h-4 w-4" />
                       </PopoverPrimitive.Close>
                     </div>
                     <div className="p-4">
@@ -401,75 +418,6 @@ export function TechFestDetail({ techFest }: Props) {
           />
         </div>
       </div>
-
-
-
     </section>
-
-
-
-
-    // <div className="mx-auto max-w-5xl space-y-6 px-4 py-6">
-    //   {/* ================= ACTION BAR ================= */}
-    //   <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-background/95 backdrop-blur border rounded-xl p-6 shadow-sm">
-    //     <div className="space-y-1">
-    //       <div className="flex items-center gap-3">
-    //         <h1 className="text-2xl font-bold tracking-tight">{techFest.title}</h1>
-    //         <Badge
-    //           variant={techFest.published ? "default" : "secondary"}
-    //           className={techFest.published ? "bg-green-500 hover:bg-green-600 text-white" : ""}
-    //         >
-    //           {techFest.published ? "Published" : "Draft"}
-    //         </Badge>
-    //       </div>
-    //     </div>
-
-    //     <div className="flex flex-wrap gap-2 w-full md:w-auto">
-    //       <Button size="sm" variant="outline" asChild>
-    //         <Link href={`/dashboard/techfest/${techFest.id}/activities`}>
-    //           <List className="mr-2 h-4 w-4" />
-    //           View Activities
-    //         </Link>
-    //       </Button>
-
-    //       <Access resource="techfest" action="update">
-    //         <Button
-    //           size="sm"
-    //           variant="outline"
-    //           onClick={handleEditClick}
-    //         >
-    //           <Pencil className="mr-2 h-4 w-4" />
-    //           Edit TechFest
-    //         </Button>
-    //       </Access>
-
-    //       <Access resource="techfest" action="publish">
-    //         <Button
-    //           size="sm"
-    //           variant="outline"
-    //           onClick={onTogglePublish}
-    //           disabled={toggle.isPending}
-    //         >
-    //           <Globe className="mr-2 h-4 w-4" />
-    //           {techFest.published ? "Unpublish" : "Publish"}
-    //         </Button>
-    //       </Access>
-
-    //       <Access resource="techfest" action="delete">
-    //         <Button
-    //           size="sm"
-    //           variant="destructive"
-    //           onClick={handleDelete}
-    //           disabled={remove.isPending}
-    //         >
-    //           <Trash2 className="mr-2 h-4 w-4" />
-    //           Delete
-    //         </Button>
-    //       </Access>
-    //     </div>
-    //   </div>
-
-
-    // </div>
   );
 }

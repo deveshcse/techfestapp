@@ -60,3 +60,34 @@ export function useCloudinarySignature() {
         },
     });
 }
+
+export function useGenerateAIBanner(techfestId: number) {
+    return useMutation({
+        mutationFn: async (prompt: string) => {
+            const response = await api.post(`/api/techfest/${techfestId}/media/ai-generate`, { prompt });
+            return response.data.data.dataUrl as string;
+        },
+        // onError: (error: any) => {
+        //     toast.error(error.response?.data?.error || "Failed to generate AI banner");
+        // },
+    });
+}
+
+export function useSaveAIBanner(techfestId: number) {
+    const queryClient = useQueryClient();
+    const queryKey = ["techfest", techfestId, "media"];
+
+    return useMutation({
+        mutationFn: async (dataUrl: string) => {
+            const response = await api.post(`/api/techfest/${techfestId}/media/ai-save`, { dataUrl });
+            return response.data.data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey });
+            toast.success("AI Banner saved successfully!");
+        },
+        // onError: (error: any) => {
+        //     toast.error(error.response?.data?.error || "Failed to save AI banner");
+        // },
+    });
+}
