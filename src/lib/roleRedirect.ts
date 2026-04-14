@@ -1,13 +1,17 @@
-// export type UserRole = "ADMIN" | "ORGANIZER" | "USER";
+export type UserRole = "admin" | "organizer" | "user";
 
-// export const ROLE_REDIRECT_MAP: Record<UserRole, string> = {
-//   ADMIN: "/admin/dashboard",
-//   ORGANIZER: "/organizer/dashboard",
-//   USER: "/user/dashboard",
-// };
+/** Maps each role to its dedicated landing page after login. */
+export const ROLE_REDIRECT_MAP: Record<UserRole, string> = {
+  admin: "/dashboard",
+  organizer: "/dashboard",
+  user: "/dashboard",
+};
 
-// export function getRedirectByRole(role?: string) {
-//   if (!role) return "/";
-
-//   return ROLE_REDIRECT_MAP[role as UserRole] ?? "/";
-// }
+/**
+ * Returns the post-login redirect path for a given role.
+ * Falls back to "/dashboard" for unknown or missing roles.
+ */
+export function getRedirectByRole(role?: string | null): string {
+  if (!role) return "/dashboard";
+  return ROLE_REDIRECT_MAP[role as UserRole] ?? "/dashboard";
+}
