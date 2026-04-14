@@ -1,64 +1,74 @@
+"use client";
+
 import Link from "next/link";
-import { ArrowLeft, Search, Map } from "lucide-react";
+import { ArrowLeft, Rocket } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function NotFound() {
-    return (
-        <div className="min-h-screen flex items-center justify-center p-4 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-destructive/5 via-background to-background">
-            <div className="max-w-md w-full text-center space-y-10">
-                {/* Visual Icon Area */}
-                <div className="relative inline-flex">
-                    {/* Glowing background effect */}
-                    <div className="absolute inset-0 blur-3xl bg-destructive/20 rounded-full animate-pulse" />
+  const [isOpen, setIsOpen] = useState(true);
+  const [countdown, setCountdown] = useState(3);
+  const router = useRouter();
 
-                    {/* Main Icon Container */}
-                    <div className="relative bg-card border shadow-2xl rounded-[2rem] p-8 backdrop-blur-sm">
-                        <Search className="h-16 w-16 text-muted-foreground" />
-                    </div>
+  useEffect(() => {
+    // Start the countdown timer
+    const timer = setInterval(() => {
+      setCountdown((prev) => prev - 1);
+    }, 1000);
 
-                    {/* Badge/Indicator */}
-                    <div className="absolute -top-3 -right-3">
-                        <span className="relative flex h-8 w-8">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive opacity-40"></span>
-                            <span className="relative inline-flex rounded-full h-8 w-8 bg-destructive border-4 border-background flex items-center justify-center shadow-lg">
-                                <Map className="h-4 w-4 text-foreground" />
-                            </span>
-                        </span>
-                    </div>
-                </div>
+    // Auto-redirect when countdown reaches 0
+    if (countdown === 0) {
+      clearInterval(timer);
+      router.replace("/dashboard");
+    }
 
-                {/* Content Area */}
-                <div className="space-y-4">
-                    <div className="space-y-2">
-                        <span className="text-sm font-black uppercase tracking-[0.3em] text-destructive/80">
-                            Error 404
-                        </span>
-                        <h1 className="text-5xl font-black tracking-tight sm:text-6xl bg-clip-text text-transparent bg-gradient-to-br from-foreground to-foreground/50">
-                            Lost in Orbit
-                        </h1>
-                    </div>
-                    <p className="text-xl text-muted-foreground font-medium leading-relaxed">
-                        The page you're looking for doesn't exist or has been moved to a different coordinate.
-                    </p>
-                </div>
+    return () => clearInterval(timer);
+  }, [countdown, router]);
 
-                {/* Action Area */}
-                <div className="pt-6">
-                    <Link
-                        href="/dashboard"
-                        className="inline-flex items-center justify-center h-12 px-10 rounded-full bg-primary text-primary-foreground font-bold shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_rgba(var(--primary),0.2)] transition-all hover:scale-105 active:scale-95 group"
-                    >
-                        <ArrowLeft className="mr-2 h-5 w-5 transition-transform group-hover:-translate-x-1" />
-                        Back to Dashboard
-                    </Link>
-                </div>
-
-                {/* Footer hint */}
-                <div className="pt-12 border-t">
-                    <p className="text-[10px] text-muted-foreground/50 uppercase tracking-[0.2em] font-bold">
-                        Techfest App Platform • {new Date().getFullYear()}
-                    </p>
-                </div>
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4 bg-muted/30">
+      <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+        <AlertDialogContent className="max-w-[400px]">
+          <AlertDialogHeader>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="bg-primary/10 p-2 rounded-full">
+                <Rocket className="h-6 w-6 text-primary animate-bounce" />
+              </div>
+              <AlertDialogTitle className="text-xl">Under Construction</AlertDialogTitle>
             </div>
-        </div>
-    );
+            <AlertDialogDescription className="text-base leading-relaxed">
+              We&apos;re currently building this part of the Techfest platform. 
+              Our engineers are working hard to bring this feature to life!
+            </AlertDialogDescription>
+            <p className="text-sm text-muted-foreground mt-2 font-medium italic">
+              Redirecting you to the dashboard in <span className="text-primary font-bold tabular-nums">{countdown}s</span>...
+            </p>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="mt-4">
+            <AlertDialogAction asChild className="w-full sm:w-auto">
+              <Link href="/dashboard" className="flex items-center justify-center gap-2">
+                <ArrowLeft className="h-4 w-4" />
+                Return to Dashboard Now
+              </Link>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Background decoration */}
+      <div className="flex flex-col items-center gap-4 opacity-20 select-none pointer-events-none">
+        <Rocket className="h-20 w-20" />
+        <p className="font-mono text-xs uppercase tracking-widest">Awaiting Deployment...</p>
+      </div>
+    </div>
+  );
 }
