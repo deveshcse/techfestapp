@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { Check } from "lucide-react";
+import { motion, useReducedMotion } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { pricing } from "../content/landing-copy";
@@ -7,6 +10,8 @@ import { Reveal } from "./reveal";
 import { SectionHeading } from "./section-heading";
 
 export function Pricing() {
+  const prefersReducedMotion = useReducedMotion();
+
   return (
     <section id="pricing" className="landing-section scroll-mt-20 bg-landing-bg">
       <div className="landing-container">
@@ -19,12 +24,23 @@ export function Pricing() {
         <div className="mt-14 grid items-stretch gap-5 lg:mt-16 lg:grid-cols-3 lg:gap-6">
           {pricing.plans.map((plan, index) => (
             <Reveal key={plan.name} delayMs={index * 80} className="h-full">
-              <article
+              <motion.article
+                whileHover={
+                  prefersReducedMotion
+                    ? undefined
+                    : {
+                        y: plan.highlighted ? -6 : -4,
+                        boxShadow: plan.highlighted
+                          ? "0 25px 50px -12px rgba(0,0,0,0.35)"
+                          : "0 12px 28px -8px rgba(0,0,0,0.12)",
+                      }
+                }
+                transition={{ duration: 0.25 }}
                 className={cn(
-                  "relative flex h-full flex-col border p-6 transition-[transform,box-shadow,border-color] duration-300 sm:p-8",
+                  "relative flex h-full flex-col border p-6 sm:p-8",
                   plan.highlighted
                     ? "z-10 border-landing-primary bg-landing-ink text-white shadow-2xl shadow-landing-ink/25 lg:-translate-y-2"
-                    : "border-landing-ink/10 bg-landing-surface text-landing-ink hover:border-landing-ink/20 hover:shadow-lg hover:shadow-landing-ink/5"
+                    : "border-landing-ink/10 bg-landing-surface text-landing-ink"
                 )}
               >
                 {plan.highlighted && (
@@ -83,7 +99,7 @@ export function Pricing() {
                 >
                   <Link href={plan.cta.href}>{plan.cta.label}</Link>
                 </Button>
-              </article>
+              </motion.article>
             </Reveal>
           ))}
         </div>

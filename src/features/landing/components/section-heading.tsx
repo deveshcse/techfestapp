@@ -1,5 +1,13 @@
+"use client";
+
+import { motion, useReducedMotion } from "motion/react";
 import { cn } from "@/lib/utils";
-import { Reveal } from "./reveal";
+import {
+  fadeUp,
+  landingTransition,
+  landingViewport,
+  staggerContainer,
+} from "./landing-motion";
 
 type SectionHeadingProps = {
   eyebrow: string;
@@ -18,32 +26,28 @@ export function SectionHeading({
   align = "center",
   light = false,
 }: SectionHeadingProps) {
-  return (
-    <Reveal
-      className={cn(
-        "max-w-2xl",
-        align === "center" && "mx-auto text-center",
-        className
-      )}
-    >
-      <p
-        className={cn(
-          "landing-eyebrow",
-          light && "text-orange-300"
-        )}
+  const prefersReducedMotion = useReducedMotion();
+
+  const content = (
+    <>
+      <motion.p
+        variants={fadeUp}
+        transition={landingTransition}
+        className={cn("landing-eyebrow", light && "text-orange-300")}
       >
         {eyebrow}
-      </p>
-      <h2
-        className={cn(
-          "landing-title mt-3",
-          light && "text-white"
-        )}
+      </motion.p>
+      <motion.h2
+        variants={fadeUp}
+        transition={landingTransition}
+        className={cn("landing-title mt-3", light && "text-white")}
       >
         {title}
-      </h2>
+      </motion.h2>
       {description && (
-        <p
+        <motion.p
+          variants={fadeUp}
+          transition={landingTransition}
           className={cn(
             "landing-lede mt-4",
             light && "text-white/65",
@@ -51,8 +55,54 @@ export function SectionHeading({
           )}
         >
           {description}
-        </p>
+        </motion.p>
       )}
-    </Reveal>
+    </>
+  );
+
+  if (prefersReducedMotion) {
+    return (
+      <div
+        className={cn(
+          "max-w-2xl",
+          align === "center" && "mx-auto text-center",
+          className
+        )}
+      >
+        <p className={cn("landing-eyebrow", light && "text-orange-300")}>
+          {eyebrow}
+        </p>
+        <h2 className={cn("landing-title mt-3", light && "text-white")}>
+          {title}
+        </h2>
+        {description && (
+          <p
+            className={cn(
+              "landing-lede mt-4",
+              light && "text-white/65",
+              align === "center" && "mx-auto"
+            )}
+          >
+            {description}
+          </p>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <motion.div
+      className={cn(
+        "max-w-2xl",
+        align === "center" && "mx-auto text-center",
+        className
+      )}
+      initial="hidden"
+      whileInView="visible"
+      viewport={landingViewport}
+      variants={staggerContainer}
+    >
+      {content}
+    </motion.div>
   );
 }

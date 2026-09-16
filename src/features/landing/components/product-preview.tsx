@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { productShowcase } from "../content/landing-copy";
+import { landingEase } from "./landing-motion";
 
 const previewByTab: Record<
   string,
@@ -113,6 +115,7 @@ export function ProductPreview({
   activeTab,
   onTabChange,
 }: ProductPreviewProps) {
+  const prefersReducedMotion = useReducedMotion();
   const [internalActive, setInternalActive] = useState(
     productShowcase.tabs[0].id
   );
@@ -150,10 +153,15 @@ export function ProductPreview({
           <ul className="space-y-1">
             {productShowcase.tabs.map((tab) => (
               <li key={tab.id}>
-                <button
+                <motion.button
                   type="button"
                   disabled={!interactive}
                   onClick={() => interactive && setActive(tab.id)}
+                  whileHover={
+                    interactive && !prefersReducedMotion && active !== tab.id
+                      ? { x: 2 }
+                      : undefined
+                  }
                   className={cn(
                     "w-full rounded-md px-2 py-2 text-left text-[11px] font-medium transition-colors sm:text-sm",
                     active === tab.id
@@ -166,68 +174,101 @@ export function ProductPreview({
                   )}
                 >
                   {tab.label}
-                </button>
+                </motion.button>
               </li>
             ))}
           </ul>
         </aside>
 
         <div className="bg-landing-bg/90 p-3.5 sm:p-5">
-          <div
-            key={active}
-            className="animate-landing-fade-swap mb-4 flex items-end justify-between gap-3"
-          >
-            <div className="min-w-0">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-landing-primary sm:text-xs">
-                Live overview
-              </p>
-              <h3 className="mt-1 truncate font-landing-display text-base font-semibold text-landing-ink sm:text-xl">
-                {currentTitle}
-              </h3>
-            </div>
-            <div
-              className="hidden h-9 w-28 items-end gap-1 sm:flex"
-              aria-hidden
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={active}
+              initial={
+                prefersReducedMotion ? false : { opacity: 0, y: 10 }
+              }
+              animate={{ opacity: 1, y: 0 }}
+              exit={
+                prefersReducedMotion ? undefined : { opacity: 0, y: -8 }
+              }
+              transition={{ duration: 0.3, ease: landingEase }}
             >
-              {chartHeights.map((h, i) => (
-                <span
-                  key={`${active}-${i}`}
-                  className="animate-landing-bar-rise w-2.5 rounded-sm bg-landing-primary/75"
-                  style={{
-                    height: `${h}%`,
-                    animationDelay: `${i * 40}ms`,
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-
-          <ul key={`rows-${active}`} className="animate-landing-fade-swap space-y-2.5">
-            {data.rows.map((row, index) => (
-              <li
-                key={row.label}
-                className="group flex items-center justify-between gap-3 border border-landing-ink/8 bg-landing-surface px-3 py-3 transition-colors duration-200 hover:border-landing-primary/25 hover:bg-landing-accent-soft/40 sm:px-4"
-                style={{ animationDelay: `${index * 40}ms` }}
-              >
+              <div className="mb-4 flex items-end justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-landing-ink">
-                    {row.label}
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-landing-primary sm:text-xs">
+                    Live overview
                   </p>
-                  <p className="truncate text-xs text-landing-ink-muted">
-                    {row.meta}
-                  </p>
+                  <h3 className="mt-1 truncate font-landing-display text-base font-semibold text-landing-ink sm:text-xl">
+                    {currentTitle}
+                  </h3>
                 </div>
-                <span
-                  className={cn(
-                    "shrink-0 rounded-sm px-2 py-1 text-[11px] font-semibold",
-                    row.tone
-                  )}
+                <div
+                  className="hidden h-9 w-28 items-end gap-1 sm:flex"
+                  aria-hidden
                 >
-                  {row.status}
-                </span>
-              </li>
-            ))}
-          </ul>
+                  {chartHeights.map((h, i) => (
+                    <motion.span
+                      key={`${active}-${i}`}
+                      className="w-2.5 rounded-sm bg-landing-primary/75"
+                      initial={
+                        prefersReducedMotion
+                          ? false
+                          : { scaleY: 0, opacity: 0 }
+                      }
+                      animate={{ scaleY: 1, opacity: 1 }}
+                      transition={{
+                        duration: 0.4,
+                        ease: landingEase,
+                        delay: i * 0.04,
+                      }}
+                      style={{
+                        height: `${h}%`,
+                        originY: 1,
+                        display: "block",
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <ul className="space-y-2.5">
+                {data.rows.map((row, index) => (
+                  <motion.li
+                    key={row.label}
+                    initial={
+                      prefersReducedMotion
+                        ? false
+                        : { opacity: 0, x: 8 }
+                    }
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{
+                      duration: 0.3,
+                      ease: landingEase,
+                      delay: 0.05 + index * 0.04,
+                    }}
+                    className="group flex items-center justify-between gap-3 border border-landing-ink/8 bg-landing-surface px-3 py-3 transition-colors duration-200 hover:border-landing-primary/25 hover:bg-landing-accent-soft/40 sm:px-4"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-landing-ink">
+                        {row.label}
+                      </p>
+                      <p className="truncate text-xs text-landing-ink-muted">
+                        {row.meta}
+                      </p>
+                    </div>
+                    <span
+                      className={cn(
+                        "shrink-0 rounded-sm px-2 py-1 text-[11px] font-semibold",
+                        row.tone
+                      )}
+                    >
+                      {row.status}
+                    </span>
+                  </motion.li>
+                ))}
+              </ul>
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
     </div>

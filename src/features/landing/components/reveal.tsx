@@ -1,47 +1,46 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import { cn } from "@/lib/utils";
+import {
+  landingTransition,
+  landingViewport,
+  revealVariants,
+  type RevealVariant,
+} from "./landing-motion";
 
 type RevealProps = {
   children: ReactNode;
   className?: string;
   delayMs?: number;
+  variant?: RevealVariant;
+  as?: "div" | "li" | "article" | "blockquote";
 };
 
-export function Reveal({ children, className, delayMs = 0 }: RevealProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
-    );
-
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
+export function Reveal({
+  children,
+  className,
+  delayMs = 0,
+  variant = "up",
+  as = "div",
+}: RevealProps) {
+  const prefersReducedMotion = useReducedMotion();
+  const MotionTag = motion[as];
 
   return (
-    <div
-      ref={ref}
-      style={{ transitionDelay: `${delayMs}ms` }}
-      className={cn(
-        "landing-reveal",
-        visible && "landing-reveal-visible",
-        className
-      )}
+    <MotionTag
+      className={cn(className)}
+      initial={prefersReducedMotion ? false : "hidden"}
+      whileInView="visible"
+      viewport={landingViewport}
+      variants={prefersReducedMotion ? undefined : revealVariants[variant]}
+      transition={{
+        ...landingTransition,
+        delay: delayMs / 1000,
+      }}
     >
       {children}
-    </div>
+    </MotionTag>
   );
 }
