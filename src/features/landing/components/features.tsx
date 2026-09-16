@@ -1,85 +1,40 @@
-"use client";
-
-import React from "react";
-import {
-    Calendar,
-    Users,
-    Clock,
-    BarChart3,
-    ShieldCheck,
-    Zap
-} from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-
-const features = [
-    {
-        title: "Event Management",
-        description: "Easily create and manage multiple techfests with dedicated dashboards and reporting.",
-        icon: Calendar,
-    },
-    {
-        title: "Activity Scheduling",
-        description: "Plan workshops, hackathons, and seminars with a robust scheduling system.",
-        icon: Clock,
-    },
-    {
-        title: "Waitlist Automation",
-        description: "Automatically handle over-subscriptions and manage waitlists for popular activities.",
-        icon: Zap,
-    },
-    {
-        title: "Attendance Tracking",
-        description: "Track participant attendance in real-time with integrated check-in tools.",
-        icon: Users,
-    },
-    {
-        title: "Analytics Dashboard",
-        description: "Get deep insights into registration trends, attendee demographics, and activity performance.",
-        icon: BarChart3,
-    },
-    {
-        title: "Role-based Access",
-        description: "Secure your platform with granular permissions for organizers, students, and admins.",
-        icon: ShieldCheck,
-    },
-];
+import { features } from "../content/landing-copy";
+import { Reveal } from "./reveal";
+import { SectionHeading } from "./section-heading";
 
 export const Features = () => {
-    return (
-        <section id="features" className="py-24 bg-landing-bg relative overflow-hidden">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="mx-auto max-w-2xl text-center mb-16">
-                    <h2 className="text-base font-semibold leading-7 text-landing-primary uppercase tracking-wider">
-                        Powerful Features
-                    </h2>
-                    <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                        Everything you need to manage your TechFest
-                    </p>
-                    <p className="mt-6 text-lg leading-8 text-gray-600">
-                        TechFestApp provides a comprehensive suite of tools designed to handle every aspect of technical festivals.
-                    </p>
-                </div>
+  return (
+    <section id="features" className="landing-section scroll-mt-20 bg-landing-bg">
+      <div className="landing-container">
+        <SectionHeading
+          eyebrow={features.eyebrow}
+          title={features.headline}
+          description={features.support}
+        />
 
-                <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                    {features.map((feature, index) => (
-                        <Card
-                            key={index}
-                            className="border-none shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-landing-muted/30"
-                        >
-                            <CardHeader>
-                                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-landing-primary text-landing-primary-foreground shadow-lg shadow-landing-primary/20">
-                                    <feature.icon className="h-6 w-6" aria-hidden="true" />
-                                </div>
-                                <CardTitle className="text-xl font-bold">{feature.title}</CardTitle>
-                                <CardDescription className="text-base text-gray-600">
-                                    {feature.description}
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent />
-                        </Card>
-                    ))}
+        <div className="mt-14 divide-y divide-landing-ink/10 border-y border-landing-ink/10 sm:mt-16">
+          {features.items.map((feature, index) => (
+            <Reveal key={feature.title} delayMs={index * 35}>
+              <article className="group grid gap-3 py-7 transition-colors duration-200 hover:bg-landing-muted/35 sm:grid-cols-[1fr_1.45fr_0.85fr] sm:items-baseline sm:gap-8 sm:py-8 sm:pl-3 sm:pr-2">
+                <div className="flex items-baseline gap-3">
+                  <span className="font-landing-display text-xs font-bold text-landing-primary/70 tabular-nums">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <h3 className="font-landing-display text-xl font-semibold text-landing-ink transition-colors group-hover:text-landing-primary">
+                    {feature.title}
+                  </h3>
                 </div>
-            </div>
-        </section>
-    );
+                <p className="text-base leading-relaxed text-landing-ink-muted sm:pl-0 pl-8">
+                  {feature.description}
+                </p>
+                <p className="pl-8 text-sm font-semibold text-landing-primary sm:pl-0 sm:text-right">
+                  {feature.outcome}
+                </p>
+              </article>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 };

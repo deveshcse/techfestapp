@@ -1,53 +1,54 @@
-"use client";
-
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { cta } from "../content/landing-copy";
+import { Reveal } from "./reveal";
 
 export const CTA = () => {
-    return (
-        <section className="py-24 bg-landing-primary relative overflow-hidden">
-            {/* Decorative elements */}
-            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
-            <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-96 h-96 bg-black/5 rounded-full blur-3xl" />
+  return (
+    <section className="relative overflow-hidden bg-landing-primary py-20 sm:py-24 lg:py-28">
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.22]"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(-12deg, transparent, transparent 14px, rgba(0,0,0,0.07) 14px, rgba(0,0,0,0.07) 15px)",
+        }}
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute -right-24 -top-24 size-72 rounded-full bg-white/10 blur-3xl"
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute -bottom-28 -left-20 size-80 rounded-full bg-black/10 blur-3xl"
+        aria-hidden
+      />
 
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div className="max-w-4xl mx-auto text-center">
-                    <div className="inline-flex items-center gap-2 rounded-full bg-white/20 px-4 py-1.5 text-sm font-medium text-white mb-8 border border-white/30 backdrop-blur-sm">
-                        <Sparkles className="h-4 w-4" aria-hidden="true" />
-                        Ready to get started?
-                    </div>
-                    <h2 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl mb-8">
-                        Start Managing Your <br />
-                        <span className="text-black/90">TechFest Today</span>
-                    </h2>
-                    <p className="text-xl text-white/90 mb-12 max-w-2xl mx-auto leading-relaxed">
-                        Join hundreds of organizers already using TechFestApp to power their technical events.
-                        Free to start, powerful enough to scale.
-                    </p>
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                        <Button
-                            asChild
-                            size="lg"
-                            variant="secondary"
-                            className="w-full sm:w-auto bg-white text-landing-primary hover:bg-gray-100 h-14 px-10 text-xl font-bold rounded-full shadow-2xl transition-all hover:scale-105"
-                        >
-                            <Link href="/dashboard/techfest/new">Get Started Now</Link>
-                        </Button>
-                        <Button
-                            asChild
-                            variant="outline"
-                            size="lg"
-                            className="w-full sm:w-auto bg-landing border-white text-white hover:bg-white/10 h-14 px-10 text-xl font-medium rounded-full backdrop-blur-sm transition-all"
-                        >
-                            <Link href="/contact">Request a Demo</Link>
-                        </Button>
-                    </div>
-                    <p className="mt-8 text-white/70 text-sm">
-                        No credit card required • Seamless migration • 24/7 Support
-                    </p>
-                </div>
-            </div>
-        </section>
-    );
+      <div className="relative z-10 mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
+        <Reveal>
+          <h2 className="font-landing-display text-3xl font-extrabold tracking-tight text-white sm:text-5xl sm:leading-[1.1]">
+            {cta.headline}
+          </h2>
+          <p className="mx-auto mt-5 max-w-xl font-landing-body text-base leading-relaxed text-white/88 sm:text-lg">
+            {cta.support}
+          </p>
+          <div className="mt-10 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
+            <Link
+              href={cta.primaryCta.href}
+              className="group inline-flex h-12 items-center justify-center gap-2 rounded-md bg-landing-ink px-8 text-base font-semibold text-white transition-[transform,background-color,box-shadow] duration-200 hover:bg-landing-ink/90 hover:shadow-xl active:scale-[0.98]"
+            >
+              {cta.primaryCta.label}
+              <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+            </Link>
+            <Link
+              href={cta.secondaryCta.href}
+              className="inline-flex h-12 items-center justify-center rounded-md border border-white/45 bg-transparent px-8 text-base font-semibold text-white transition-[background-color,border-color,transform] duration-200 hover:border-white hover:bg-white/10 active:scale-[0.98]"
+            >
+              {cta.secondaryCta.label}
+            </Link>
+          </div>
+          <p className="mt-6 text-sm text-white/70">{cta.note}</p>
+        </Reveal>
+      </div>
+    </section>
+  );
 };

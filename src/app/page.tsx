@@ -1,13 +1,23 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import LandingPage from "@/features/landing/components/landing-page";
 
 export const metadata: Metadata = {
-  title: "TechFestApp | The Ultimate Technical Festival Management Platform",
-  description: "Streamline your technical festivals with TechFestApp. Manage registrations, automate waitlists, schedule activities, and track attendance in real-time.",
-  keywords: ["techfest", "technical festival", "event management", "registration platform", "hackathon management", "student events"],
+  title: "TechFestApp | Technical Festival Management",
+  description:
+    "Create techfests, schedule activities, automate waitlists, and track attendance from one campus dashboard.",
+  keywords: [
+    "techfest",
+    "technical festival",
+    "event management",
+    "registration platform",
+    "hackathon management",
+    "student events",
+    "campus festival software",
+  ],
   openGraph: {
-    title: "TechFestApp | Technical Festival Management Made Easy",
-    description: "The all-in-one platform for technical excellence. Empowering organizers and students.",
+    title: "TechFestApp | Technical festivals, fully under control",
+    description:
+      "Run technical festivals without spreadsheet chaos. Registrations, waitlists, and attendance in one place.",
     type: "website",
     url: "https://techfestapp.com",
     siteName: "TechFestApp",
@@ -15,8 +25,9 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "TechFestApp | Technical Festival Management",
-    description: "Manage your techfest activities and registrations from a single dashboard.",
-  }
+    description:
+      "Manage techfest activities and registrations from a single dashboard.",
+  },
 };
 
 export default function Home() {

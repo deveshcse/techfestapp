@@ -1,74 +1,77 @@
-"use client";
-
 import Link from "next/link";
+import { BrandMark } from "./brand-mark";
+import { footer } from "../content/landing-copy";
 
 export const Footer = () => {
-    const currentYear = new Date().getFullYear();
+  const currentYear = new Date().getFullYear();
 
-    return (
-        <footer className="bg-landing-bg border-t border-landing-muted py-12">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-12 lg:gap-8">
-                    <div className="col-span-1 md:col-span-2">
-                        <Link href="/" className="inline-block">
-                            <span className="text-2xl font-bold tracking-tight text-landing-primary">
-                                TechFestApp
-                            </span>
-                        </Link>
-                        <p className="mt-6 text-gray-500 max-w-sm leading-relaxed">
-                            The premier platform for technical festival management.
-                            Simplifying event organization for students and administrators worldwide.
-                        </p>
-                    </div>
+  return (
+    <footer className="border-t border-landing-ink/8 bg-landing-surface py-14 font-landing-body sm:py-16">
+      <div className="landing-container">
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-4 lg:gap-10">
+          <div className="md:col-span-2">
+            <BrandMark />
+            <p className="mt-5 max-w-sm text-sm leading-relaxed text-landing-ink-muted">
+              {footer.blurb}
+            </p>
+          </div>
 
-                    <div>
-                        <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Product</h3>
-                        <ul className="mt-6 space-y-4">
-                            <li>
-                                <Link href="#features" className="text-gray-500 hover:text-landing-primary transition-colors">Features</Link>
-                            </li>
-                            <li>
-                                <Link href="#how-it-works" className="text-gray-500 hover:text-landing-primary transition-colors">How it Works</Link>
-                            </li>
-                            <li>
-                                <Link href="/pricing" className="text-gray-500 hover:text-landing-primary transition-colors">Pricing</Link>
-                            </li>
-                        </ul>
-                    </div>
+          <div>
+            <h3 className="text-xs font-bold uppercase tracking-[0.16em] text-landing-ink">
+              Product
+            </h3>
+            <ul className="mt-5 space-y-3">
+              {footer.product.map((link) => (
+                <li key={link.name}>
+                  <Link
+                    href={link.href}
+                    className="landing-link-underline text-sm text-landing-ink-muted transition-colors hover:text-landing-primary"
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-                    <div>
-                        <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Company</h3>
-                        <ul className="mt-6 space-y-4">
-                            <li>
-                                <Link href="/about" className="text-gray-500 hover:text-landing-primary transition-colors">About Us</Link>
-                            </li>
-                            <li>
-                                <Link href="/contact" className="text-gray-500 hover:text-landing-primary transition-colors">Contact</Link>
-                            </li>
-                            <li>
-                                <Link href="/privacy" className="text-gray-500 hover:text-landing-primary transition-colors">Privacy Policy</Link>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+          <div>
+            <h3 className="text-xs font-bold uppercase tracking-[0.16em] text-landing-ink">
+              Company
+            </h3>
+            <ul className="mt-5 space-y-3">
+              {footer.company.map((link) => (
+                <li key={link.name}>
+                  <Link
+                    href={link.href}
+                    className="landing-link-underline text-sm text-landing-ink-muted transition-colors hover:text-landing-primary"
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
 
-                <div className="mt-12 pt-8 border-t border-landing-muted flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <p className="text-sm text-gray-500">
-                        &copy; {currentYear} TechFestApp. All rights reserved.
-                    </p>
-                    <div className="flex items-center gap-6">
-                        <Link href="#" className="text-gray-400 hover:text-landing-primary transition-colors">
-                            Twitter
-                        </Link>
-                        <Link href="#" className="text-gray-400 hover:text-landing-primary transition-colors">
-                            GitHub
-                        </Link>
-                        <Link href="#" className="text-gray-400 hover:text-landing-primary transition-colors">
-                            LinkedIn
-                        </Link>
-                    </div>
-                </div>
-            </div>
-        </footer>
-    );
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-landing-ink/8 pt-8 sm:flex-row">
+          <p className="text-sm text-landing-ink-muted">
+            &copy; {currentYear} TechFestApp. All rights reserved.
+          </p>
+          <div className="flex items-center gap-6">
+            {footer.social.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="landing-link-underline text-sm text-landing-ink-muted transition-colors hover:text-landing-primary"
+              >
+                {link.name}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
 };

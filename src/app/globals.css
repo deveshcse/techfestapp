@@ -6,8 +6,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-inter);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -43,6 +43,12 @@
   --color-landing-primary-foreground: hsl(var(--landing-primary-foreground));
   --color-landing-bg: hsl(var(--landing-bg));
   --color-landing-muted: hsl(var(--landing-muted));
+  --color-landing-ink: hsl(var(--landing-ink));
+  --color-landing-ink-muted: hsl(var(--landing-ink-muted));
+  --color-landing-surface: hsl(var(--landing-surface));
+  --color-landing-accent-soft: hsl(var(--landing-accent-soft));
+  --font-landing-display: var(--font-poppins);
+  --font-landing-body: var(--font-inter);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -87,12 +93,15 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
 
-  /* Landing Page Theme */
-  --landing-primary: 24 95% 53%;
-  /* orange */
+  /* Landing Page Theme — warm campus / energetic tech */
+  --landing-primary: 18 88% 48%;
   --landing-primary-foreground: 0 0% 100%;
-  --landing-bg: 0 0% 100%;
-  --landing-muted: 210 20% 98%;
+  --landing-bg: 40 33% 98%;
+  --landing-muted: 30 25% 94%;
+  --landing-ink: 210 24% 12%;
+  --landing-ink-muted: 215 12% 40%;
+  --landing-surface: 0 0% 100%;
+  --landing-accent-soft: 18 90% 96%;
 }
 
 .dark {
@@ -135,13 +144,61 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background font-sans text-foreground;
   }
 }
 
 @layer utilities {
-  @keyframes float {
+  .font-landing-display {
+    font-family: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  }
 
+  .font-landing-body {
+    font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  }
+
+  .landing-container {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .landing-section {
+    @apply py-20 sm:py-24 lg:py-28;
+  }
+
+  .landing-eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.18em] text-landing-primary;
+  }
+
+  .landing-title {
+    @apply font-landing-display text-3xl font-bold tracking-tight text-landing-ink sm:text-4xl lg:text-[2.75rem] lg:leading-[1.15];
+  }
+
+  .landing-lede {
+    @apply font-landing-body text-base leading-relaxed text-landing-ink-muted sm:text-lg;
+  }
+
+  .landing-btn-primary {
+    @apply inline-flex h-12 items-center justify-center gap-2 rounded-md bg-landing-primary px-8 text-base font-semibold text-landing-primary-foreground transition-[background-color,transform,box-shadow] duration-200 hover:bg-landing-primary/90 hover:shadow-[0_12px_28px_-12px_hsl(var(--landing-primary)/0.65)] active:scale-[0.98];
+  }
+
+  .landing-btn-secondary {
+    @apply inline-flex h-12 items-center justify-center gap-2 rounded-md border border-landing-ink/12 bg-landing-surface/70 px-8 text-base font-semibold text-landing-ink backdrop-blur-sm transition-[background-color,border-color,transform] duration-200 hover:border-landing-ink/25 hover:bg-landing-surface active:scale-[0.98];
+  }
+
+  .landing-link-underline {
+    @apply relative inline-block;
+  }
+
+  .landing-link-underline::after {
+    content: "";
+    @apply absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-current transition-transform duration-300 ease-out;
+  }
+
+  .landing-link-underline:hover::after {
+    @apply scale-x-100;
+  }
+
+  @keyframes float {
     0%,
     100% {
       transform: translate(0, 0) rotate(0deg);
@@ -173,5 +230,137 @@
   .animate-dash {
     stroke-dasharray: 10, 10;
     animation: dash 1s linear infinite;
+  }
+
+  @keyframes landing-marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-landing-marquee {
+    animation: landing-marquee 36s linear infinite;
+  }
+
+  .animate-landing-marquee:hover {
+    animation-play-state: paused;
+  }
+
+  @keyframes landing-hero-rise {
+    from {
+      opacity: 0;
+      transform: translateY(28px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-landing-hero-rise {
+    animation: landing-hero-rise 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes landing-fade-swap {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-landing-fade-swap {
+    animation: landing-fade-swap 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes landing-bar-rise {
+    from {
+      transform: scaleY(0.35);
+      opacity: 0.4;
+    }
+    to {
+      transform: scaleY(1);
+      opacity: 1;
+    }
+  }
+
+  .animate-landing-bar-rise {
+    transform-origin: bottom;
+    animation: landing-bar-rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .landing-reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .landing-reveal-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .landing-atmosphere {
+    background-color: hsl(var(--landing-bg));
+    background-image:
+      radial-gradient(
+        ellipse 90% 55% at 50% -15%,
+        hsl(var(--landing-primary) / 0.16),
+        transparent 58%
+      ),
+      radial-gradient(
+        ellipse 45% 40% at 100% 20%,
+        hsl(var(--landing-primary) / 0.06),
+        transparent 50%
+      ),
+      linear-gradient(
+        180deg,
+        hsl(var(--landing-muted) / 0.7) 0%,
+        transparent 48%
+      ),
+      repeating-linear-gradient(
+        -12deg,
+        transparent,
+        transparent 12px,
+        hsl(var(--landing-ink) / 0.022) 12px,
+        hsl(var(--landing-ink) / 0.022) 13px
+      );
+  }
+
+  .landing-scroll-smooth {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-float,
+    .animate-dash,
+    .animate-landing-marquee,
+    .animate-landing-hero-rise,
+    .animate-landing-fade-swap,
+    .animate-landing-bar-rise {
+      animation: none !important;
+    }
+
+    .landing-reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+
+    .landing-scroll-smooth {
+      scroll-behavior: auto;
+    }
+
+    .landing-link-underline::after {
+      transition: none;
+    }
   }
 }

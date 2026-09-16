@@ -1,10 +1,11 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Menu, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/features/auth/context/auth-context";
 import { Skeleton } from "@/components/ui/skeleton";
-import { LogOut, User } from "lucide-react";
 import { signOut } from "@/lib/auth-client";
 import {
   DropdownMenu,
@@ -15,56 +16,77 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
-const navLinks = [
-  { name: "Features", href: "#features" },
-  { name: "How it Works", href: "#how-it-works" },
-];
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
+import { BrandMark } from "./brand-mark";
+import { navLinks } from "../content/landing-copy";
 
 export const Navbar = () => {
   const { user, isAuthenticated, isLoading } = useAuth();
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-5xl border border-landing-primary bg-white/70 backdrop-blur-md rounded-full shadow-lg shadow-landing-primary/5">
-      <div className="container mx-auto flex h-12 md:h-14 items-center justify-between px-3">
+    <header
+      className={cn(
+        "fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,box-shadow,backdrop-filter] duration-300",
+        scrolled
+          ? "border-b border-landing-ink/10 bg-landing-bg/90 shadow-[0_8px_30px_-18px_rgba(20,24,32,0.35)] backdrop-blur-xl"
+          : "border-b border-transparent bg-landing-bg/55 backdrop-blur-md"
+      )}
+    >
+      <div className="landing-container flex h-16 items-center justify-between">
+        <BrandMark />
+
+        <nav className="hidden items-center gap-7 md:flex">
+          {navLinks.map((link) => (
+            <Link
+              key={link.name}
+              href={link.href}
+              className="landing-link-underline font-landing-body text-sm font-medium text-landing-ink-muted transition-colors hover:text-landing-ink"
+            >
+              {link.name}
+            </Link>
+          ))}
+        </nav>
+
         <div className="flex items-center gap-2">
-          <Link href="/" className="flex items-center space-x-2">
-            <span className="text-xl font-bold tracking-tight text-landing-primary">
-              TechFestApp
-            </span>
-          </Link>
-        </div>
-
-        <nav className="flex items-center gap-4 md:gap-8">
-          <div className="hidden md:flex items-center gap-8 mr-2">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                className="text-sm font-medium transition-colors hover:text-landing-primary"
-              >
-                {link.name}
-              </Link>
-            ))}
-          </div>
-
           {isLoading ? (
-            <Skeleton className="h-9 w-24 rounded-full" />
+            <Skeleton className="h-9 w-24 rounded-md" />
           ) : isAuthenticated ? (
-            <div className="flex items-center gap-3">
-              <Link 
-                href="/dashboard" 
-                className="hidden md:block text-sm font-medium transition-colors hover:text-landing-primary"
+            <div className="flex items-center gap-2">
+              <Button
+                asChild
+                variant="ghost"
+                className="hidden text-landing-ink hover:bg-landing-muted hover:text-landing-ink md:inline-flex"
               >
-                Dashboard
-              </Link>
-              
+                <Link href="/dashboard">Dashboard</Link>
+              </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+                  <Button
+                    variant="ghost"
+                    className="relative h-9 w-9 rounded-full ring-offset-landing-bg focus-visible:ring-2 focus-visible:ring-landing-primary/40"
+                  >
                     <Avatar className="h-9 w-9">
-                      <AvatarImage src={user?.image || ""} alt={user?.name || "User"} />
-                      <AvatarFallback className="bg-landing-primary/10 text-landing-primary">
+                      <AvatarImage
+                        src={user?.image || ""}
+                        alt={user?.name || "User"}
+                      />
+                      <AvatarFallback className="bg-landing-accent-soft font-semibold text-landing-primary">
                         {user?.name?.charAt(0) || <User className="h-4 w-4" />}
                       </AvatarFallback>
                     </Avatar>
@@ -73,7 +95,9 @@ export const Navbar = () => {
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{user?.name}</p>
+                      <p className="text-sm font-medium leading-none">
+                        {user?.name}
+                      </p>
                       <p className="text-xs leading-none text-muted-foreground">
                         {user?.email}
                       </p>
@@ -87,9 +111,15 @@ export const Navbar = () => {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem 
-                    className="text-destructive focus:text-destructive cursor-pointer"
-                    onClick={() => signOut({ fetchOptions: { onSuccess: () => window.location.reload() } })}
+                  <DropdownMenuItem
+                    className="cursor-pointer text-destructive focus:text-destructive"
+                    onClick={() =>
+                      signOut({
+                        fetchOptions: {
+                          onSuccess: () => window.location.reload(),
+                        },
+                      })
+                    }
                   >
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Log out</span>
@@ -98,14 +128,89 @@ export const Navbar = () => {
               </DropdownMenu>
             </div>
           ) : (
-            <Button
-              asChild
-              className="bg-landing-primary text-landing-primary-foreground hover:bg-landing-primary/90 h-9 rounded-full px-6"
-            >
-              <Link href="/auth/login">Login</Link>
-            </Button>
+            <div className="hidden items-center gap-2 sm:flex">
+              <Button
+                asChild
+                variant="ghost"
+                className="text-landing-ink hover:bg-landing-muted hover:text-landing-ink"
+              >
+                <Link href="/auth/login">Log in</Link>
+              </Button>
+              <Button
+                asChild
+                className="rounded-md bg-landing-primary text-landing-primary-foreground shadow-sm shadow-landing-primary/20 hover:bg-landing-primary/90"
+              >
+                <Link href="/auth/signup">Start free</Link>
+              </Button>
+            </div>
           )}
-        </nav>
+
+          <Sheet open={open} onOpenChange={setOpen}>
+            <SheetTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-landing-ink md:hidden"
+                aria-label="Open menu"
+              >
+                <Menu className="size-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent
+              side="right"
+              className="border-landing-ink/10 bg-landing-bg font-landing-body"
+            >
+              <SheetHeader>
+                <SheetTitle className="sr-only">Navigation</SheetTitle>
+                <BrandMark />
+              </SheetHeader>
+              <div className="mt-8 flex flex-col gap-1 px-2">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    onClick={() => setOpen(false)}
+                    className="rounded-md px-3 py-3 text-base font-medium text-landing-ink transition-colors hover:bg-landing-muted"
+                  >
+                    {link.name}
+                  </Link>
+                ))}
+              </div>
+              <div className="mt-8 flex flex-col gap-2 border-t border-landing-ink/10 px-2 pt-6">
+                {isAuthenticated ? (
+                  <Button
+                    asChild
+                    className="bg-landing-primary hover:bg-landing-primary/90"
+                  >
+                    <Link href="/dashboard" onClick={() => setOpen(false)}>
+                      Go to dashboard
+                    </Link>
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="border-landing-ink/15"
+                    >
+                      <Link href="/auth/login" onClick={() => setOpen(false)}>
+                        Log in
+                      </Link>
+                    </Button>
+                    <Button
+                      asChild
+                      className="bg-landing-primary hover:bg-landing-primary/90"
+                    >
+                      <Link href="/auth/signup" onClick={() => setOpen(false)}>
+                        Start free
+                      </Link>
+                    </Button>
+                  </>
+                )}
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
     </header>
   );
