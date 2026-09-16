@@ -20,11 +20,11 @@ export function Faq() {
           description={faq.support}
         />
 
-        <Reveal className="mt-12" delayMs={60}>
+        <Reveal className="mt-8 sm:mt-12" delayMs={40}>
           <Accordion
             type="single"
             collapsible
-            className="w-full rounded-xl border border-landing-ink/10 bg-landing-surface px-4 sm:px-6"
+            className="w-full rounded-xl border border-landing-ink/10 bg-landing-surface px-3 sm:px-6"
           >
             {faq.items.map((item, index) => (
               <AccordionItem
@@ -32,10 +32,10 @@ export function Faq() {
                 value={`item-${index}`}
                 className="border-landing-ink/10"
               >
-                <AccordionTrigger className="py-5 text-left font-landing-display text-base font-semibold text-landing-ink hover:no-underline hover:text-landing-primary sm:text-lg">
+                <AccordionTrigger className="min-h-12 py-4 text-left font-landing-display text-[0.95rem] font-semibold text-landing-ink touch-manipulation hover:no-underline hover:text-landing-primary sm:py-5 sm:text-lg">
                   {item.question}
                 </AccordionTrigger>
-                <AccordionContent className="pb-5 text-base leading-relaxed text-landing-ink-muted">
+                <AccordionContent className="pb-4 text-sm leading-relaxed text-landing-ink-muted sm:pb-5 sm:text-base">
                   {item.answer}
                 </AccordionContent>
               </AccordionItem>

@@ -162,27 +162,27 @@
   }
 
   .landing-section {
-    @apply py-20 sm:py-24 lg:py-28;
+    @apply py-14 sm:py-24 lg:py-28;
   }
 
   .landing-eyebrow {
-    @apply text-xs font-semibold uppercase tracking-[0.18em] text-landing-primary;
+    @apply text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-landing-primary sm:text-xs sm:tracking-[0.18em];
   }
 
   .landing-title {
-    @apply font-landing-display text-3xl font-bold tracking-tight text-landing-ink sm:text-4xl lg:text-[2.75rem] lg:leading-[1.15];
+    @apply font-landing-display text-[1.65rem] font-bold tracking-tight text-landing-ink text-balance sm:text-4xl lg:text-[2.75rem] lg:leading-[1.15];
   }
 
   .landing-lede {
-    @apply font-landing-body text-base leading-relaxed text-landing-ink-muted sm:text-lg;
+    @apply font-landing-body text-sm leading-relaxed text-landing-ink-muted text-pretty sm:text-lg;
   }
 
   .landing-btn-primary {
-    @apply inline-flex h-12 items-center justify-center gap-2 rounded-md bg-landing-primary px-8 text-base font-semibold text-landing-primary-foreground transition-[background-color,transform,box-shadow] duration-200 hover:bg-landing-primary/90 hover:shadow-[0_12px_28px_-12px_hsl(var(--landing-primary)/0.65)] active:scale-[0.98];
+    @apply inline-flex h-12 min-h-12 items-center justify-center gap-2 rounded-md bg-landing-primary px-6 text-base font-semibold text-landing-primary-foreground touch-manipulation transition-[background-color,transform,box-shadow] duration-200 hover:bg-landing-primary/90 hover:shadow-[0_12px_28px_-12px_hsl(var(--landing-primary)/0.65)] active:scale-[0.98] sm:px-8;
   }
 
   .landing-btn-secondary {
-    @apply inline-flex h-12 items-center justify-center gap-2 rounded-md border border-landing-ink/12 bg-landing-surface/70 px-8 text-base font-semibold text-landing-ink backdrop-blur-sm transition-[background-color,border-color,transform] duration-200 hover:border-landing-ink/25 hover:bg-landing-surface active:scale-[0.98];
+    @apply inline-flex h-12 min-h-12 items-center justify-center gap-2 rounded-md border border-landing-ink/12 bg-landing-surface/70 px-6 text-base font-semibold text-landing-ink backdrop-blur-sm touch-manipulation transition-[background-color,border-color,transform] duration-200 hover:border-landing-ink/25 hover:bg-landing-surface active:scale-[0.98] sm:px-8;
   }
 
   .landing-link-underline {
@@ -242,11 +242,23 @@
   }
 
   .animate-landing-marquee {
-    animation: landing-marquee 36s linear infinite;
+    animation: landing-marquee 28s linear infinite;
+  }
+
+  @media (min-width: 640px) {
+    .animate-landing-marquee {
+      animation-duration: 36s;
+    }
   }
 
   .animate-landing-marquee:hover {
     animation-play-state: paused;
+  }
+
+  @media (hover: none) {
+    .animate-landing-marquee:hover {
+      animation-play-state: running;
+    }
   }
 
   @keyframes landing-hero-rise {
@@ -455,6 +467,13 @@
 
   .landing-scroll-smooth {
     scroll-behavior: smooth;
+    overflow-x: clip;
+  }
+
+  @supports (padding: env(safe-area-inset-top)) {
+    .landing-safe-header {
+      padding-top: env(safe-area-inset-top);
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

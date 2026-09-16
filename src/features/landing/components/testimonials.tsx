@@ -1,10 +1,13 @@
 "use client";
 
+import { useIsMobile } from "@/hooks/use-mobile";
 import { testimonials } from "../content/landing-copy";
 import { Reveal } from "./reveal";
 import { SectionHeading } from "./section-heading";
 
 export function Testimonials() {
+  const isMobile = useIsMobile();
+
   return (
     <section className="landing-section bg-landing-muted/45">
       <div className="landing-container">
@@ -14,13 +17,13 @@ export function Testimonials() {
           description={testimonials.support}
         />
 
-        <div className="mt-14 grid gap-8 md:grid-cols-3 md:gap-10">
+        <div className="mt-10 grid gap-8 sm:mt-14 md:grid-cols-3 md:gap-10">
           {testimonials.items.map((item, index) => (
             <Reveal
               key={item.name}
-              delayMs={index * 80}
+              delayMs={isMobile ? Math.min(index * 80, 100) : index * 80}
               as="blockquote"
-              className="flex h-full flex-col border-t-2 border-landing-primary pt-6 transition-[padding] duration-300 hover:pt-7"
+              className="flex h-full flex-col border-t-2 border-landing-primary pt-5 sm:pt-6 sm:transition-[padding] sm:duration-300 sm:hover:pt-7"
             >
               <p className="flex-1 text-base leading-relaxed text-landing-ink sm:text-[1.05rem]">
                 <span className="font-landing-display text-3xl leading-none text-landing-primary/40">

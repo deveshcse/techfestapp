@@ -1,13 +1,8 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
-import {
-  fadeUp,
-  landingTransition,
-  landingViewport,
-  staggerContainer,
-} from "./landing-motion";
+import { useLandingMotionPrefs } from "./use-landing-motion";
 
 type SectionHeadingProps = {
   eyebrow: string;
@@ -26,39 +21,8 @@ export function SectionHeading({
   align = "center",
   light = false,
 }: SectionHeadingProps) {
-  const prefersReducedMotion = useReducedMotion();
-
-  const content = (
-    <>
-      <motion.p
-        variants={fadeUp}
-        transition={landingTransition}
-        className={cn("landing-eyebrow", light && "text-orange-300")}
-      >
-        {eyebrow}
-      </motion.p>
-      <motion.h2
-        variants={fadeUp}
-        transition={landingTransition}
-        className={cn("landing-title mt-3", light && "text-white")}
-      >
-        {title}
-      </motion.h2>
-      {description && (
-        <motion.p
-          variants={fadeUp}
-          transition={landingTransition}
-          className={cn(
-            "landing-lede mt-4",
-            light && "text-white/65",
-            align === "center" && "mx-auto"
-          )}
-        >
-          {description}
-        </motion.p>
-      )}
-    </>
-  );
+  const { prefersReducedMotion, viewport, transition, fadeUp, stagger } =
+    useLandingMotionPrefs();
 
   if (prefersReducedMotion) {
     return (
@@ -99,10 +63,36 @@ export function SectionHeading({
       )}
       initial="hidden"
       whileInView="visible"
-      viewport={landingViewport}
-      variants={staggerContainer}
+      viewport={viewport}
+      variants={stagger}
     >
-      {content}
+      <motion.p
+        variants={fadeUp}
+        transition={transition}
+        className={cn("landing-eyebrow", light && "text-orange-300")}
+      >
+        {eyebrow}
+      </motion.p>
+      <motion.h2
+        variants={fadeUp}
+        transition={transition}
+        className={cn("landing-title mt-3 text-balance", light && "text-white")}
+      >
+        {title}
+      </motion.h2>
+      {description && (
+        <motion.p
+          variants={fadeUp}
+          transition={transition}
+          className={cn(
+            "landing-lede mt-3 text-pretty sm:mt-4",
+            light && "text-white/65",
+            align === "center" && "mx-auto"
+          )}
+        >
+          {description}
+        </motion.p>
+      )}
     </motion.div>
   );
 }

@@ -1,12 +1,14 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { personas } from "../content/landing-copy";
 import { Reveal } from "./reveal";
 import { SectionHeading } from "./section-heading";
 
 export function Personas() {
   const prefersReducedMotion = useReducedMotion();
+  const isMobile = useIsMobile();
 
   return (
     <section className="landing-section bg-landing-ink text-white">
@@ -18,17 +20,25 @@ export function Personas() {
           light
         />
 
-        <div className="mt-14 grid gap-5 md:grid-cols-3 md:gap-6">
+        <div className="mt-10 grid gap-4 sm:mt-14 md:grid-cols-3 md:gap-6">
           {personas.items.map((item, index) => (
-            <Reveal key={item.role} delayMs={index * 80}>
+            <Reveal
+              key={item.role}
+              delayMs={isMobile ? Math.min(index * 80, 100) : index * 80}
+            >
               <motion.article
                 whileHover={
-                  prefersReducedMotion
+                  prefersReducedMotion || isMobile
                     ? undefined
                     : { y: -4, borderColor: "rgba(255,255,255,0.2)" }
                 }
+                whileTap={
+                  prefersReducedMotion || !isMobile
+                    ? undefined
+                    : { scale: 0.99 }
+                }
                 transition={{ duration: 0.25 }}
-                className="group relative h-full overflow-hidden border border-white/10 bg-white/[0.04] p-6 sm:p-7"
+                className="group relative h-full overflow-hidden border border-white/10 bg-white/[0.04] p-5 touch-manipulation sm:p-7"
               >
                 <div
                   className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-landing-primary transition-transform duration-300 group-hover:scale-x-100"

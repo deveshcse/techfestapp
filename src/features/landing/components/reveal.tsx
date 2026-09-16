@@ -1,14 +1,10 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
-import {
-  landingTransition,
-  landingViewport,
-  revealVariants,
-  type RevealVariant,
-} from "./landing-motion";
+import { useLandingMotionPrefs } from "./use-landing-motion";
+import type { RevealVariant } from "./landing-motion";
 
 type RevealProps = {
   children: ReactNode;
@@ -25,7 +21,8 @@ export function Reveal({
   variant = "up",
   as = "div",
 }: RevealProps) {
-  const prefersReducedMotion = useReducedMotion();
+  const { prefersReducedMotion, viewport, transition, reveal, delayMs: cap } =
+    useLandingMotionPrefs();
   const MotionTag = motion[as];
 
   return (
@@ -33,11 +30,11 @@ export function Reveal({
       className={cn(className)}
       initial={prefersReducedMotion ? false : "hidden"}
       whileInView="visible"
-      viewport={landingViewport}
-      variants={prefersReducedMotion ? undefined : revealVariants[variant]}
+      viewport={viewport}
+      variants={prefersReducedMotion ? undefined : reveal(variant)}
       transition={{
-        ...landingTransition,
-        delay: delayMs / 1000,
+        ...transition,
+        delay: cap(delayMs) / 1000,
       }}
     >
       {children}

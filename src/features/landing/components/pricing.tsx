@@ -5,12 +5,14 @@ import { Check } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { pricing } from "../content/landing-copy";
 import { Reveal } from "./reveal";
 import { SectionHeading } from "./section-heading";
 
 export function Pricing() {
   const prefersReducedMotion = useReducedMotion();
+  const isMobile = useIsMobile();
 
   return (
     <section id="pricing" className="landing-section scroll-mt-20 bg-landing-bg">
@@ -21,12 +23,16 @@ export function Pricing() {
           description={pricing.support}
         />
 
-        <div className="mt-14 grid items-stretch gap-5 lg:mt-16 lg:grid-cols-3 lg:gap-6">
+        <div className="mt-10 grid items-stretch gap-4 sm:mt-14 sm:gap-5 lg:mt-16 lg:grid-cols-3 lg:gap-6">
           {pricing.plans.map((plan, index) => (
-            <Reveal key={plan.name} delayMs={index * 80} className="h-full">
+            <Reveal
+              key={plan.name}
+              delayMs={isMobile ? Math.min(index * 80, 100) : index * 80}
+              className="h-full"
+            >
               <motion.article
                 whileHover={
-                  prefersReducedMotion
+                  prefersReducedMotion || isMobile
                     ? undefined
                     : {
                         y: plan.highlighted ? -6 : -4,
@@ -35,11 +41,16 @@ export function Pricing() {
                           : "0 12px 28px -8px rgba(0,0,0,0.12)",
                       }
                 }
+                whileTap={
+                  prefersReducedMotion || !isMobile
+                    ? undefined
+                    : { scale: 0.99 }
+                }
                 transition={{ duration: 0.25 }}
                 className={cn(
-                  "relative flex h-full flex-col border p-6 sm:p-8",
+                  "relative flex h-full flex-col border p-5 touch-manipulation sm:p-8",
                   plan.highlighted
-                    ? "z-10 border-landing-primary bg-landing-ink text-white shadow-2xl shadow-landing-ink/25 lg:-translate-y-2"
+                    ? "z-10 border-landing-primary bg-landing-ink text-white shadow-xl shadow-landing-ink/20 sm:shadow-2xl sm:shadow-landing-ink/25 lg:-translate-y-2"
                     : "border-landing-ink/10 bg-landing-surface text-landing-ink"
                 )}
               >

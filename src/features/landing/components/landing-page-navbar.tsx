@@ -53,7 +53,7 @@ export const Navbar = () => {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: landingEase }}
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,box-shadow,backdrop-filter] duration-300",
+        "landing-safe-header fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,box-shadow,backdrop-filter] duration-300",
         scrolled
           ? "border-b border-landing-ink/10 bg-landing-bg/90 shadow-[0_8px_30px_-18px_rgba(20,24,32,0.35)] backdrop-blur-xl"
           : "border-b border-transparent bg-landing-bg/55 backdrop-blur-md"

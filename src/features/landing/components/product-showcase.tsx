@@ -1,21 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { productShowcase } from "../content/landing-copy";
-import {
-  fadeScale,
-  fadeUp,
-  landingEase,
-  landingTransition,
-  landingViewport,
-} from "./landing-motion";
+import { landingEase } from "./landing-motion";
 import { ProductPreview } from "./product-preview";
 import { SectionHeading } from "./section-heading";
+import { useLandingMotionPrefs } from "./use-landing-motion";
 
 export function ProductShowcase() {
-  const prefersReducedMotion = useReducedMotion();
+  const {
+    prefersReducedMotion,
+    isMobile,
+    viewport,
+    transition,
+    fadeUp,
+    fadeScale,
+  } = useLandingMotionPrefs();
   const [active, setActive] = useState(productShowcase.tabs[0].id);
   const current =
     productShowcase.tabs.find((t) => t.id === active) ?? productShowcase.tabs[0];
@@ -33,17 +35,17 @@ export function ProductShowcase() {
         />
 
         <motion.div
-          className="mt-12"
+          className="mt-8 sm:mt-12"
           initial={prefersReducedMotion ? false : "hidden"}
           whileInView="visible"
-          viewport={landingViewport}
+          viewport={viewport}
           variants={fadeUp}
-          transition={{ ...landingTransition, delay: 0.08 }}
+          transition={{ ...transition, delay: 0.06 }}
         >
           <div
             role="tablist"
             aria-label="Product areas"
-            className="flex flex-wrap justify-center gap-2"
+            className="-mx-4 flex snap-x snap-mandatory gap-2 overflow-x-auto px-4 pb-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0 sm:pb-0 [&::-webkit-scrollbar]:hidden"
           >
             {productShowcase.tabs.map((tab) => (
               <motion.button
@@ -52,13 +54,15 @@ export function ProductShowcase() {
                 role="tab"
                 aria-selected={active === tab.id}
                 onClick={() => setActive(tab.id)}
-                whileHover={prefersReducedMotion ? undefined : { scale: 1.03 }}
-                whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
+                whileHover={
+                  prefersReducedMotion || isMobile ? undefined : { scale: 1.03 }
+                }
+                whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
                 className={cn(
-                  "rounded-md px-4 py-2.5 text-sm font-semibold transition-colors duration-300",
+                  "snap-start shrink-0 rounded-md px-3.5 py-2.5 text-sm font-semibold touch-manipulation transition-colors duration-300 sm:px-4",
                   active === tab.id
                     ? "bg-landing-ink text-white shadow-md shadow-landing-ink/20"
-                    : "bg-landing-surface text-landing-ink-muted hover:text-landing-ink"
+                    : "bg-landing-surface text-landing-ink-muted active:text-landing-ink sm:hover:text-landing-ink"
                 )}
               >
                 {tab.label}
@@ -66,30 +70,41 @@ export function ProductShowcase() {
             ))}
           </div>
 
-          <div className="mt-10 grid items-center gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-12">
+          <div className="mt-8 grid items-center gap-8 lg:mt-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-12">
             <AnimatePresence mode="wait">
               <motion.div
                 key={active}
                 initial={
-                  prefersReducedMotion ? false : { opacity: 0, y: 12 }
+                  prefersReducedMotion
+                    ? false
+                    : { opacity: 0, y: isMobile ? 8 : 12 }
                 }
                 animate={{ opacity: 1, y: 0 }}
                 exit={
-                  prefersReducedMotion ? undefined : { opacity: 0, y: -8 }
+                  prefersReducedMotion
+                    ? undefined
+                    : { opacity: 0, y: isMobile ? -4 : -8 }
                 }
-                transition={{ duration: 0.35, ease: landingEase }}
+                transition={{
+                  duration: isMobile ? 0.25 : 0.35,
+                  ease: landingEase,
+                }}
               >
-                <h3 className="font-landing-display text-2xl font-bold text-landing-ink sm:text-[1.75rem]">
+                <h3 className="font-landing-display text-xl font-bold text-landing-ink sm:text-[1.75rem]">
                   {current.title}
                 </h3>
-                <p className="mt-3 max-w-md text-base leading-relaxed text-landing-ink-muted">
+                <p className="mt-2.5 max-w-md text-sm leading-relaxed text-landing-ink-muted sm:mt-3 sm:text-base">
                   {current.description}
                 </p>
                 <motion.div
-                  className="mt-6 h-px w-16 origin-left bg-landing-primary"
+                  className="mt-5 h-px w-14 origin-left bg-landing-primary sm:mt-6 sm:w-16"
                   initial={prefersReducedMotion ? false : { scaleX: 0 }}
                   animate={{ scaleX: 1 }}
-                  transition={{ duration: 0.45, ease: landingEase, delay: 0.1 }}
+                  transition={{
+                    duration: 0.4,
+                    ease: landingEase,
+                    delay: 0.08,
+                  }}
                   aria-hidden
                 />
               </motion.div>
@@ -98,16 +113,19 @@ export function ProductShowcase() {
             <motion.div
               initial={prefersReducedMotion ? false : "hidden"}
               whileInView="visible"
-              viewport={landingViewport}
+              viewport={viewport}
               variants={fadeScale}
-              transition={{ ...landingTransition, delay: 0.12 }}
-              whileHover={prefersReducedMotion ? undefined : { y: -4 }}
+              transition={{ ...transition, delay: 0.08 }}
+              whileHover={
+                prefersReducedMotion || isMobile ? undefined : { y: -4 }
+              }
+              className="-mx-4 sm:mx-0"
             >
               <ProductPreview
                 interactive
                 activeTab={active}
                 onTabChange={setActive}
-                className="rounded-xl"
+                className="rounded-none border-x-0 sm:rounded-xl sm:border-x"
               />
             </motion.div>
           </div>
