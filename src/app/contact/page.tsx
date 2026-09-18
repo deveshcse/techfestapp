@@ -11,8 +11,8 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <MarketingPageShell
-      title="Contact"
-      description="Request a demo, ask about Campus pricing, or tell us how your fest committee works today."
+      title="Talk with the team"
+      description="Request a demo, ask about Campus pricing, or tell us how your fest committee runs today."
     >
       <ContactForm />
     </MarketingPageShell>
