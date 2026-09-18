@@ -341,8 +341,8 @@ export const footer = {
     { name: "Terms", href: "/terms" },
   ],
   social: [
-    { name: "Twitter", href: "https://twitter.com" },
-    { name: "GitHub", href: "https://github.com" },
-    { name: "LinkedIn", href: "https://linkedin.com" },
+    { name: "Twitter", href: "https://twitter.com/deveshcss" },
+    { name: "GitHub", href: "https://github.com/deveshcse" },
+    { name: "LinkedIn", href: "https://www.linkedin.com/in/deveshcse" },
   ],
 };

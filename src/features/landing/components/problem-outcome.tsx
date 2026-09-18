@@ -2,7 +2,6 @@
 
 import { motion } from "motion/react";
 import { problemOutcome } from "../content/landing-copy";
-import { fadeLeft, fadeRight } from "./landing-motion";
 import {
   landingGap,
   landingGapLg,
@@ -23,9 +22,6 @@ export function ProblemOutcome() {
     stagger,
   } = useLandingMotionPrefs();
 
-  const enter = isMobile ? fadeUp : fadeLeft;
-  const enterAlt = isMobile ? fadeUp : fadeRight;
-
   return (
     <section className={`bg-landing-bg ${landingSectionY}`}>
       <div className={landingPad}>
@@ -35,19 +31,18 @@ export function ProblemOutcome() {
           description={problemOutcome.support}
         />
 
-        <div
+        <motion.div
           className={`grid lg:grid-cols-2 ${landingGapLg} ${landingStackAfterHeading}`}
+          initial={prefersReducedMotion ? false : "hidden"}
+          whileInView="visible"
+          viewport={viewport}
+          variants={stagger}
         >
-          <motion.div
-            initial={prefersReducedMotion ? false : "hidden"}
-            whileInView="visible"
-            viewport={viewport}
-            variants={stagger}
-          >
+          <div className="min-w-0">
             <motion.p
-              variants={enter}
+              variants={fadeUp}
               transition={transition}
-              className="mb-[var(--landing-stack-md)] text-sm font-semibold uppercase tracking-[0.14em] text-landing-ink-muted"
+              className="mb-[var(--landing-stack-md)] text-sm font-semibold uppercase tracking-[0.14em] text-landing-ink"
             >
               Before
             </motion.p>
@@ -55,7 +50,7 @@ export function ProblemOutcome() {
               {problemOutcome.pains.map((item) => (
                 <motion.li
                   key={item.title}
-                  variants={enter}
+                  variants={fadeUp}
                   transition={transition}
                   whileHover={
                     prefersReducedMotion || isMobile ? undefined : { x: 4 }
@@ -65,7 +60,7 @@ export function ProblemOutcome() {
                       ? undefined
                       : { scale: 0.99 }
                   }
-                  className="rounded-r-md border-l-2 border-landing-ink/15 bg-landing-muted/40 py-[var(--landing-stack-md)] pl-[var(--landing-stack-md)] pr-[var(--landing-stack-sm)] touch-manipulation transition-colors duration-300 hover:bg-landing-muted/70"
+                  className="rounded-r-md border border-landing-ink/12 border-l-[3px] border-l-landing-ink/45 bg-landing-surface py-[var(--landing-stack-md)] pl-[var(--landing-stack-md)] pr-[var(--landing-stack-sm)] shadow-[0_1px_0_hsl(var(--landing-ink)/0.04)] touch-manipulation transition-colors duration-300 hover:bg-landing-muted/60"
                 >
                   <h3 className="font-landing-display text-base font-semibold text-landing-ink sm:text-lg">
                     {item.title}
@@ -76,16 +71,11 @@ export function ProblemOutcome() {
                 </motion.li>
               ))}
             </ul>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={prefersReducedMotion ? false : "hidden"}
-            whileInView="visible"
-            viewport={viewport}
-            variants={stagger}
-          >
+          <div className="min-w-0 border-t border-landing-ink/10 pt-[var(--landing-stack-lg)] lg:border-t-0 lg:pt-0">
             <motion.p
-              variants={enterAlt}
+              variants={fadeUp}
               transition={transition}
               className="mb-[var(--landing-stack-md)] text-sm font-semibold uppercase tracking-[0.14em] text-landing-primary"
             >
@@ -95,7 +85,7 @@ export function ProblemOutcome() {
               {problemOutcome.outcomes.map((item) => (
                 <motion.li
                   key={item.title}
-                  variants={enterAlt}
+                  variants={fadeUp}
                   transition={transition}
                   whileHover={
                     prefersReducedMotion || isMobile ? undefined : { x: 4 }
@@ -105,7 +95,7 @@ export function ProblemOutcome() {
                       ? undefined
                       : { scale: 0.99 }
                   }
-                  className="rounded-r-md border-l-2 border-landing-primary bg-landing-accent-soft/50 py-[var(--landing-stack-md)] pl-[var(--landing-stack-md)] pr-[var(--landing-stack-sm)] touch-manipulation transition-colors duration-300 hover:bg-landing-accent-soft"
+                  className="rounded-r-md border border-landing-primary/15 border-l-[3px] border-l-landing-primary bg-landing-accent-soft/70 py-[var(--landing-stack-md)] pl-[var(--landing-stack-md)] pr-[var(--landing-stack-sm)] touch-manipulation transition-colors duration-300 hover:bg-landing-accent-soft"
                 >
                   <h3 className="font-landing-display text-base font-semibold text-landing-ink sm:text-lg">
                     {item.title}
@@ -116,8 +106,8 @@ export function ProblemOutcome() {
                 </motion.li>
               ))}
             </ul>
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

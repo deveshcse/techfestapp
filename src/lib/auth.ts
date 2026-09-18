@@ -16,9 +16,9 @@ export const auth = betterAuth({
     async sendResetPassword({ user, url, token }: { user: any; url: string; token: string }, request: any) {
       const resend = getResend();
       resend.emails.send({
-        from: "TechFest <onboarding@resend.dev>",
+        from: "TechFestApp <onboarding@resend.dev>",
         to: user.email,
-        subject: "Reset your Password - TechFest",
+        subject: "Reset your Password - TechFestApp",
         html: getPasswordResetEmailHtml(user.name, url),
       });
     },

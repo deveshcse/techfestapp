@@ -3,23 +3,17 @@
 import * as React from "react"
 import {
   Camera,
-  BarChart3,
   LayoutDashboard,
   Database,
   FileText,
   File,
-  Folder,
   HelpCircle,
-  List,
   FileBarChart,
   Search,
   Settings,
-  Users,
-  GalleryVerticalEnd,
   Award,
   ClipboardList,
   Calendar,
-  User,
 } from "lucide-react"
 import {
   Sidebar,
@@ -30,6 +24,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { BrandMark } from "@/components/common/brand-mark"
 import { NavMain } from "./nav-main"
 import { NavUser } from "./nav-user"
 import { useAuth } from "@/features/auth/context/auth-context"
@@ -168,10 +163,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <a href="#">
-                <GalleryVerticalEnd className="!size-5" />
-                <span className="text-base font-semibold">Techfest App</span>
-              </a>
+              <BrandMark
+                href="/dashboard"
+                size="sm"
+                className="w-full text-sidebar-foreground [&_span:last-child]:text-base [&_span:last-child]:font-semibold"
+              />
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
