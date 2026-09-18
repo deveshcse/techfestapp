@@ -70,7 +70,7 @@ export function ContactForm() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.4, ease: landingEase }}
-            className="relative overflow-hidden border-l-[3px] border-l-landing-primary bg-landing-accent-soft/80 px-(--landing-card-pad) py-(--landing-stack-lg)"
+            className="relative overflow-hidden  bg-landing-accent-soft/80 px-(--landing-card-pad) py-(--landing-stack-lg)"
           >
             <div className="mx-auto flex max-w-xl flex-col items-center text-center">
               <span className="flex size-12 items-center justify-center rounded-full bg-landing-primary text-landing-primary-foreground">
@@ -238,7 +238,7 @@ export function ContactForm() {
                 {topics.map((topic) => (
                   <li
                     key={topic.title}
-                    className="border-l-2 border-landing-primary/35 pl-(--landing-stack-md)"
+                    className=" pl-(--landing-stack-md)"
                   >
                     <p className="font-landing-display text-base font-semibold text-landing-ink">
                       {topic.title}
