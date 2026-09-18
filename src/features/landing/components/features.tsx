@@ -31,8 +31,8 @@ export const Features = () => {
               delayMs={delayMs(index * 45)}
               as="article"
             >
-              <div className="group grid gap-[var(--landing-stack-sm)] py-[var(--landing-stack-md)] transition-colors duration-200 active:bg-landing-muted/35 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_minmax(0,0.9fr)] sm:items-baseline sm:gap-[var(--landing-gap-lg)] sm:py-[var(--landing-stack-lg)] sm:hover:bg-landing-muted/35">
-                <div className="flex items-baseline gap-[var(--landing-stack-sm)]">
+              <div className="group grid gap-(--landing-stack-sm) py-(--landing-stack-md) transition-colors duration-200 active:bg-landing-muted/35 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_minmax(0,0.9fr)] sm:items-baseline sm:gap-(--landing-gap-lg) sm:py-(--landing-stack-lg) sm:hover:bg-landing-muted/35">
+                <div className="flex items-baseline gap-(--landing-stack-sm)">
                   <span className="font-landing-display text-xs font-bold text-landing-primary/70 tabular-nums">
                     {String(index + 1).padStart(2, "0")}
                   </span>

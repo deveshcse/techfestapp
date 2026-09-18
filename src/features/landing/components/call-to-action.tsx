@@ -76,14 +76,14 @@ export const CTA = () => {
         <motion.p
           variants={fadeUp}
           transition={transition}
-          className="mx-auto mt-[var(--landing-stack-md)] w-full font-landing-body text-sm leading-relaxed text-white/88 sm:text-lg"
+          className="mx-auto mt-(--landing-stack-md) w-full font-landing-body text-sm leading-relaxed text-white/88 sm:text-lg"
         >
           {cta.support}
         </motion.p>
         <motion.div
           variants={fadeUp}
           transition={transition}
-          className="mt-[var(--landing-stack-lg)] flex w-full flex-col items-stretch gap-[var(--landing-stack-sm)] sm:flex-row sm:items-center sm:justify-center"
+          className="mt-(--landing-stack-lg) flex w-full flex-col items-stretch gap-(--landing-stack-sm) sm:flex-row sm:items-center sm:justify-center"
         >
           <motion.div
             whileHover={
@@ -118,7 +118,7 @@ export const CTA = () => {
         <motion.p
           variants={fadeUp}
           transition={transition}
-          className="mt-[var(--landing-stack-md)] text-xs text-white/70 sm:text-sm"
+          className="mt-(--landing-stack-md) text-xs text-white/70 sm:text-sm"
         >
           {cta.note}
         </motion.p>

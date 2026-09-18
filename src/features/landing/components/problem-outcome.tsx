@@ -42,7 +42,7 @@ export function ProblemOutcome() {
             <motion.p
               variants={fadeUp}
               transition={transition}
-              className="mb-[var(--landing-stack-md)] text-sm font-semibold uppercase tracking-[0.14em] text-landing-ink"
+              className="mb-(--landing-stack-md) text-sm font-semibold uppercase tracking-[0.14em] text-landing-ink"
             >
               Before
             </motion.p>
@@ -60,12 +60,12 @@ export function ProblemOutcome() {
                       ? undefined
                       : { scale: 0.99 }
                   }
-                  className="rounded-r-md border border-landing-ink/12 border-l-[3px] border-l-landing-ink/45 bg-landing-surface py-[var(--landing-stack-md)] pl-[var(--landing-stack-md)] pr-[var(--landing-stack-sm)] shadow-[0_1px_0_hsl(var(--landing-ink)/0.04)] touch-manipulation transition-colors duration-300 hover:bg-landing-muted/60"
+                  className="rounded-r-md border border-landing-ink/12 border-l-[3px] border-l-landing-ink/45 bg-landing-surface py-(--landing-stack-md) pl-(--landing-stack-md) pr-(--landing-stack-sm) shadow-[0_1px_0_hsl(var(--landing-ink)/0.04)] touch-manipulation transition-colors duration-300 hover:bg-landing-muted/60"
                 >
                   <h3 className="font-landing-display text-base font-semibold text-landing-ink sm:text-lg">
                     {item.title}
                   </h3>
-                  <p className="mt-[var(--landing-stack-xs)] text-sm leading-relaxed text-landing-ink-muted">
+                  <p className="mt-(--landing-stack-xs) text-sm leading-relaxed text-landing-ink-muted">
                     {item.description}
                   </p>
                 </motion.li>
@@ -73,11 +73,11 @@ export function ProblemOutcome() {
             </ul>
           </div>
 
-          <div className="min-w-0 border-t border-landing-ink/10 pt-[var(--landing-stack-lg)] lg:border-t-0 lg:pt-0">
+          <div className="min-w-0 border-t border-landing-ink/10 pt-(--landing-stack-lg) lg:border-t-0 lg:pt-0">
             <motion.p
               variants={fadeUp}
               transition={transition}
-              className="mb-[var(--landing-stack-md)] text-sm font-semibold uppercase tracking-[0.14em] text-landing-primary"
+              className="mb-(--landing-stack-md) text-sm font-semibold uppercase tracking-[0.14em] text-landing-primary"
             >
               With TechFestApp
             </motion.p>
@@ -95,12 +95,12 @@ export function ProblemOutcome() {
                       ? undefined
                       : { scale: 0.99 }
                   }
-                  className="rounded-r-md border border-landing-primary/15 border-l-[3px] border-l-landing-primary bg-landing-accent-soft/70 py-[var(--landing-stack-md)] pl-[var(--landing-stack-md)] pr-[var(--landing-stack-sm)] touch-manipulation transition-colors duration-300 hover:bg-landing-accent-soft"
+                  className="rounded-r-md border border-landing-primary/15 border-l-[3px] border-l-landing-primary bg-landing-accent-soft/70 py-(--landing-stack-md) pl-(--landing-stack-md) pr-(--landing-stack-sm) touch-manipulation transition-colors duration-300 hover:bg-landing-accent-soft"
                 >
                   <h3 className="font-landing-display text-base font-semibold text-landing-ink sm:text-lg">
                     {item.title}
                   </h3>
-                  <p className="mt-[var(--landing-stack-xs)] text-sm leading-relaxed text-landing-ink-muted">
+                  <p className="mt-(--landing-stack-xs) text-sm leading-relaxed text-landing-ink-muted">
                     {item.description}
                   </p>
                 </motion.li>

@@ -39,7 +39,7 @@ export const Footer = () => {
             transition={landingTransition}
           >
             <BrandMark />
-            <p className="mt-[var(--landing-stack-md)] w-full text-sm leading-relaxed text-landing-ink-muted md:w-4/5">
+            <p className="mt-(--landing-stack-md) w-full text-sm leading-relaxed text-landing-ink-muted md:w-4/5">
               {footer.blurb}
             </p>
           </motion.div>
@@ -49,7 +49,7 @@ export const Footer = () => {
               Product
             </h3>
             <motion.ul
-              className="mt-[var(--landing-stack-md)] space-y-[var(--landing-stack-sm)]"
+              className="mt-(--landing-stack-md) space-y-(--landing-stack-sm)"
               variants={staggerFast}
               initial={prefersReducedMotion ? false : "hidden"}
               whileInView="visible"
@@ -73,7 +73,7 @@ export const Footer = () => {
               Company
             </h3>
             <motion.ul
-              className="mt-[var(--landing-stack-md)] space-y-[var(--landing-stack-sm)]"
+              className="mt-(--landing-stack-md) space-y-(--landing-stack-sm)"
               variants={staggerFast}
               initial={prefersReducedMotion ? false : "hidden"}
               whileInView="visible"
@@ -96,12 +96,12 @@ export const Footer = () => {
         <motion.div
           variants={fadeUp}
           transition={landingTransition}
-          className="mt-[var(--landing-stack-xl)] flex flex-col items-center justify-between gap-[var(--landing-stack-md)] border-t border-landing-ink/8 pt-[var(--landing-stack-lg)] sm:flex-row"
+          className="mt-(--landing-stack-xl) flex flex-col items-center justify-between gap-(--landing-stack-md) border-t border-landing-ink/8 pt-(--landing-stack-lg) sm:flex-row"
         >
           <p className="text-sm text-landing-ink-muted">
             &copy; {currentYear} TechFestApp. All rights reserved.
           </p>
-          <div className="flex items-center gap-[var(--landing-stack-lg)]">
+          <div className="flex items-center gap-(--landing-stack-lg)">
             {footer.social.map((link) => (
               <a
                 key={link.name}

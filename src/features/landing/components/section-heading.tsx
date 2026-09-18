@@ -25,7 +25,7 @@ export function SectionHeading({
     useLandingMotionPrefs();
 
   const shellClass = cn(
-    "flex w-full flex-col gap-[var(--landing-stack-sm)]",
+    "flex w-full flex-col gap-(--landing-stack-sm)",
     align === "center" && "text-center",
     className
   );

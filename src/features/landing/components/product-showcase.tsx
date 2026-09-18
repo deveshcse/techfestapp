@@ -51,7 +51,7 @@ export function ProductShowcase() {
           <div
             role="tablist"
             aria-label="Product areas"
-            className="-mx-[var(--landing-gutter)] flex snap-x snap-mandatory gap-[var(--landing-stack-sm)] overflow-x-auto px-[var(--landing-gutter)] pb-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0 sm:pb-0 [&::-webkit-scrollbar]:hidden"
+            className="-mx-(--landing-gutter) flex snap-x snap-mandatory gap-(--landing-stack-sm) overflow-x-auto px-(--landing-gutter) pb-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0 sm:pb-0 [&::-webkit-scrollbar]:hidden"
           >
             {productShowcase.tabs.map((tab) => (
               <motion.button
@@ -77,7 +77,7 @@ export function ProductShowcase() {
           </div>
 
           <div
-            className={`mt-[var(--landing-stack-lg)] grid items-center lg:grid-cols-2 ${landingGapLg}`}
+            className={`mt-(--landing-stack-lg) grid items-center lg:grid-cols-2 ${landingGapLg}`}
           >
             <AnimatePresence mode="wait">
               <motion.div
@@ -101,11 +101,11 @@ export function ProductShowcase() {
                 <h3 className="font-landing-display text-xl font-bold text-landing-ink sm:text-[1.75rem]">
                   {current.title}
                 </h3>
-                <p className="mt-[var(--landing-stack-sm)] w-full text-sm leading-relaxed text-landing-ink-muted sm:text-base">
+                <p className="mt-(--landing-stack-sm) w-full text-sm leading-relaxed text-landing-ink-muted sm:text-base">
                   {current.description}
                 </p>
                 <motion.div
-                  className="mt-[var(--landing-stack-md)] h-px w-14 origin-left bg-landing-primary sm:w-16"
+                  className="mt-(--landing-stack-md) h-px w-14 origin-left bg-landing-primary sm:w-16"
                   initial={prefersReducedMotion ? false : { scaleX: 0 }}
                   animate={{ scaleX: 1 }}
                   transition={{

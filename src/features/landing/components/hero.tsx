@@ -40,19 +40,19 @@ export const Hero = () => {
             {hero.brand}
           </p>
           <h1
-            className="animate-landing-hero-rise mt-[var(--landing-stack-md)] font-landing-display text-[1.65rem] font-bold tracking-tight text-landing-ink text-balance sm:text-5xl lg:text-[3.35rem] lg:leading-[1.08]"
+            className="animate-landing-hero-rise mt-(--landing-stack-md) font-landing-display text-[1.65rem] font-bold tracking-tight text-landing-ink text-balance sm:text-5xl lg:text-[3.35rem] lg:leading-[1.08]"
             style={{ animationDelay: "80ms" }}
           >
             {hero.headline}
           </h1>
           <p
-            className="animate-landing-hero-rise mx-auto mt-[var(--landing-stack-md)] w-full font-landing-body text-[0.95rem] leading-relaxed text-landing-ink-muted text-pretty sm:text-lg"
+            className="animate-landing-hero-rise mx-auto mt-(--landing-stack-md) w-full font-landing-body text-[0.95rem] leading-relaxed text-landing-ink-muted text-pretty sm:text-lg"
             style={{ animationDelay: "160ms" }}
           >
             {hero.support}
           </p>
           <div
-            className="animate-landing-hero-rise mt-[var(--landing-stack-lg)] flex w-full flex-col items-stretch gap-[var(--landing-stack-sm)] sm:flex-row sm:items-center sm:justify-center"
+            className="animate-landing-hero-rise mt-(--landing-stack-lg) flex w-full flex-col items-stretch gap-(--landing-stack-sm) sm:flex-row sm:items-center sm:justify-center"
             style={{ animationDelay: "240ms" }}
           >
             <Link
@@ -74,7 +74,7 @@ export const Hero = () => {
         </div>
       </div>
 
-      <div className="relative mt-[var(--landing-stack-xl)] w-full">
+      <div className="relative mt-(--landing-stack-xl) w-full">
         <div
           className="animate-landing-hero-rise"
           style={{ animationDelay: "320ms" }}

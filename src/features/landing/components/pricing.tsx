@@ -74,20 +74,20 @@ export function Pricing() {
                 </h3>
                 <p
                   className={cn(
-                    "mt-[var(--landing-stack-xs)] text-sm leading-relaxed",
+                    "mt-(--landing-stack-xs) text-sm leading-relaxed",
                     plan.highlighted ? "text-white/65" : "text-landing-ink-muted"
                   )}
                 >
                   {plan.description}
                 </p>
-                <p className="mt-[var(--landing-stack-md)] font-landing-display text-4xl font-extrabold tracking-tight">
+                <p className="mt-(--landing-stack-md) font-landing-display text-4xl font-extrabold tracking-tight">
                   {plan.price}
                 </p>
-                <ul className="mt-[var(--landing-stack-lg)] flex-1 space-y-[var(--landing-stack-sm)]">
+                <ul className="mt-(--landing-stack-lg) flex-1 space-y-(--landing-stack-sm)">
                   {plan.features.map((feature) => (
                     <li
                       key={feature}
-                      className="flex items-start gap-[var(--landing-stack-sm)] text-sm"
+                      className="flex items-start gap-(--landing-stack-sm) text-sm"
                     >
                       <Check
                         className={cn(
@@ -112,7 +112,7 @@ export function Pricing() {
                 <Button
                   asChild
                   className={cn(
-                    "mt-[var(--landing-stack-lg)] h-11 w-full rounded-md font-semibold transition-[transform,background-color] active:scale-[0.98]",
+                    "mt-(--landing-stack-lg) h-11 w-full rounded-md font-semibold transition-[transform,background-color] active:scale-[0.98]",
                     plan.highlighted
                       ? "bg-landing-primary text-landing-primary-foreground hover:bg-landing-primary/90"
                       : "bg-landing-ink text-white hover:bg-landing-ink/90"

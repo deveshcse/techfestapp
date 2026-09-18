@@ -56,10 +56,10 @@ export function Personas() {
                 <p className="font-landing-display text-xs font-bold uppercase tracking-[0.16em] text-orange-300/80">
                   {String(index + 1).padStart(2, "0")}
                 </p>
-                <h3 className="mt-[var(--landing-stack-md)] font-landing-display text-xl font-bold">
+                <h3 className="mt-(--landing-stack-md) font-landing-display text-xl font-bold">
                   {item.role}
                 </h3>
-                <p className="mt-[var(--landing-stack-md)] text-sm leading-relaxed text-white/68">
+                <p className="mt-(--landing-stack-md) text-sm leading-relaxed text-white/68">
                   {item.description}
                 </p>
               </motion.article>

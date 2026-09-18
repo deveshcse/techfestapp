@@ -23,7 +23,7 @@ export const HowItWorks = () => {
 
         <div className={landingStackAfterHeading}>
           {/* Desktop stepper track */}
-          <div className="relative mb-[var(--landing-stack-lg)] hidden h-12 lg:block">
+          <div className="relative mb-(--landing-stack-lg) hidden h-12 lg:block">
             <div
               className="absolute left-6 top-1/2 h-px w-2/3 -translate-y-1/2 bg-landing-primary/30"
               aria-hidden
@@ -52,7 +52,7 @@ export const HowItWorks = () => {
               return (
                 <li
                   key={step.title}
-                  className="flex gap-[var(--landing-stack-md)] lg:block"
+                  className="flex gap-(--landing-stack-md) lg:block"
                 >
                   {/* Mobile stepper */}
                   <div className="flex w-8 shrink-0 flex-col items-center lg:hidden">
@@ -71,14 +71,14 @@ export const HowItWorks = () => {
                     className={
                       isLast
                         ? "min-w-0 flex-1"
-                        : "min-w-0 flex-1 pb-[var(--landing-stack-xl)] lg:pb-0"
+                        : "min-w-0 flex-1 pb-(--landing-stack-xl) lg:pb-0"
                     }
                   >
                     <p className="landing-eyebrow">{step.cue}</p>
-                    <h3 className="mt-[var(--landing-stack-xs)] font-landing-display text-xl font-bold tracking-tight text-landing-ink lg:mt-[var(--landing-stack-sm)] lg:text-[1.65rem] lg:leading-snug">
+                    <h3 className="mt-(--landing-stack-xs) font-landing-display text-xl font-bold tracking-tight text-landing-ink lg:mt-(--landing-stack-sm) lg:text-[1.65rem] lg:leading-snug">
                       {step.title}
                     </h3>
-                    <p className="mt-[var(--landing-stack-sm)] text-[0.9375rem] leading-relaxed text-landing-ink-muted lg:text-base">
+                    <p className="mt-(--landing-stack-sm) text-[0.9375rem] leading-relaxed text-landing-ink-muted lg:text-base">
                       {step.description}
                     </p>
                   </div>

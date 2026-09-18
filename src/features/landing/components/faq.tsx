@@ -29,7 +29,7 @@ export function Faq() {
           <Accordion
             type="single"
             collapsible
-            className="w-full rounded-xl border border-landing-ink/10 bg-landing-surface px-[var(--landing-stack-md)] sm:px-[var(--landing-stack-lg)]"
+            className="w-full rounded-xl border border-landing-ink/10 bg-landing-surface px-(--landing-stack-md) sm:px-(--landing-stack-lg)"
           >
             {faq.items.map((item, index) => (
               <AccordionItem
@@ -37,10 +37,10 @@ export function Faq() {
                 value={`item-${index}`}
                 className="border-landing-ink/10"
               >
-                <AccordionTrigger className="min-h-12 py-[var(--landing-stack-md)] text-left font-landing-display text-[0.95rem] font-semibold text-landing-ink touch-manipulation hover:no-underline hover:text-landing-primary sm:text-lg">
+                <AccordionTrigger className="min-h-12 py-(--landing-stack-md) text-left font-landing-display text-[0.95rem] font-semibold text-landing-ink touch-manipulation hover:no-underline hover:text-landing-primary sm:text-lg">
                   {item.question}
                 </AccordionTrigger>
-                <AccordionContent className="pb-[var(--landing-stack-md)] text-sm leading-relaxed text-landing-ink-muted sm:text-base">
+                <AccordionContent className="pb-(--landing-stack-md) text-sm leading-relaxed text-landing-ink-muted sm:text-base">
                   {item.answer}
                 </AccordionContent>
               </AccordionItem>
