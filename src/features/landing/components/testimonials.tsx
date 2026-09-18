@@ -2,12 +2,6 @@
 
 import { useIsMobile } from "@/hooks/use-mobile";
 import { testimonials } from "../content/landing-copy";
-import {
-  landingGapLg,
-  landingPad,
-  landingSectionY,
-  landingStackAfterHeading,
-} from "./landing-layout";
 import { Reveal } from "./reveal";
 import { SectionHeading } from "./section-heading";
 
@@ -15,8 +9,8 @@ export function Testimonials() {
   const isMobile = useIsMobile();
 
   return (
-    <section className={`bg-landing-muted/45 ${landingSectionY}`}>
-      <div className={landingPad}>
+    <section className={`bg-landing-muted/45 py-(--landing-section-y)`}>
+      <div className="w-full px-(--landing-gutter)">
         <SectionHeading
           eyebrow={testimonials.eyebrow}
           title={testimonials.headline}
@@ -24,7 +18,7 @@ export function Testimonials() {
         />
 
         <div
-          className={`grid md:grid-cols-3 ${landingGapLg} ${landingStackAfterHeading}`}
+          className={`grid md:grid-cols-3 gap-(--landing-gap-lg) mt-(--landing-stack-lg)`}
         >
           {testimonials.items.map((item, index) => (
             <Reveal

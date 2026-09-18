@@ -11,11 +11,6 @@ import {
   staggerContainer,
   staggerFast,
 } from "./landing-motion";
-import {
-  landingGapLg,
-  landingPad,
-  landingSectionCompactY,
-} from "./landing-layout";
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -23,16 +18,16 @@ export const Footer = () => {
 
   return (
     <footer
-      className={`border-t border-landing-ink/8 bg-landing-surface font-landing-body ${landingSectionCompactY}`}
+      className={`border-t border-landing-ink/8 bg-landing-surface font-landing-body py-(--landing-section-y-compact)`}
     >
       <motion.div
-        className={landingPad}
+        className="w-full px-(--landing-gutter)"
         initial={prefersReducedMotion ? false : "hidden"}
         whileInView="visible"
         viewport={landingViewport}
         variants={staggerContainer}
       >
-        <div className={`grid grid-cols-1 md:grid-cols-4 ${landingGapLg}`}>
+        <div className={`grid grid-cols-1 md:grid-cols-4 gap-(--landing-gap-lg)`}>
           <motion.div
             className="md:col-span-2"
             variants={fadeUp}

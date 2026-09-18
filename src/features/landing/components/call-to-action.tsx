@@ -4,7 +4,6 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
 import { cta } from "../content/landing-copy";
-import { landingPad, landingSectionY } from "./landing-layout";
 import { useLandingMotionPrefs } from "./use-landing-motion";
 
 export const CTA = () => {
@@ -19,7 +18,7 @@ export const CTA = () => {
 
   return (
     <section
-      className={`relative overflow-hidden bg-landing-primary ${landingSectionY}`}
+      className={`relative overflow-hidden bg-landing-primary py-(--landing-section-y)`}
     >
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.22]"
@@ -60,7 +59,7 @@ export const CTA = () => {
       )}
 
       <motion.div
-        className={`relative z-10 text-center ${landingPad}`}
+        className={`relative z-10 text-center w-full px-(--landing-gutter)`}
         initial={prefersReducedMotion ? false : "hidden"}
         whileInView="visible"
         viewport={viewport}

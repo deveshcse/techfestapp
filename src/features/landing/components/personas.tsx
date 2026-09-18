@@ -3,13 +3,6 @@
 import { motion, useReducedMotion } from "motion/react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { personas } from "../content/landing-copy";
-import {
-  landingCardPad,
-  landingGap,
-  landingPad,
-  landingSectionY,
-  landingStackAfterHeading,
-} from "./landing-layout";
 import { Reveal } from "./reveal";
 import { SectionHeading } from "./section-heading";
 
@@ -18,8 +11,8 @@ export function Personas() {
   const isMobile = useIsMobile();
 
   return (
-    <section className={`bg-landing-ink text-white ${landingSectionY}`}>
-      <div className={landingPad}>
+    <section className={`bg-landing-ink text-white py-(--landing-section-y)`}>
+      <div className="w-full px-(--landing-gutter)">
         <SectionHeading
           eyebrow={personas.eyebrow}
           title={personas.headline}
@@ -28,7 +21,7 @@ export function Personas() {
         />
 
         <div
-          className={`grid md:grid-cols-3 ${landingGap} ${landingStackAfterHeading}`}
+          className={`grid md:grid-cols-3 gap-(--landing-gap) mt-(--landing-stack-lg)`}
         >
           {personas.items.map((item, index) => (
             <Reveal
@@ -47,7 +40,7 @@ export function Personas() {
                     : { scale: 0.99 }
                 }
                 transition={{ duration: 0.25 }}
-                className={`group relative h-full overflow-hidden border border-white/10 bg-white/[0.04] touch-manipulation ${landingCardPad}`}
+                className={`group relative h-full overflow-hidden border border-white/10 bg-white/[0.04] touch-manipulation p-(--landing-card-pad)`}
               >
                 <div
                   className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-landing-primary transition-transform duration-300 group-hover:scale-x-100"

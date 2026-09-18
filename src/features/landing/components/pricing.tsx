@@ -7,13 +7,6 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { pricing } from "../content/landing-copy";
-import {
-  landingCardPad,
-  landingGap,
-  landingPad,
-  landingSectionY,
-  landingStackAfterHeading,
-} from "./landing-layout";
 import { Reveal } from "./reveal";
 import { SectionHeading } from "./section-heading";
 
@@ -22,8 +15,8 @@ export function Pricing() {
   const isMobile = useIsMobile();
 
   return (
-    <section id="pricing" className={`scroll-mt-20 bg-landing-bg ${landingSectionY}`}>
-      <div className={landingPad}>
+    <section id="pricing" className={`scroll-mt-20 bg-landing-bg py-(--landing-section-y)`}>
+      <div className="w-full px-(--landing-gutter)">
         <SectionHeading
           eyebrow={pricing.eyebrow}
           title={pricing.headline}
@@ -31,7 +24,7 @@ export function Pricing() {
         />
 
         <div
-          className={`grid items-stretch lg:grid-cols-3 ${landingGap} ${landingStackAfterHeading}`}
+          className={`grid items-stretch lg:grid-cols-3 gap-(--landing-gap) mt-(--landing-stack-lg)`}
         >
           {pricing.plans.map((plan, index) => (
             <Reveal
@@ -58,7 +51,7 @@ export function Pricing() {
                 transition={{ duration: 0.25 }}
                 className={cn(
                   "relative flex h-full flex-col border touch-manipulation",
-                  landingCardPad,
+                  "p-(--landing-card-pad)",
                   plan.highlighted
                     ? "z-10 border-landing-primary bg-landing-ink text-white shadow-xl shadow-landing-ink/20 sm:shadow-2xl sm:shadow-landing-ink/25 lg:-translate-y-2"
                     : "border-landing-ink/10 bg-landing-surface text-landing-ink"

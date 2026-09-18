@@ -1,11 +1,6 @@
 "use client";
 
 import { features } from "../content/landing-copy";
-import {
-  landingPad,
-  landingSectionY,
-  landingStackAfterHeading,
-} from "./landing-layout";
 import { Reveal } from "./reveal";
 import { SectionHeading } from "./section-heading";
 import { useLandingMotionPrefs } from "./use-landing-motion";
@@ -14,8 +9,8 @@ export const Features = () => {
   const { delayMs } = useLandingMotionPrefs();
 
   return (
-    <section id="features" className={`scroll-mt-20 bg-landing-bg ${landingSectionY}`}>
-      <div className={landingPad}>
+    <section id="features" className={`scroll-mt-20 bg-landing-bg py-(--landing-section-y)`}>
+      <div className="w-full px-(--landing-gutter)">
         <SectionHeading
           eyebrow={features.eyebrow}
           title={features.headline}
@@ -23,7 +18,7 @@ export const Features = () => {
         />
 
         <div
-          className={`divide-y divide-landing-ink/10 border-y border-landing-ink/10 ${landingStackAfterHeading}`}
+          className={`divide-y divide-landing-ink/10 border-y border-landing-ink/10 mt-(--landing-stack-lg)`}
         >
           {features.items.map((feature, index) => (
             <Reveal

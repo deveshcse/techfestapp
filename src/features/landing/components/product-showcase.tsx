@@ -5,12 +5,6 @@ import { AnimatePresence, motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { productShowcase } from "../content/landing-copy";
 import { landingEase } from "./landing-motion";
-import {
-  landingGapLg,
-  landingPad,
-  landingSectionY,
-  landingStackAfterHeading,
-} from "./landing-layout";
 import { ProductPreview } from "./product-preview";
 import { SectionHeading } from "./section-heading";
 import { useLandingMotionPrefs } from "./use-landing-motion";
@@ -31,9 +25,9 @@ export function ProductShowcase() {
   return (
     <section
       id="product"
-      className={`scroll-mt-20 bg-landing-muted/55 ${landingSectionY}`}
+      className={`scroll-mt-20 bg-landing-muted/55 py-(--landing-section-y)`}
     >
-      <div className={landingPad}>
+      <div className="w-full px-(--landing-gutter)">
         <SectionHeading
           eyebrow={productShowcase.eyebrow}
           title={productShowcase.headline}
@@ -41,7 +35,7 @@ export function ProductShowcase() {
         />
 
         <motion.div
-          className={landingStackAfterHeading}
+          className="mt-(--landing-stack-lg)"
           initial={prefersReducedMotion ? false : "hidden"}
           whileInView="visible"
           viewport={viewport}
@@ -77,7 +71,7 @@ export function ProductShowcase() {
           </div>
 
           <div
-            className={`mt-(--landing-stack-lg) grid items-center lg:grid-cols-2 ${landingGapLg}`}
+            className={`mt-(--landing-stack-lg) grid items-center lg:grid-cols-2 gap-(--landing-gap-lg)`}
           >
             <AnimatePresence mode="wait">
               <motion.div

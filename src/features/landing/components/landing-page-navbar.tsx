@@ -26,7 +26,6 @@ import {
 import { cn } from "@/lib/utils";
 import { BrandMark } from "./brand-mark";
 import { navLinks } from "../content/landing-copy";
-import { landingPad } from "./landing-layout";
 
 export const Navbar = () => {
   const { user, isAuthenticated, isLoading } = useAuth();
@@ -49,7 +48,7 @@ export const Navbar = () => {
           : "border-b border-transparent bg-landing-bg/55 backdrop-blur-md"
       )}
     >
-      <div className={`${landingPad} flex h-16 items-center justify-between`}>
+      <div className="flex h-16 w-full items-center justify-between px-(--landing-gutter)">
         <BrandMark />
 
         <nav className="hidden items-center gap-7 md:flex">

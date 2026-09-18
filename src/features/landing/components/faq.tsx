@@ -7,25 +7,20 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { faq } from "../content/landing-copy";
-import {
-  landingPad,
-  landingSectionY,
-  landingStackAfterHeading,
-} from "./landing-layout";
 import { Reveal } from "./reveal";
 import { SectionHeading } from "./section-heading";
 
 export function Faq() {
   return (
-    <section id="faq" className={`scroll-mt-20 bg-landing-bg ${landingSectionY}`}>
-      <div className={landingPad}>
+    <section id="faq" className={`scroll-mt-20 bg-landing-bg py-(--landing-section-y)`}>
+      <div className="w-full px-(--landing-gutter)">
         <SectionHeading
           eyebrow={faq.eyebrow}
           title={faq.headline}
           description={faq.support}
         />
 
-        <Reveal className={landingStackAfterHeading} delayMs={40}>
+        <Reveal className="mt-(--landing-stack-lg)" delayMs={40}>
           <Accordion
             type="single"
             collapsible

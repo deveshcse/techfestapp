@@ -1,27 +1,22 @@
 "use client";
 
 import { howItWorks } from "../content/landing-copy";
-import {
-  landingPad,
-  landingSectionY,
-  landingStackAfterHeading,
-} from "./landing-layout";
 import { SectionHeading } from "./section-heading";
 
 export const HowItWorks = () => {
   return (
     <section
       id="how-it-works"
-      className={`scroll-mt-20 bg-landing-surface ${landingSectionY}`}
+      className={`scroll-mt-20 bg-landing-surface py-(--landing-section-y)`}
     >
-      <div className={landingPad}>
+      <div className="w-full px-(--landing-gutter)">
         <SectionHeading
           eyebrow={howItWorks.eyebrow}
           title={howItWorks.headline}
           description={howItWorks.support}
         />
 
-        <div className={landingStackAfterHeading}>
+        <div className="mt-(--landing-stack-lg)">
           {/* Desktop stepper track */}
           <div className="relative mb-(--landing-stack-lg) hidden h-12 lg:block">
             <div
@@ -34,7 +29,7 @@ export const HowItWorks = () => {
             >
               {howItWorks.steps.map((step, index) => (
                 <li key={`node-${step.title}`} className="flex items-center">
-                  <span className="relative z-[1] flex size-12 items-center justify-center rounded-full border-2 border-landing-primary bg-landing-surface font-landing-display text-sm font-bold text-landing-primary ring-[6px] ring-landing-surface">
+                  <span className="relative z-1 flex size-12 items-center justify-center rounded-full border-2 border-landing-primary bg-landing-surface font-landing-display text-sm font-bold text-landing-primary ring-[6px] ring-landing-surface">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                 </li>

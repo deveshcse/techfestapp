@@ -11,7 +11,6 @@ import {
   landingTransition,
   staggerContainer,
 } from "./landing-motion";
-import { landingPad, landingSectionY } from "./landing-layout";
 
 type MarketingPageShellProps = {
   title: string;
@@ -34,7 +33,7 @@ export function MarketingPageShell({
         transition={{ duration: 0.45, ease: landingEase }}
         className="sticky top-0 z-40 border-b border-landing-ink/8 bg-landing-bg/90 backdrop-blur-md"
       >
-        <div className={`${landingPad} flex h-16 items-center justify-between`}>
+        <div className="flex h-16 w-full items-center justify-between px-(--landing-gutter)">
           <BrandMark />
           <Link
             href="/"
@@ -45,7 +44,7 @@ export function MarketingPageShell({
         </div>
       </motion.header>
       <motion.main
-        className={`w-full flex-1 ${landingPad} ${landingSectionY}`}
+        className="w-full flex-1 px-(--landing-gutter) py-(--landing-section-y)"
         initial={prefersReducedMotion ? false : "hidden"}
         animate="visible"
         variants={staggerContainer}

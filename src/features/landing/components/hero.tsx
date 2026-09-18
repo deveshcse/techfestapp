@@ -4,7 +4,6 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { hero } from "../content/landing-copy";
-import { landingPad } from "./landing-layout";
 
 const ProductPreview = dynamic(
   () =>
@@ -13,7 +12,7 @@ const ProductPreview = dynamic(
     ssr: true,
     loading: () => (
       <div
-        className="min-h-[280px] animate-pulse rounded-xl border border-landing-ink/10 bg-landing-surface sm:min-h-[360px] sm:rounded-2xl"
+        className="min-h-70 animate-pulse rounded-xl border border-landing-ink/10 bg-landing-surface sm:min-h-90 sm:rounded-2xl"
         aria-hidden
       />
     ),
@@ -27,11 +26,11 @@ export const Hero = () => {
       style={{ paddingTop: "var(--landing-hero-top)" }}
     >
       <div
-        className="pointer-events-none absolute left-1/2 top-20 h-48 w-[min(100vw,22rem)] -translate-x-1/2 rounded-full bg-landing-primary/20 blur-3xl animate-landing-glow-breathe sm:top-24 sm:h-64 sm:w-[36rem]"
+        className="pointer-events-none absolute left-1/2 top-20 h-48 w-[min(100vw,22rem)] -translate-x-1/2 rounded-full bg-landing-primary/20 blur-3xl animate-landing-glow-breathe sm:top-24 sm:h-64 sm:w-xl"
         aria-hidden
       />
 
-      <div className={landingPad}>
+      <div className="w-full px-(--landing-gutter)">
         <div className="w-full text-center">
           <p
             className="animate-landing-hero-rise font-landing-display text-[2.15rem] font-extrabold tracking-tight text-landing-primary sm:text-5xl lg:text-6xl"
@@ -79,7 +78,7 @@ export const Hero = () => {
           className="animate-landing-hero-rise"
           style={{ animationDelay: "320ms" }}
         >
-          <div className={landingPad}>
+          <div className="w-full px-(--landing-gutter)">
             <div className="relative">
               <div
                 className="pointer-events-none absolute -inset-x-8 -top-10 hidden h-40 rounded-full bg-landing-primary/15 blur-3xl animate-landing-glow-breathe sm:block"
@@ -91,7 +90,7 @@ export const Hero = () => {
             </div>
           </div>
           <div
-            className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-landing-bg via-landing-bg/85 to-transparent sm:h-28"
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-linear-to-t from-landing-bg via-landing-bg/85 to-transparent sm:h-28"
             aria-hidden
           />
         </div>

@@ -2,13 +2,6 @@
 
 import { motion } from "motion/react";
 import { problemOutcome } from "../content/landing-copy";
-import {
-  landingGap,
-  landingGapLg,
-  landingPad,
-  landingSectionY,
-  landingStackAfterHeading,
-} from "./landing-layout";
 import { SectionHeading } from "./section-heading";
 import { useLandingMotionPrefs } from "./use-landing-motion";
 
@@ -23,8 +16,8 @@ export function ProblemOutcome() {
   } = useLandingMotionPrefs();
 
   return (
-    <section className={`bg-landing-bg ${landingSectionY}`}>
-      <div className={landingPad}>
+    <section className={`bg-landing-bg py-(--landing-section-y)`}>
+      <div className="w-full px-(--landing-gutter)">
         <SectionHeading
           eyebrow={problemOutcome.eyebrow}
           title={problemOutcome.headline}
@@ -32,7 +25,7 @@ export function ProblemOutcome() {
         />
 
         <motion.div
-          className={`grid lg:grid-cols-2 ${landingGapLg} ${landingStackAfterHeading}`}
+          className={`grid lg:grid-cols-2 gap-(--landing-gap-lg) mt-(--landing-stack-lg)`}
           initial={prefersReducedMotion ? false : "hidden"}
           whileInView="visible"
           viewport={viewport}
@@ -46,7 +39,7 @@ export function ProblemOutcome() {
             >
               Before
             </motion.p>
-            <ul className={`flex flex-col ${landingGap}`}>
+            <ul className={`flex flex-col gap-(--landing-gap)`}>
               {problemOutcome.pains.map((item) => (
                 <motion.li
                   key={item.title}
@@ -81,7 +74,7 @@ export function ProblemOutcome() {
             >
               With TechFestApp
             </motion.p>
-            <ul className={`flex flex-col ${landingGap}`}>
+            <ul className={`flex flex-col gap-(--landing-gap)`}>
               {problemOutcome.outcomes.map((item) => (
                 <motion.li
                   key={item.title}
