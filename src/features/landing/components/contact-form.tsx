@@ -72,32 +72,33 @@ export function ContactForm() {
             transition={{ duration: 0.4, ease: landingEase }}
             className="relative overflow-hidden border-l-[3px] border-l-landing-primary bg-landing-accent-soft/80 px-(--landing-card-pad) py-(--landing-stack-lg)"
           >
-            <div className="flex items-start gap-(--landing-stack-md)">
-              <span className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-full bg-landing-primary text-landing-primary-foreground">
-                <Check className="size-5" strokeWidth={2.5} aria-hidden />
+            <div className="mx-auto flex max-w-xl flex-col items-center text-center">
+              <span className="flex size-12 items-center justify-center rounded-full bg-landing-primary text-landing-primary-foreground">
+                <Check className="size-6" strokeWidth={2.5} aria-hidden />
               </span>
-              <div className="min-w-0">
-                <p className="landing-eyebrow">Message sent</p>
-                <h2 className="mt-(--landing-stack-xs) font-landing-display text-2xl font-bold tracking-tight text-landing-ink sm:text-3xl">
-                  Thanks — we&apos;ll be in touch.
-                </h2>
-                <p className="mt-(--landing-stack-sm) max-w-xl text-[0.95rem] leading-relaxed text-landing-ink-muted sm:text-base">
-                  Your message is with the team. We typically reply within 1–2
-                  business days. Meanwhile, create an account and explore the
-                  product.
-                </p>
-                <div className="mt-(--landing-stack-lg) flex flex-col items-stretch gap-(--landing-stack-sm) sm:flex-row sm:items-center">
-                  <Link href="/auth/signup" className="landing-btn-primary group">
-                    Start free
-                    <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
-                  </Link>
-                  <Link
-                    href="/"
-                    className="landing-link-underline text-sm font-medium text-landing-ink-muted hover:text-landing-primary"
-                  >
-                    Back to home
-                  </Link>
-                </div>
+              <p className="landing-eyebrow mt-(--landing-stack-md)">Message sent</p>
+              <h2 className="mt-(--landing-stack-xs) font-landing-display text-2xl font-bold tracking-tight text-landing-ink sm:text-3xl">
+                Thanks — we&apos;ll be in touch.
+              </h2>
+              <p className="mt-(--landing-stack-sm) text-[0.95rem] leading-relaxed text-landing-ink-muted sm:text-base">
+                Your message is with the team. We typically reply within 1–2
+                business days. Meanwhile, create an account and explore the
+                product.
+              </p>
+              <div className="mt-(--landing-stack-lg) flex w-full flex-col items-center gap-(--landing-stack-sm) sm:flex-row sm:justify-center">
+                <Link
+                  href="/auth/signup"
+                  className="landing-btn-primary group no-underline hover:no-underline"
+                >
+                  Start free
+                  <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </Link>
+                <Link
+                  href="/"
+                  className="landing-link-underline text-sm font-medium text-landing-ink-muted no-underline hover:text-landing-primary hover:no-underline"
+                >
+                  Back to home
+                </Link>
               </div>
             </div>
           </motion.div>

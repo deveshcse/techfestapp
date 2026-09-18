@@ -68,7 +68,7 @@ export function MarketingPageShell({
         <motion.div
           variants={fadeUp}
           transition={landingTransition}
-          className="mt-(--landing-stack-lg) space-y-(--landing-stack-md) text-base leading-relaxed text-landing-ink-muted [&_h2]:mt-(--landing-stack-lg) [&_h2]:font-landing-display [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-landing-ink [&_a]:font-semibold [&_a]:text-landing-primary [&_a]:underline-offset-4 hover:[&_a]:underline"
+          className="mt-(--landing-stack-lg) space-y-(--landing-stack-md) text-base leading-relaxed text-landing-ink-muted [&_h2]:mt-(--landing-stack-lg) [&_h2]:font-landing-display [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-landing-ink [&_a:not(.landing-btn-primary)]:font-semibold [&_a:not(.landing-btn-primary)]:text-landing-primary [&_a:not(.landing-btn-primary)]:underline-offset-4 hover:[&_a:not(.landing-btn-primary)]:underline"
         >
           {children}
         </motion.div>
