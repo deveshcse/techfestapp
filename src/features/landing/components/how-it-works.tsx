@@ -3,6 +3,12 @@
 import { motion, useReducedMotion } from "motion/react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { howItWorks } from "../content/landing-copy";
+import {
+  landingGapLg,
+  landingPad,
+  landingSectionY,
+  landingStackAfterHeading,
+} from "./landing-layout";
 import { Reveal } from "./reveal";
 import { SectionHeading } from "./section-heading";
 
@@ -13,16 +19,18 @@ export const HowItWorks = () => {
   return (
     <section
       id="how-it-works"
-      className="landing-section scroll-mt-20 bg-landing-surface"
+      className={`scroll-mt-20 bg-landing-surface ${landingSectionY}`}
     >
-      <div className="landing-container">
+      <div className={landingPad}>
         <SectionHeading
           eyebrow={howItWorks.eyebrow}
           title={howItWorks.headline}
           description={howItWorks.support}
         />
 
-        <div className="relative mt-10 grid gap-8 sm:mt-14 sm:gap-10 lg:mt-16 lg:grid-cols-3 lg:gap-8">
+        <div
+          className={`relative grid lg:grid-cols-3 ${landingGapLg} ${landingStackAfterHeading}`}
+        >
           {howItWorks.steps.map((step, index) => (
             <Reveal
               key={step.title}
@@ -60,10 +68,10 @@ export const HowItWorks = () => {
                 >
                   {String(index + 1).padStart(2, "0")}
                 </motion.span>
-                <h3 className="mt-6 font-landing-display text-xl font-bold text-landing-ink">
+                <h3 className="mt-[var(--landing-stack-md)] font-landing-display text-xl font-bold text-landing-ink">
                   {step.title}
                 </h3>
-                <p className="mt-3 max-w-sm text-base leading-relaxed text-landing-ink-muted">
+                <p className="mt-[var(--landing-stack-sm)] w-full text-base leading-relaxed text-landing-ink-muted">
                   {step.description}
                 </p>
               </div>

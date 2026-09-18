@@ -33,6 +33,7 @@ import {
   landingTransition,
   staggerFast,
 } from "./landing-motion";
+import { landingPad } from "./landing-layout";
 
 export const Navbar = () => {
   const { user, isAuthenticated, isLoading } = useAuth();
@@ -59,7 +60,7 @@ export const Navbar = () => {
           : "border-b border-transparent bg-landing-bg/55 backdrop-blur-md"
       )}
     >
-      <div className="landing-container flex h-16 items-center justify-between">
+      <div className={`${landingPad} flex h-16 items-center justify-between`}>
         <motion.div
           initial={prefersReducedMotion ? false : { opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}

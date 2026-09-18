@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { hero } from "../content/landing-copy";
+import { landingPad } from "./landing-layout";
 import { ProductPreview } from "./product-preview";
 import { useLandingMotionPrefs } from "./use-landing-motion";
 
@@ -43,7 +44,8 @@ export const Hero = () => {
   return (
     <section
       ref={sectionRef}
-      className="landing-atmosphere relative overflow-hidden pt-24 pb-0 sm:pt-32 lg:pt-36"
+      className="landing-atmosphere relative overflow-hidden pb-0"
+      style={{ paddingTop: "var(--landing-hero-top)" }}
     >
       <motion.div
         className="pointer-events-none absolute left-1/2 top-20 h-48 w-[min(100vw,22rem)] -translate-x-1/2 rounded-full bg-landing-primary/20 blur-3xl animate-landing-glow-breathe sm:top-24 sm:h-64 sm:w-[36rem]"
@@ -52,7 +54,7 @@ export const Hero = () => {
       />
 
       <motion.div
-        className="landing-container"
+        className={landingPad}
         style={
           enableParallax
             ? { y: copyY, opacity: copyOpacity }
@@ -63,7 +65,7 @@ export const Hero = () => {
                 : undefined
         }
       >
-        <div className="mx-auto max-w-3xl text-center">
+        <div className="w-full text-center">
           <p
             className="animate-landing-hero-rise font-landing-display text-[2.15rem] font-extrabold tracking-tight text-landing-primary sm:text-5xl lg:text-6xl"
             style={{ animationDelay: "0ms" }}
@@ -71,31 +73,31 @@ export const Hero = () => {
             {hero.brand}
           </p>
           <h1
-            className="animate-landing-hero-rise mt-4 font-landing-display text-[1.65rem] font-bold tracking-tight text-landing-ink sm:mt-6 sm:text-5xl lg:text-[3.35rem] lg:leading-[1.08]"
+            className="animate-landing-hero-rise mt-[var(--landing-stack-md)] font-landing-display text-[1.65rem] font-bold tracking-tight text-landing-ink text-balance sm:text-5xl lg:text-[3.35rem] lg:leading-[1.08]"
             style={{ animationDelay: "80ms" }}
           >
             {hero.headline}
           </h1>
           <p
-            className="animate-landing-hero-rise mx-auto mt-4 max-w-xl px-1 font-landing-body text-[0.95rem] leading-relaxed text-landing-ink-muted sm:mt-6 sm:max-w-2xl sm:px-0 sm:text-lg"
+            className="animate-landing-hero-rise mx-auto mt-[var(--landing-stack-md)] w-full font-landing-body text-[0.95rem] leading-relaxed text-landing-ink-muted text-pretty sm:text-lg"
             style={{ animationDelay: "160ms" }}
           >
             {hero.support}
           </p>
           <div
-            className="animate-landing-hero-rise mt-8 flex w-full flex-col items-stretch gap-3 sm:mt-9 sm:flex-row sm:items-center sm:justify-center"
+            className="animate-landing-hero-rise mt-[var(--landing-stack-lg)] flex w-full flex-col items-stretch gap-[var(--landing-stack-sm)] sm:flex-row sm:items-center sm:justify-center"
             style={{ animationDelay: "240ms" }}
           >
             <Link
               href={hero.primaryCta.href}
-              className="landing-btn-primary group min-h-12 w-full touch-manipulation sm:w-auto"
+              className="landing-btn-primary group w-full touch-manipulation sm:w-auto"
             >
               {hero.primaryCta.label}
               <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
             <Link
               href={hero.secondaryCta.href}
-              className="landing-btn-secondary group min-h-12 w-full touch-manipulation sm:w-auto"
+              className="landing-btn-secondary group w-full touch-manipulation sm:w-auto"
             >
               <span className="transition-transform duration-300 group-hover:translate-x-0.5">
                 {hero.secondaryCta.label}
@@ -106,21 +108,21 @@ export const Hero = () => {
       </motion.div>
 
       <motion.div
-        className="relative mt-10 w-full sm:mt-16 lg:mt-20"
+        className="relative mt-[var(--landing-stack-xl)] w-full"
         style={enableParallax ? { y: previewY, scale: previewScale } : undefined}
       >
         <div
           className="animate-landing-hero-rise"
           style={{ animationDelay: "320ms" }}
         >
-          <div className="landing-container px-0 sm:px-6 lg:px-8">
+          <div className={landingPad}>
             <div className="relative">
               <div
                 className="pointer-events-none absolute -inset-x-8 -top-10 hidden h-40 rounded-full bg-landing-primary/15 blur-3xl animate-landing-glow-breathe sm:block"
                 aria-hidden
               />
               <div className="relative sm:transition-transform sm:duration-700 sm:ease-out sm:hover:-translate-y-1">
-                <ProductPreview className="rounded-none border-x-0 shadow-[0_18px_50px_-28px_rgba(20,24,32,0.45)] sm:rounded-t-2xl sm:border-x sm:shadow-[0_28px_90px_-36px_rgba(20,24,32,0.5)]" />
+                <ProductPreview className="rounded-xl border shadow-[0_18px_50px_-28px_rgba(20,24,32,0.45)] sm:rounded-2xl sm:shadow-[0_28px_90px_-36px_rgba(20,24,32,0.5)]" />
               </div>
             </div>
           </div>

@@ -11,28 +11,35 @@ import {
   staggerContainer,
   staggerFast,
 } from "./landing-motion";
+import {
+  landingGapLg,
+  landingPad,
+  landingSectionCompactY,
+} from "./landing-layout";
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
   const prefersReducedMotion = useReducedMotion();
 
   return (
-    <footer className="border-t border-landing-ink/8 bg-landing-surface py-14 font-landing-body sm:py-16">
+    <footer
+      className={`border-t border-landing-ink/8 bg-landing-surface font-landing-body ${landingSectionCompactY}`}
+    >
       <motion.div
-        className="landing-container"
+        className={landingPad}
         initial={prefersReducedMotion ? false : "hidden"}
         whileInView="visible"
         viewport={landingViewport}
         variants={staggerContainer}
       >
-        <div className="grid grid-cols-1 gap-12 md:grid-cols-4 lg:gap-10">
+        <div className={`grid grid-cols-1 md:grid-cols-4 ${landingGapLg}`}>
           <motion.div
             className="md:col-span-2"
             variants={fadeUp}
             transition={landingTransition}
           >
             <BrandMark />
-            <p className="mt-5 max-w-sm text-sm leading-relaxed text-landing-ink-muted">
+            <p className="mt-[var(--landing-stack-md)] w-full text-sm leading-relaxed text-landing-ink-muted md:w-4/5">
               {footer.blurb}
             </p>
           </motion.div>
@@ -42,7 +49,7 @@ export const Footer = () => {
               Product
             </h3>
             <motion.ul
-              className="mt-5 space-y-3"
+              className="mt-[var(--landing-stack-md)] space-y-[var(--landing-stack-sm)]"
               variants={staggerFast}
               initial={prefersReducedMotion ? false : "hidden"}
               whileInView="visible"
@@ -66,7 +73,7 @@ export const Footer = () => {
               Company
             </h3>
             <motion.ul
-              className="mt-5 space-y-3"
+              className="mt-[var(--landing-stack-md)] space-y-[var(--landing-stack-sm)]"
               variants={staggerFast}
               initial={prefersReducedMotion ? false : "hidden"}
               whileInView="visible"
@@ -89,12 +96,12 @@ export const Footer = () => {
         <motion.div
           variants={fadeUp}
           transition={landingTransition}
-          className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-landing-ink/8 pt-8 sm:flex-row"
+          className="mt-[var(--landing-stack-xl)] flex flex-col items-center justify-between gap-[var(--landing-stack-md)] border-t border-landing-ink/8 pt-[var(--landing-stack-lg)] sm:flex-row"
         >
           <p className="text-sm text-landing-ink-muted">
             &copy; {currentYear} TechFestApp. All rights reserved.
           </p>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-[var(--landing-stack-lg)]">
             {footer.social.map((link) => (
               <a
                 key={link.name}

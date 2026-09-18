@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
 import { cta } from "../content/landing-copy";
+import { landingPad, landingSectionY } from "./landing-layout";
 import { useLandingMotionPrefs } from "./use-landing-motion";
 
 export const CTA = () => {
@@ -17,7 +18,9 @@ export const CTA = () => {
   } = useLandingMotionPrefs();
 
   return (
-    <section className="relative overflow-hidden bg-landing-primary py-16 sm:py-24 lg:py-28">
+    <section
+      className={`relative overflow-hidden bg-landing-primary ${landingSectionY}`}
+    >
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.22]"
         style={{
@@ -57,7 +60,7 @@ export const CTA = () => {
       )}
 
       <motion.div
-        className="relative z-10 mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8"
+        className={`relative z-10 text-center ${landingPad}`}
         initial={prefersReducedMotion ? false : "hidden"}
         whileInView="visible"
         viewport={viewport}
@@ -73,14 +76,14 @@ export const CTA = () => {
         <motion.p
           variants={fadeUp}
           transition={transition}
-          className="mx-auto mt-4 max-w-xl font-landing-body text-sm leading-relaxed text-white/88 sm:mt-5 sm:text-lg"
+          className="mx-auto mt-[var(--landing-stack-md)] w-full font-landing-body text-sm leading-relaxed text-white/88 sm:text-lg"
         >
           {cta.support}
         </motion.p>
         <motion.div
           variants={fadeUp}
           transition={transition}
-          className="mt-8 flex w-full flex-col items-stretch gap-3 sm:mt-10 sm:flex-row sm:items-center sm:justify-center"
+          className="mt-[var(--landing-stack-lg)] flex w-full flex-col items-stretch gap-[var(--landing-stack-sm)] sm:flex-row sm:items-center sm:justify-center"
         >
           <motion.div
             whileHover={
@@ -115,7 +118,7 @@ export const CTA = () => {
         <motion.p
           variants={fadeUp}
           transition={transition}
-          className="mt-5 text-xs text-white/70 sm:mt-6 sm:text-sm"
+          className="mt-[var(--landing-stack-md)] text-xs text-white/70 sm:text-sm"
         >
           {cta.note}
         </motion.p>

@@ -3,6 +3,13 @@
 import { motion, useReducedMotion } from "motion/react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { personas } from "../content/landing-copy";
+import {
+  landingCardPad,
+  landingGap,
+  landingPad,
+  landingSectionY,
+  landingStackAfterHeading,
+} from "./landing-layout";
 import { Reveal } from "./reveal";
 import { SectionHeading } from "./section-heading";
 
@@ -11,8 +18,8 @@ export function Personas() {
   const isMobile = useIsMobile();
 
   return (
-    <section className="landing-section bg-landing-ink text-white">
-      <div className="landing-container">
+    <section className={`bg-landing-ink text-white ${landingSectionY}`}>
+      <div className={landingPad}>
         <SectionHeading
           eyebrow={personas.eyebrow}
           title={personas.headline}
@@ -20,7 +27,9 @@ export function Personas() {
           light
         />
 
-        <div className="mt-10 grid gap-4 sm:mt-14 md:grid-cols-3 md:gap-6">
+        <div
+          className={`grid md:grid-cols-3 ${landingGap} ${landingStackAfterHeading}`}
+        >
           {personas.items.map((item, index) => (
             <Reveal
               key={item.role}
@@ -38,7 +47,7 @@ export function Personas() {
                     : { scale: 0.99 }
                 }
                 transition={{ duration: 0.25 }}
-                className="group relative h-full overflow-hidden border border-white/10 bg-white/[0.04] p-5 touch-manipulation sm:p-7"
+                className={`group relative h-full overflow-hidden border border-white/10 bg-white/[0.04] touch-manipulation ${landingCardPad}`}
               >
                 <div
                   className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-landing-primary transition-transform duration-300 group-hover:scale-x-100"
@@ -47,10 +56,10 @@ export function Personas() {
                 <p className="font-landing-display text-xs font-bold uppercase tracking-[0.16em] text-orange-300/80">
                   {String(index + 1).padStart(2, "0")}
                 </p>
-                <h3 className="mt-4 font-landing-display text-xl font-bold">
+                <h3 className="mt-[var(--landing-stack-md)] font-landing-display text-xl font-bold">
                   {item.role}
                 </h3>
-                <p className="mt-4 text-sm leading-relaxed text-white/68">
+                <p className="mt-[var(--landing-stack-md)] text-sm leading-relaxed text-white/68">
                   {item.description}
                 </p>
               </motion.article>

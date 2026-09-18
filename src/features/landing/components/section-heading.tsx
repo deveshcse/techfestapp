@@ -24,29 +24,21 @@ export function SectionHeading({
   const { prefersReducedMotion, viewport, transition, fadeUp, stagger } =
     useLandingMotionPrefs();
 
+  const shellClass = cn(
+    "flex w-full flex-col gap-[var(--landing-stack-sm)]",
+    align === "center" && "text-center",
+    className
+  );
+
   if (prefersReducedMotion) {
     return (
-      <div
-        className={cn(
-          "max-w-2xl",
-          align === "center" && "mx-auto text-center",
-          className
-        )}
-      >
+      <div className={shellClass}>
         <p className={cn("landing-eyebrow", light && "text-orange-300")}>
           {eyebrow}
         </p>
-        <h2 className={cn("landing-title mt-3", light && "text-white")}>
-          {title}
-        </h2>
+        <h2 className={cn("landing-title", light && "text-white")}>{title}</h2>
         {description && (
-          <p
-            className={cn(
-              "landing-lede mt-4",
-              light && "text-white/65",
-              align === "center" && "mx-auto"
-            )}
-          >
+          <p className={cn("landing-lede", light && "text-white/65")}>
             {description}
           </p>
         )}
@@ -56,11 +48,7 @@ export function SectionHeading({
 
   return (
     <motion.div
-      className={cn(
-        "max-w-2xl",
-        align === "center" && "mx-auto text-center",
-        className
-      )}
+      className={shellClass}
       initial="hidden"
       whileInView="visible"
       viewport={viewport}
@@ -76,7 +64,7 @@ export function SectionHeading({
       <motion.h2
         variants={fadeUp}
         transition={transition}
-        className={cn("landing-title mt-3 text-balance", light && "text-white")}
+        className={cn("landing-title", light && "text-white")}
       >
         {title}
       </motion.h2>
@@ -84,11 +72,7 @@ export function SectionHeading({
         <motion.p
           variants={fadeUp}
           transition={transition}
-          className={cn(
-            "landing-lede mt-3 text-pretty sm:mt-4",
-            light && "text-white/65",
-            align === "center" && "mx-auto"
-          )}
+          className={cn("landing-lede", light && "text-white/65")}
         >
           {description}
         </motion.p>

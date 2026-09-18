@@ -5,6 +5,12 @@ import { AnimatePresence, motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { productShowcase } from "../content/landing-copy";
 import { landingEase } from "./landing-motion";
+import {
+  landingGapLg,
+  landingPad,
+  landingSectionY,
+  landingStackAfterHeading,
+} from "./landing-layout";
 import { ProductPreview } from "./product-preview";
 import { SectionHeading } from "./section-heading";
 import { useLandingMotionPrefs } from "./use-landing-motion";
@@ -25,9 +31,9 @@ export function ProductShowcase() {
   return (
     <section
       id="product"
-      className="landing-section scroll-mt-20 bg-landing-muted/55"
+      className={`scroll-mt-20 bg-landing-muted/55 ${landingSectionY}`}
     >
-      <div className="landing-container">
+      <div className={landingPad}>
         <SectionHeading
           eyebrow={productShowcase.eyebrow}
           title={productShowcase.headline}
@@ -35,7 +41,7 @@ export function ProductShowcase() {
         />
 
         <motion.div
-          className="mt-8 sm:mt-12"
+          className={landingStackAfterHeading}
           initial={prefersReducedMotion ? false : "hidden"}
           whileInView="visible"
           viewport={viewport}
@@ -45,7 +51,7 @@ export function ProductShowcase() {
           <div
             role="tablist"
             aria-label="Product areas"
-            className="-mx-4 flex snap-x snap-mandatory gap-2 overflow-x-auto px-4 pb-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0 sm:pb-0 [&::-webkit-scrollbar]:hidden"
+            className="-mx-[var(--landing-gutter)] flex snap-x snap-mandatory gap-[var(--landing-stack-sm)] overflow-x-auto px-[var(--landing-gutter)] pb-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0 sm:pb-0 [&::-webkit-scrollbar]:hidden"
           >
             {productShowcase.tabs.map((tab) => (
               <motion.button
@@ -70,7 +76,9 @@ export function ProductShowcase() {
             ))}
           </div>
 
-          <div className="mt-8 grid items-center gap-8 lg:mt-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-12">
+          <div
+            className={`mt-[var(--landing-stack-lg)] grid items-center lg:grid-cols-2 ${landingGapLg}`}
+          >
             <AnimatePresence mode="wait">
               <motion.div
                 key={active}
@@ -93,11 +101,11 @@ export function ProductShowcase() {
                 <h3 className="font-landing-display text-xl font-bold text-landing-ink sm:text-[1.75rem]">
                   {current.title}
                 </h3>
-                <p className="mt-2.5 max-w-md text-sm leading-relaxed text-landing-ink-muted sm:mt-3 sm:text-base">
+                <p className="mt-[var(--landing-stack-sm)] w-full text-sm leading-relaxed text-landing-ink-muted sm:text-base">
                   {current.description}
                 </p>
                 <motion.div
-                  className="mt-5 h-px w-14 origin-left bg-landing-primary sm:mt-6 sm:w-16"
+                  className="mt-[var(--landing-stack-md)] h-px w-14 origin-left bg-landing-primary sm:w-16"
                   initial={prefersReducedMotion ? false : { scaleX: 0 }}
                   animate={{ scaleX: 1 }}
                   transition={{
@@ -119,13 +127,12 @@ export function ProductShowcase() {
               whileHover={
                 prefersReducedMotion || isMobile ? undefined : { y: -4 }
               }
-              className="-mx-4 sm:mx-0"
             >
               <ProductPreview
                 interactive
                 activeTab={active}
                 onTabChange={setActive}
-                className="rounded-none border-x-0 sm:rounded-xl sm:border-x"
+                className="rounded-xl"
               />
             </motion.div>
           </div>

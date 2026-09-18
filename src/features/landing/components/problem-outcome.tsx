@@ -3,6 +3,13 @@
 import { motion } from "motion/react";
 import { problemOutcome } from "../content/landing-copy";
 import { fadeLeft, fadeRight } from "./landing-motion";
+import {
+  landingGap,
+  landingGapLg,
+  landingPad,
+  landingSectionY,
+  landingStackAfterHeading,
+} from "./landing-layout";
 import { SectionHeading } from "./section-heading";
 import { useLandingMotionPrefs } from "./use-landing-motion";
 
@@ -20,15 +27,17 @@ export function ProblemOutcome() {
   const enterAlt = isMobile ? fadeUp : fadeRight;
 
   return (
-    <section className="landing-section bg-landing-bg">
-      <div className="landing-container">
+    <section className={`bg-landing-bg ${landingSectionY}`}>
+      <div className={landingPad}>
         <SectionHeading
           eyebrow={problemOutcome.eyebrow}
           title={problemOutcome.headline}
           description={problemOutcome.support}
         />
 
-        <div className="mt-10 grid gap-10 sm:mt-14 lg:mt-16 lg:grid-cols-2 lg:gap-16">
+        <div
+          className={`grid lg:grid-cols-2 ${landingGapLg} ${landingStackAfterHeading}`}
+        >
           <motion.div
             initial={prefersReducedMotion ? false : "hidden"}
             whileInView="visible"
@@ -38,11 +47,11 @@ export function ProblemOutcome() {
             <motion.p
               variants={enter}
               transition={transition}
-              className="mb-5 text-sm font-semibold uppercase tracking-[0.14em] text-landing-ink-muted sm:mb-6"
+              className="mb-[var(--landing-stack-md)] text-sm font-semibold uppercase tracking-[0.14em] text-landing-ink-muted"
             >
               Before
             </motion.p>
-            <ul className="space-y-4 sm:space-y-5">
+            <ul className={`flex flex-col ${landingGap}`}>
               {problemOutcome.pains.map((item) => (
                 <motion.li
                   key={item.title}
@@ -52,14 +61,16 @@ export function ProblemOutcome() {
                     prefersReducedMotion || isMobile ? undefined : { x: 4 }
                   }
                   whileTap={
-                    prefersReducedMotion || !isMobile ? undefined : { scale: 0.99 }
+                    prefersReducedMotion || !isMobile
+                      ? undefined
+                      : { scale: 0.99 }
                   }
-                  className="rounded-r-md border-l-2 border-landing-ink/15 bg-landing-muted/40 py-4 pl-4 pr-3 touch-manipulation transition-colors duration-300 hover:bg-landing-muted/70 sm:pl-5 sm:pr-4"
+                  className="rounded-r-md border-l-2 border-landing-ink/15 bg-landing-muted/40 py-[var(--landing-stack-md)] pl-[var(--landing-stack-md)] pr-[var(--landing-stack-sm)] touch-manipulation transition-colors duration-300 hover:bg-landing-muted/70"
                 >
                   <h3 className="font-landing-display text-base font-semibold text-landing-ink sm:text-lg">
                     {item.title}
                   </h3>
-                  <p className="mt-1.5 text-sm leading-relaxed text-landing-ink-muted">
+                  <p className="mt-[var(--landing-stack-xs)] text-sm leading-relaxed text-landing-ink-muted">
                     {item.description}
                   </p>
                 </motion.li>
@@ -76,11 +87,11 @@ export function ProblemOutcome() {
             <motion.p
               variants={enterAlt}
               transition={transition}
-              className="mb-5 text-sm font-semibold uppercase tracking-[0.14em] text-landing-primary sm:mb-6"
+              className="mb-[var(--landing-stack-md)] text-sm font-semibold uppercase tracking-[0.14em] text-landing-primary"
             >
               With TechFestApp
             </motion.p>
-            <ul className="space-y-4 sm:space-y-5">
+            <ul className={`flex flex-col ${landingGap}`}>
               {problemOutcome.outcomes.map((item) => (
                 <motion.li
                   key={item.title}
@@ -90,14 +101,16 @@ export function ProblemOutcome() {
                     prefersReducedMotion || isMobile ? undefined : { x: 4 }
                   }
                   whileTap={
-                    prefersReducedMotion || !isMobile ? undefined : { scale: 0.99 }
+                    prefersReducedMotion || !isMobile
+                      ? undefined
+                      : { scale: 0.99 }
                   }
-                  className="rounded-r-md border-l-2 border-landing-primary bg-landing-accent-soft/50 py-4 pl-4 pr-3 touch-manipulation transition-colors duration-300 hover:bg-landing-accent-soft sm:pl-5 sm:pr-4"
+                  className="rounded-r-md border-l-2 border-landing-primary bg-landing-accent-soft/50 py-[var(--landing-stack-md)] pl-[var(--landing-stack-md)] pr-[var(--landing-stack-sm)] touch-manipulation transition-colors duration-300 hover:bg-landing-accent-soft"
                 >
                   <h3 className="font-landing-display text-base font-semibold text-landing-ink sm:text-lg">
                     {item.title}
                   </h3>
-                  <p className="mt-1.5 text-sm leading-relaxed text-landing-ink-muted">
+                  <p className="mt-[var(--landing-stack-xs)] text-sm leading-relaxed text-landing-ink-muted">
                     {item.description}
                   </p>
                 </motion.li>
