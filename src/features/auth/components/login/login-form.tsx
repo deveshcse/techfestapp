@@ -27,6 +27,7 @@ import { useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { signIn } from "@/lib/auth-client";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { getRedirectByRole } from "@/lib/roleRedirect";
 
 /** Proper multi-color Google "G" logo — matches brand guidelines */
@@ -135,6 +136,12 @@ export function LoginForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
+      <Button asChild variant="ghost" size="sm" className="self-start -ml-2 text-muted-foreground">
+        <Link href="/">
+          <ArrowLeft className="h-4 w-4" />
+          Back to home
+        </Link>
+      </Button>
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Welcome back</CardTitle>

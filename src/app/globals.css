@@ -94,7 +94,8 @@
   --sidebar-ring: oklch(0.708 0 0);
 
   /* Landing Page Theme — warm campus / energetic tech */
-  --landing-primary: 18 88% 48%;
+  /* ~39% L keeps brand orange while clearing WCAG AA 4.5:1 on white / white-on-primary */
+  --landing-primary: 18 90% 39%;
   --landing-primary-foreground: 0 0% 100%;
   --landing-bg: 40 33% 98%;
   --landing-muted: 30 25% 94%;

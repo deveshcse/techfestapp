@@ -29,7 +29,7 @@ export const HowItWorks = () => {
               aria-hidden
             />
             <ol
-              className="relative grid h-full grid-cols-3 gap-x-[var(--landing-gap-lg)]"
+              className="relative grid h-full grid-cols-3 gap-x-(--landing-gap-lg)"
               aria-hidden
             >
               {howItWorks.steps.map((step, index) => (
@@ -43,7 +43,7 @@ export const HowItWorks = () => {
           </div>
 
           <ol
-            className="grid lg:grid-cols-3 lg:gap-x-[var(--landing-gap-lg)]"
+            className="grid lg:grid-cols-3 lg:gap-x-(--landing-gap-lg)"
             aria-label="How TechFestApp works"
           >
             {howItWorks.steps.map((step, index) => {

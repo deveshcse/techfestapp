@@ -1,70 +1,37 @@
 "use client";
 
-import { useRef } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { motion, useScroll, useTransform } from "motion/react";
 import { hero } from "../content/landing-copy";
 import { landingPad } from "./landing-layout";
-import { ProductPreview } from "./product-preview";
-import { useLandingMotionPrefs } from "./use-landing-motion";
+
+const ProductPreview = dynamic(
+  () =>
+    import("./product-preview").then((m) => ({ default: m.ProductPreview })),
+  {
+    ssr: true,
+    loading: () => (
+      <div
+        className="min-h-[280px] animate-pulse rounded-xl border border-landing-ink/10 bg-landing-surface sm:min-h-[360px] sm:rounded-2xl"
+        aria-hidden
+      />
+    ),
+  }
+);
 
 export const Hero = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const { enableParallax, prefersReducedMotion, isMobile } =
-    useLandingMotionPrefs();
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end start"],
-  });
-
-  const copyY = useTransform(
-    scrollYProgress,
-    [0, 1],
-    [0, isMobile ? -24 : -72]
-  );
-  const copyOpacity = useTransform(
-    scrollYProgress,
-    [0, isMobile ? 0.7 : 0.55],
-    [1, isMobile ? 0.35 : 0]
-  );
-  const previewY = useTransform(
-    scrollYProgress,
-    [0, 1],
-    [0, isMobile ? 32 : 96]
-  );
-  const previewScale = useTransform(
-    scrollYProgress,
-    [0, 1],
-    [1, isMobile ? 0.98 : 0.94]
-  );
-  const glowY = useTransform(scrollYProgress, [0, 1], [0, isMobile ? 16 : 48]);
-
   return (
     <section
-      ref={sectionRef}
       className="landing-atmosphere relative overflow-hidden pb-0"
       style={{ paddingTop: "var(--landing-hero-top)" }}
     >
-      <motion.div
+      <div
         className="pointer-events-none absolute left-1/2 top-20 h-48 w-[min(100vw,22rem)] -translate-x-1/2 rounded-full bg-landing-primary/20 blur-3xl animate-landing-glow-breathe sm:top-24 sm:h-64 sm:w-[36rem]"
-        style={enableParallax ? { y: glowY } : undefined}
         aria-hidden
       />
 
-      <motion.div
-        className={landingPad}
-        style={
-          enableParallax
-            ? { y: copyY, opacity: copyOpacity }
-            : prefersReducedMotion
-              ? undefined
-              : isMobile
-                ? { opacity: copyOpacity }
-                : undefined
-        }
-      >
+      <div className={landingPad}>
         <div className="w-full text-center">
           <p
             className="animate-landing-hero-rise font-landing-display text-[2.15rem] font-extrabold tracking-tight text-landing-primary sm:text-5xl lg:text-6xl"
@@ -105,12 +72,9 @@ export const Hero = () => {
             </Link>
           </div>
         </div>
-      </motion.div>
+      </div>
 
-      <motion.div
-        className="relative mt-[var(--landing-stack-xl)] w-full"
-        style={enableParallax ? { y: previewY, scale: previewScale } : undefined}
-      >
+      <div className="relative mt-[var(--landing-stack-xl)] w-full">
         <div
           className="animate-landing-hero-rise"
           style={{ animationDelay: "320ms" }}
@@ -131,7 +95,7 @@ export const Hero = () => {
             aria-hidden
           />
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 };

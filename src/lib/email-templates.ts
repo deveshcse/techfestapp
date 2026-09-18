@@ -3,7 +3,7 @@ export const getPasswordResetEmailHtml = (userName: string, url: string) => {
     <div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 0 auto; padding: 40px; border: 1px solid #e1e4e8; border-radius: 12px; background-color: #ffffff; color: #1a1a1a;">
       <div style="text-align: center; margin-bottom: 32px;">
         <div style="display: inline-flex; align-items: center; gap: 10px;">
-          <span style="display: inline-flex; width: 32px; height: 32px; align-items: center; justify-content: center; border-radius: 8px; background-color: #e85d0c; color: #ffffff;">
+          <span style="display: inline-flex; width: 32px; height: 32px; align-items: center; justify-content: center; border-radius: 8px; background-color: #c2410c; color: #ffffff;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M5 17.5L12 5l7 12.5H5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
               <path d="M9.2 13.5h5.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />

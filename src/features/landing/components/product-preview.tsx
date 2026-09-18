@@ -226,9 +226,9 @@ export function ProductPreview({
                   <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-landing-primary sm:text-xs">
                     Live overview
                   </p>
-                  <h3 className="mt-1 truncate font-landing-display text-sm font-semibold text-landing-ink sm:text-xl">
+                  <p className="mt-1 truncate font-landing-display text-sm font-semibold text-landing-ink sm:text-xl">
                     {currentTitle}
-                  </h3>
+                  </p>
                 </div>
                 <div
                   className="hidden h-9 w-28 items-end gap-1 sm:flex"
