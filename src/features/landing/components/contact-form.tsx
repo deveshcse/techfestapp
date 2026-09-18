@@ -2,12 +2,13 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, Loader2 } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { useCreateContactMessage } from "@/features/contact/utils/useContact";
 import { fadeUp, landingEase, landingTransition } from "./landing-motion";
 
 const fieldClass =
@@ -34,10 +35,24 @@ const topics = [
 export function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
   const prefersReducedMotion = useReducedMotion();
+  const createMessage = useCreateContactMessage();
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSubmitted(true);
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    try {
+      await createMessage.mutateAsync({
+        name: String(formData.get("name") ?? ""),
+        email: String(formData.get("email") ?? ""),
+        organization: String(formData.get("org") ?? ""),
+        message: String(formData.get("message") ?? ""),
+      });
+      setSubmitted(true);
+    } catch {
+      // Error toast is handled by the shared axios interceptor.
+    }
   }
 
   return (
@@ -67,9 +82,9 @@ export function ContactForm() {
                   Thanks — we&apos;ll be in touch.
                 </h2>
                 <p className="mt-(--landing-stack-sm) max-w-xl text-[0.95rem] leading-relaxed text-landing-ink-muted sm:text-base">
-                  This demo form doesn&apos;t store anything yet. In production it
-                  would reach the team. Meanwhile, create an account and explore
-                  the product.
+                  Your message is with the team. We typically reply within 1–2
+                  business days. Meanwhile, create an account and explore the
+                  product.
                 </p>
                 <div className="mt-(--landing-stack-lg) flex flex-col items-stretch gap-(--landing-stack-sm) sm:flex-row sm:items-center">
                   <Link href="/auth/signup" className="landing-btn-primary group">
@@ -118,6 +133,7 @@ export function ContactForm() {
                     autoComplete="name"
                     placeholder="Your name"
                     className={fieldClass}
+                    disabled={createMessage.isPending}
                   />
                 </div>
                 <div className="space-y-(--landing-stack-xs)">
@@ -132,6 +148,7 @@ export function ContactForm() {
                     autoComplete="email"
                     placeholder="you@college.edu"
                     className={fieldClass}
+                    disabled={createMessage.isPending}
                   />
                 </div>
               </div>
@@ -149,6 +166,7 @@ export function ContactForm() {
                   autoComplete="organization"
                   placeholder="Club, college, or committee"
                   className={fieldClass}
+                  disabled={createMessage.isPending}
                 />
               </div>
 
@@ -161,22 +179,45 @@ export function ContactForm() {
                   name="message"
                   required
                   rows={6}
+                  minLength={10}
                   placeholder="Tell us about your fest, timeline, or what you want to see in a demo."
                   className={cn(
                     fieldClass,
                     "min-h-36 resize-y py-3 leading-relaxed"
                   )}
+                  disabled={createMessage.isPending}
                 />
               </div>
 
               <div className="flex flex-col gap-(--landing-stack-sm) pt-(--landing-stack-xs) sm:flex-row sm:items-center sm:justify-between">
                 <motion.div
-                  whileHover={prefersReducedMotion ? undefined : { y: -1 }}
-                  whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
+                  whileHover={
+                    prefersReducedMotion || createMessage.isPending
+                      ? undefined
+                      : { y: -1 }
+                  }
+                  whileTap={
+                    prefersReducedMotion || createMessage.isPending
+                      ? undefined
+                      : { scale: 0.98 }
+                  }
                 >
-                  <button type="submit" className="landing-btn-primary group w-full sm:w-auto">
-                    Send message
-                    <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
+                  <button
+                    type="submit"
+                    disabled={createMessage.isPending}
+                    className="landing-btn-primary group w-full sm:w-auto disabled:pointer-events-none disabled:opacity-70"
+                  >
+                    {createMessage.isPending ? (
+                      <>
+                        <Loader2 className="size-4 animate-spin" />
+                        Sending…
+                      </>
+                    ) : (
+                      <>
+                        Send message
+                        <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
+                      </>
+                    )}
                   </button>
                 </motion.div>
                 <p className="text-sm text-landing-ink-muted">
@@ -194,7 +235,10 @@ export function ContactForm() {
               <p className="landing-eyebrow">Good fits for this form</p>
               <ul className="mt-(--landing-stack-md) space-y-(--landing-stack-md)">
                 {topics.map((topic) => (
-                  <li key={topic.title} className="border-l-2 border-landing-primary/35 pl-(--landing-stack-md)">
+                  <li
+                    key={topic.title}
+                    className="border-l-2 border-landing-primary/35 pl-(--landing-stack-md)"
+                  >
                     <p className="font-landing-display text-base font-semibold text-landing-ink">
                       {topic.title}
                     </p>

@@ -14,7 +14,9 @@ import {
   Award,
   ClipboardList,
   Calendar,
+  Mail,
 } from "lucide-react"
+import { checkPermission } from "@/lib/check-permission"
 import {
   Sidebar,
   SidebarContent,
@@ -57,7 +59,12 @@ const data = {
       url: "/dashboard/upcoming-activities",
       icon: Calendar,
     },
-
+    {
+      title: "Contact messages",
+      url: "/dashboard/contact",
+      icon: Mail,
+      adminOnly: true,
+    },
   ],
 
   navClouds: [
@@ -154,6 +161,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     email: user?.email || "",
     avatar: user?.image || "",
   }
+
+  const navItems = data.navMain.filter((item) => {
+    if (!("adminOnly" in item) || !item.adminOnly) return true
+    if (!user?.role) return false
+    return checkPermission({
+      role: user.role,
+      resource: "contact",
+      action: "read",
+    })
+  })
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -173,9 +191,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        {/* <NavDocuments items={data.documents} /> */}
-        {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
+        <NavMain items={navItems} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={userData} />
