@@ -1,21 +1,14 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { howItWorks } from "../content/landing-copy";
 import {
-  landingGapLg,
   landingPad,
   landingSectionY,
   landingStackAfterHeading,
 } from "./landing-layout";
-import { Reveal } from "./reveal";
 import { SectionHeading } from "./section-heading";
 
 export const HowItWorks = () => {
-  const prefersReducedMotion = useReducedMotion();
-  const isMobile = useIsMobile();
-
   return (
     <section
       id="how-it-works"
@@ -28,55 +21,71 @@ export const HowItWorks = () => {
           description={howItWorks.support}
         />
 
-        <div
-          className={`relative grid lg:grid-cols-3 ${landingGapLg} ${landingStackAfterHeading}`}
-        >
-          {howItWorks.steps.map((step, index) => (
-            <Reveal
-              key={step.title}
-              delayMs={isMobile ? Math.min(index * 90, 100) : index * 90}
-              className="relative"
+        <div className={landingStackAfterHeading}>
+          {/* Desktop stepper track */}
+          <div className="relative mb-[var(--landing-stack-lg)] hidden h-12 lg:block">
+            <div
+              className="absolute left-6 top-1/2 h-px w-2/3 -translate-y-1/2 bg-landing-primary/30"
+              aria-hidden
+            />
+            <ol
+              className="relative grid h-full grid-cols-3 gap-x-[var(--landing-gap-lg)]"
+              aria-hidden
             >
-              {index < howItWorks.steps.length - 1 && (
-                <div
-                  className="absolute top-6 left-[calc(50%+2.75rem)] right-[calc(-50%+2.75rem)] hidden h-px lg:block"
-                  aria-hidden
+              {howItWorks.steps.map((step, index) => (
+                <li key={`node-${step.title}`} className="flex items-center">
+                  <span className="relative z-[1] flex size-12 items-center justify-center rounded-full border-2 border-landing-primary bg-landing-surface font-landing-display text-sm font-bold text-landing-primary ring-[6px] ring-landing-surface">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          <ol
+            className="grid lg:grid-cols-3 lg:gap-x-[var(--landing-gap-lg)]"
+            aria-label="How TechFestApp works"
+          >
+            {howItWorks.steps.map((step, index) => {
+              const isLast = index === howItWorks.steps.length - 1;
+
+              return (
+                <li
+                  key={step.title}
+                  className="flex gap-[var(--landing-stack-md)] lg:block"
                 >
-                  <svg className="h-full w-full" preserveAspectRatio="none">
-                    <line
-                      x1="0"
-                      y1="50%"
-                      x2="100%"
-                      y2="50%"
-                      strokeDasharray="1,10"
-                      className="animate-dash stroke-landing-primary/40 stroke-[2]"
-                    />
-                  </svg>
-                </div>
-              )}
-              <div className="group flex flex-col items-start text-left">
-                <motion.span
-                  whileHover={
-                    prefersReducedMotion || isMobile
-                      ? undefined
-                      : { scale: 1.06 }
-                  }
-                  whileTap={
-                    prefersReducedMotion ? undefined : { scale: 0.96 }
-                  }
-                  className="flex size-11 items-center justify-center border border-landing-primary bg-landing-accent-soft font-landing-display text-base font-bold text-landing-primary touch-manipulation transition-[background-color,color] duration-300 group-hover:bg-landing-primary group-hover:text-white sm:size-12 sm:text-lg"
-                >
-                  {String(index + 1).padStart(2, "0")}
-                </motion.span>
-                <h3 className="mt-[var(--landing-stack-md)] font-landing-display text-xl font-bold text-landing-ink">
-                  {step.title}
-                </h3>
-                <p className="mt-[var(--landing-stack-sm)] w-full text-base leading-relaxed text-landing-ink-muted">
-                  {step.description}
-                </p>
-              </div>
-            </Reveal>
-          ))}
+                  {/* Mobile stepper */}
+                  <div className="flex w-8 shrink-0 flex-col items-center lg:hidden">
+                    <span className="flex size-8 shrink-0 items-center justify-center rounded-full border-2 border-landing-primary bg-landing-surface font-landing-display text-xs font-bold text-landing-primary">
+                      {index + 1}
+                    </span>
+                    {!isLast && (
+                      <span
+                        className="mt-2 w-px flex-1 bg-landing-primary/35"
+                        aria-hidden
+                      />
+                    )}
+                  </div>
+
+                  <div
+                    className={
+                      isLast
+                        ? "min-w-0 flex-1"
+                        : "min-w-0 flex-1 pb-[var(--landing-stack-xl)] lg:pb-0"
+                    }
+                  >
+                    <p className="landing-eyebrow">{step.cue}</p>
+                    <h3 className="mt-[var(--landing-stack-xs)] font-landing-display text-xl font-bold tracking-tight text-landing-ink lg:mt-[var(--landing-stack-sm)] lg:text-[1.65rem] lg:leading-snug">
+                      {step.title}
+                    </h3>
+                    <p className="mt-[var(--landing-stack-sm)] text-[0.9375rem] leading-relaxed text-landing-ink-muted lg:text-base">
+                      {step.description}
+                    </p>
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
         </div>
       </div>
     </section>

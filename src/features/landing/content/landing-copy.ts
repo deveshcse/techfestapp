@@ -155,16 +155,19 @@ export const howItWorks = {
   support: "From empty slate to open registrations without a setup circus.",
   steps: [
     {
+      cue: "Setup",
       title: "Create your techfest",
       description:
         "Set dates, venue, and details. Publish when you are ready for your team.",
     },
     {
+      cue: "Build",
       title: "Add activities",
       description:
         "Define workshops and competitions with capacity, schedules, and organizers.",
     },
     {
+      cue: "Launch",
       title: "Open registrations",
       description:
         "Students sign up, waitlists fill gaps, and attendance tracks on the day.",
