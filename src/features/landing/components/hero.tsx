@@ -1,10 +1,13 @@
 "use client";
 
+import { useRef } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { motion, useScroll, useTransform } from "motion/react";
 import { hero } from "../content/landing-copy";
 import { SmoothHashLink } from "./smooth-hash-link";
+import { useLandingMotionPrefs } from "./use-landing-motion";
 
 const ProductPreview = dynamic(
   () =>
@@ -21,6 +24,18 @@ const ProductPreview = dynamic(
 );
 
 export const Hero = () => {
+  const { enableParallax } = useLandingMotionPrefs();
+  const previewRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: previewRef,
+    offset: ["start end", "end start"],
+  });
+
+  const previewY = useTransform(scrollYProgress, [0, 1], [48, -64]);
+  const previewScale = useTransform(scrollYProgress, [0, 1], [1.05, 0.88]);
+  const glowY = useTransform(scrollYProgress, [0, 1], [24, -36]);
+
   return (
     <section
       className="landing-atmosphere relative overflow-hidden pb-0"
@@ -80,14 +95,28 @@ export const Hero = () => {
           style={{ animationDelay: "320ms" }}
         >
           <div className="w-full px-(--landing-gutter)">
-            <div className="relative">
-              <div
+            <div ref={previewRef} className="relative">
+              <motion.div
                 className="pointer-events-none absolute -inset-x-8 -top-10 hidden h-40 rounded-full bg-landing-primary/15 blur-3xl animate-landing-glow-breathe sm:block"
+                style={enableParallax ? { y: glowY, willChange: "transform" } : undefined}
                 aria-hidden
               />
-              <div className="relative sm:transition-transform sm:duration-700 sm:ease-out sm:hover:-translate-y-1">
-                <ProductPreview className="rounded-xl border shadow-[0_18px_50px_-28px_rgba(20,24,32,0.45)] sm:rounded-2xl sm:shadow-[0_28px_90px_-36px_rgba(20,24,32,0.5)]" />
-              </div>
+              <motion.div
+                className="relative"
+                style={
+                  enableParallax
+                    ? {
+                        y: previewY,
+                        scale: previewScale,
+                        willChange: "transform",
+                      }
+                    : undefined
+                }
+              >
+                <div className="relative sm:transition-transform sm:duration-700 sm:ease-out sm:hover:-translate-y-1">
+                  <ProductPreview className="rounded-xl border shadow-[0_18px_50px_-28px_rgba(20,24,32,0.45)] sm:rounded-2xl sm:shadow-[0_28px_90px_-36px_rgba(20,24,32,0.5)]" />
+                </div>
+              </motion.div>
             </div>
           </div>
           <div
