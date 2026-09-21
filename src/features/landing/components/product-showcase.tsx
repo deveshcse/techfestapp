@@ -47,27 +47,53 @@ export function ProductShowcase() {
             aria-label="Product areas"
             className="-mx-(--landing-gutter) flex snap-x snap-mandatory gap-(--landing-stack-sm) overflow-x-auto px-(--landing-gutter) pb-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0 sm:pb-0 [&::-webkit-scrollbar]:hidden"
           >
-            {productShowcase.tabs.map((tab) => (
-              <motion.button
-                key={tab.id}
-                type="button"
-                role="tab"
-                aria-selected={active === tab.id}
-                onClick={() => setActive(tab.id)}
-                whileHover={
-                  prefersReducedMotion || isMobile ? undefined : { scale: 1.03 }
-                }
-                whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
-                className={cn(
-                  "snap-start shrink-0 rounded-md px-3.5 py-2.5 text-sm font-semibold touch-manipulation transition-colors duration-300 sm:px-4",
-                  active === tab.id
-                    ? "bg-landing-ink text-white shadow-md shadow-landing-ink/20"
-                    : "bg-landing-surface text-landing-ink-muted active:text-landing-ink sm:hover:text-landing-ink"
-                )}
-              >
-                {tab.label}
-              </motion.button>
-            ))}
+            {productShowcase.tabs.map((tab) => {
+              const isActive = active === tab.id;
+
+              return (
+                <motion.button
+                  key={tab.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  onClick={() => setActive(tab.id)}
+                  whileHover={
+                    prefersReducedMotion || isMobile
+                      ? undefined
+                      : { scale: 1.03 }
+                  }
+                  whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
+                  className={cn(
+                    "relative snap-start shrink-0 rounded-md px-3.5 py-2.5 text-sm font-semibold touch-manipulation transition-colors duration-300 sm:px-4",
+                    isActive
+                      ? "text-white"
+                      : "bg-landing-surface text-landing-ink-muted active:text-landing-ink sm:hover:text-landing-ink"
+                  )}
+                >
+                  {isActive && (
+                    <motion.span
+                      layoutId={
+                        prefersReducedMotion
+                          ? undefined
+                          : "product-showcase-tab-pill"
+                      }
+                      className="absolute inset-0 z-0 rounded-md bg-landing-ink shadow-md shadow-landing-ink/20"
+                      transition={
+                        prefersReducedMotion
+                          ? { duration: 0 }
+                          : {
+                              type: "spring",
+                              bounce: 0.15,
+                              visualDuration: 0.35,
+                            }
+                      }
+                      aria-hidden
+                    />
+                  )}
+                  <span className="relative z-10">{tab.label}</span>
+                </motion.button>
+              );
+            })}
           </div>
 
           <div
