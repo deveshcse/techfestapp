@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
 import { MarketingPageShell } from "@/features/landing/components/marketing-page-shell";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
   title: "Terms of Service",
   description: "Terms governing use of the TechFestApp platform.",
-};
+  path: "/terms",
+});
 
 export default function TermsPage() {
   return (

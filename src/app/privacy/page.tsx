@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
 import { MarketingPageShell } from "@/features/landing/components/marketing-page-shell";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
   title: "Privacy Policy",
   description: "How TechFestApp collects, uses, and protects your information.",
-};
+  path: "/privacy",
+});
 
 export default function PrivacyPage() {
   return (

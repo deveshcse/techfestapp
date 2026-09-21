@@ -1,9 +1,17 @@
+import type { Metadata } from "next";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/common/app-sidebar";
 import { AuthGuard } from "@/features/auth/context/auth-gaurd";
 import BreadcrumbComponent from "@/components/common/breadcrumb";
 import HeaderComponent from "@/components/common/header-component";
-import ToolbarComponent from "@/components/common/toolbar-component";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+  },
+};
 
 export default function DashboardLayout({
   children,

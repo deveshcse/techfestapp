@@ -8,6 +8,13 @@ import ReactQueryClientProvider from "@/components/providers/react-query-client-
 import { AuthProvider } from "@/features/auth/context/auth-context";
 import { GlobalConfirmDialog } from "@/components/common/confirm-dialog";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import {
+  SITE_DESCRIPTION,
+  SITE_KEYWORDS,
+  SITE_NAME,
+  SITE_TAGLINE,
+  getSiteUrl,
+} from "@/lib/seo";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -21,26 +28,51 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getSiteUrl()),
   title: {
-    default: "TechFestApp | Technical Festival Management",
-    template: "%s | TechFestApp",
+    default: `${SITE_NAME} | ${SITE_TAGLINE}`,
+    template: `%s | ${SITE_NAME}`,
   },
-  description:
-    "Create techfests, schedule activities, automate waitlists, and track attendance — the campus platform for technical festivals.",
-  metadataBase: new URL("https://techfestapp.com"),
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  keywords: [...SITE_KEYWORDS],
+  authors: [{ name: SITE_NAME }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  category: "technology",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "TechFestApp | Technical Festival Management",
+    title: `${SITE_NAME} | ${SITE_TAGLINE}`,
     description:
       "Run technical festivals without spreadsheet chaos. Registrations, waitlists, and attendance in one place.",
     type: "website",
-    siteName: "TechFestApp",
-    url: "https://techfestapp.com",
+    siteName: SITE_NAME,
+    locale: "en_US",
+    url: "/",
   },
   twitter: {
     card: "summary_large_image",
-    title: "TechFestApp | Technical Festival Management",
+    title: `${SITE_NAME} | ${SITE_TAGLINE}`,
     description:
       "Manage techfest activities and registrations from a single dashboard.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
   },
 };
 

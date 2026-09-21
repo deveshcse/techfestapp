@@ -1,12 +1,13 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { MarketingPageShell } from "@/features/landing/components/marketing-page-shell";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
   title: "About",
   description:
     "Learn why TechFestApp exists — a platform built for campus technical festivals.",
-};
+  path: "/about",
+});
 
 export default function AboutPage() {
   return (

@@ -1,12 +1,13 @@
-import type { Metadata } from "next";
 import { MarketingPageShell } from "@/features/landing/components/marketing-page-shell";
 import { ContactForm } from "@/features/landing/components/contact-form";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
   title: "Contact",
   description:
     "Request a demo or ask about Campus pricing for TechFestApp.",
-};
+  path: "/contact",
+});
 
 export default function ContactPage() {
   return (
