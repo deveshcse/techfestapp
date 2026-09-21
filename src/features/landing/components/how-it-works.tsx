@@ -27,7 +27,7 @@ export const HowItWorks = () => {
             return (
               <li
                 key={step.title}
-                className="flex gap-(--landing-stack-md) lg:block"
+                className="relative flex gap-(--landing-stack-md) lg:flex-col lg:items-center lg:gap-0 lg:text-center"
               >
                 {/* Mobile stepper */}
                 <div className="flex w-8 shrink-0 flex-col items-center lg:hidden">
@@ -42,11 +42,11 @@ export const HowItWorks = () => {
                   )}
                 </div>
 
-                {/* Desktop node + track segment (center of this circle → center of next) */}
-                <div className="relative mb-(--landing-stack-md) hidden lg:block">
+                {/* Desktop node — centered so the track hits each circle */}
+                <div className="relative mb-(--landing-stack-md) hidden w-full justify-center lg:flex">
                   {!isLast && (
                     <span
-                      className="absolute top-6 left-6 h-px w-[calc(100%+var(--landing-gap-lg))] bg-landing-primary/30"
+                      className="absolute top-1/2 left-1/2 h-px w-[calc(100%+var(--landing-gap-lg))] -translate-y-1/2 bg-landing-primary/30"
                       aria-hidden
                     />
                   )}
@@ -58,8 +58,8 @@ export const HowItWorks = () => {
                 <div
                   className={
                     isLast
-                      ? "min-w-0 flex-1"
-                      : "min-w-0 flex-1 pb-(--landing-stack-xl) lg:pb-0"
+                      ? "min-w-0 flex-1 lg:max-w-[18rem]"
+                      : "min-w-0 flex-1 pb-(--landing-stack-xl) lg:max-w-[18rem] lg:pb-0"
                   }
                 >
                   <p className="landing-eyebrow">{step.cue}</p>
