@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { hero } from "../content/landing-copy";
+import { SmoothHashLink } from "./smooth-hash-link";
 
 const ProductPreview = dynamic(
   () =>
@@ -61,14 +62,14 @@ export const Hero = () => {
               {hero.primaryCta.label}
               <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
-            <Link
+            <SmoothHashLink
               href={hero.secondaryCta.href}
               className="landing-btn-secondary group w-full touch-manipulation sm:w-auto"
             >
               <span className="transition-transform duration-300 group-hover:translate-x-0.5">
                 {hero.secondaryCta.label}
               </span>
-            </Link>
+            </SmoothHashLink>
           </div>
         </div>
       </div>

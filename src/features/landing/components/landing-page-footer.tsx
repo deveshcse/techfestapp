@@ -11,6 +11,7 @@ import {
   staggerContainer,
   staggerFast,
 } from "./landing-motion";
+import { SmoothHashLink } from "./smooth-hash-link";
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -52,12 +53,12 @@ export const Footer = () => {
             >
               {footer.product.map((link) => (
                 <motion.li key={link.name} variants={fadeUp}>
-                  <Link
+                  <SmoothHashLink
                     href={link.href}
                     className="landing-link-underline text-sm text-landing-ink-muted transition-colors hover:text-landing-primary"
                   >
                     {link.name}
-                  </Link>
+                  </SmoothHashLink>
                 </motion.li>
               ))}
             </motion.ul>

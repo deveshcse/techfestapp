@@ -518,8 +518,12 @@
       );
   }
 
-  .landing-scroll-smooth {
+  /* Viewport scrolls on html — smooth on a child div has no effect for anchors */
+  html:has(.landing-scroll-smooth) {
     scroll-behavior: smooth;
+  }
+
+  .landing-scroll-smooth {
     overflow-x: clip;
   }
 
@@ -549,7 +553,7 @@
       animation: none !important;
     }
 
-    .landing-scroll-smooth {
+    html:has(.landing-scroll-smooth) {
       scroll-behavior: auto;
     }
 

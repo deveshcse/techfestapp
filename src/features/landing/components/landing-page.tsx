@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { Hero } from "./hero";
 import { Navbar } from "./landing-page-navbar";
+import { onSmoothHashClick } from "./smooth-hash-link";
 import { SocialProof } from "./social-proof";
 
 const ProblemOutcome = dynamic(
@@ -53,6 +54,7 @@ const LandingPage = () => {
     <div className="landing-scroll-smooth flex min-h-screen flex-col bg-landing-bg font-landing-body text-landing-ink antialiased selection:bg-landing-primary/15 selection:text-landing-ink">
       <a
         href="#main-content"
+        onClick={(e) => onSmoothHashClick(e, "#main-content")}
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-60 focus:rounded-md focus:bg-landing-ink focus:px-4 focus:py-2 focus:text-white"
       >
         Skip to content

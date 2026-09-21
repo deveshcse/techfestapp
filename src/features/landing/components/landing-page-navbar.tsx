@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { BrandMark } from "./brand-mark";
+import { SmoothHashLink } from "./smooth-hash-link";
 import { navLinks } from "../content/landing-copy";
 
 export const Navbar = () => {
@@ -53,13 +54,13 @@ export const Navbar = () => {
 
         <nav className="hidden items-center gap-7 md:flex">
           {navLinks.map((link) => (
-            <Link
+            <SmoothHashLink
               key={link.name}
               href={link.href}
               className="landing-link-underline font-landing-body text-sm font-medium text-landing-ink-muted transition-colors hover:text-landing-ink"
             >
               {link.name}
-            </Link>
+            </SmoothHashLink>
           ))}
         </nav>
 
@@ -170,14 +171,14 @@ export const Navbar = () => {
               </SheetHeader>
               <div className="mt-8 flex flex-col gap-1 px-2">
                 {navLinks.map((link) => (
-                  <Link
+                  <SmoothHashLink
                     key={link.name}
                     href={link.href}
                     onClick={() => setOpen(false)}
                     className="block rounded-md px-3 py-3 text-base font-medium text-landing-ink transition-colors hover:bg-landing-muted"
                   >
                     {link.name}
-                  </Link>
+                  </SmoothHashLink>
                 ))}
               </div>
               <div className="mt-8 flex flex-col gap-2 border-t border-landing-ink/10 px-2 pt-6">
