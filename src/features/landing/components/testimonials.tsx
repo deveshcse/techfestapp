@@ -25,7 +25,7 @@ export function Testimonials() {
               key={item.name}
               delayMs={isMobile ? Math.min(index * 80, 100) : index * 80}
               as="blockquote"
-              className="flex h-full flex-col border-t-2 border-landing-primary pt-(--landing-stack-md) sm:transition-[padding] sm:duration-300 sm:hover:pt-(--landing-stack-lg)"
+              className="flex h-full flex-col border-t-2 border-landing-primary pt-(--landing-stack-md) sm:transition-colors sm:duration-300 sm:hover:border-landing-primary/70"
             >
               <p className="flex-1 text-base leading-relaxed text-landing-ink sm:text-[1.05rem]">
                 <span className="font-landing-display text-3xl leading-none text-landing-primary/40">
